@@ -1,0 +1,57 @@
+<?php 
+class Sipra extends CI_Controller {
+
+	public function index()
+	{
+		$client = new SoapClient("http://172.20.0.108/servicosipra/Projeto/SProjeto.svc?wsdl");
+
+		echo "<h1>Lista de M&eacutetodos</h1>";
+		echo "<pre>";
+		print_r($client->__getFunctions());
+		echo "</pre>";
+
+                echo "<h3>M&eacutetodo ConsultarResponse</h3>";
+                echo "<pre>";
+                print_r($client->Consultar());
+                echo "</pre>";
+
+                echo "<h3>M&eacutetodo ConsultarProjetoAleatorioResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarProjetoAleatorio());
+                echo "</pre>";
+
+                echo "<h3>M&eacutetodo ConsultarPorMunicipioResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarPorMunicipio());
+                echo "</pre>";
+
+                echo "<h3>M&eacutetodo ConsultarSubProjetoResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarSubProjeto());
+                echo "</pre>";
+
+                echo "<h3>M&eacutetodo ConsultarListaResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarLista());
+                echo "</pre>";
+
+		echo "<h3>M&eacutetodo ConsultarListaPorMunicipioResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarListaPorMunicipio());
+                echo "</pre>";
+
+                echo "<h3>M&eacutetodo ConsultarSubProjetosResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarSubProjetos());
+                echo "</pre>";
+
+		echo "<h3>M&eacutetodo ConsultarListaProjetosResponse</h3>";
+                echo "<pre>";
+                print_r($client->ConsultarListaProjetos());
+                echo "</pre>";
+
+	}
+}
+
+/* End of file sipra.php */
+/* Location: ./application/controllers/sipra.php */

@@ -1,0 +1,257 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/newpnera/!svn/ver/136/application/controllers
+END
+pessoa.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/newpnera/!svn/ver/136/application/controllers/pessoa.php
+END
+welcome.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/newpnera/!svn/ver/2/application/controllers/welcome.php
+END
+organizacao.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/newpnera/!svn/ver/125/application/controllers/organizacao.php
+END
+superintendencia.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/newpnera/!svn/ver/121/application/controllers/superintendencia.php
+END
+relatorio_geral_andamento.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/newpnera/!svn/ver/135/application/controllers/relatorio_geral_andamento.php
+END
+responsavel.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/newpnera/!svn/ver/125/application/controllers/responsavel.php
+END
+relatorio_dinamico.php
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/newpnera/!svn/ver/103/application/controllers/relatorio_dinamico.php
+END
+producao9b_col.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/newpnera/!svn/ver/115/application/controllers/producao9b_col.php
+END
+producao8a.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/121/application/controllers/producao8a.php
+END
+producao8b.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/121/application/controllers/producao8b.php
+END
+contato.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/newpnera/!svn/ver/112/application/controllers/contato.php
+END
+producao8c.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/121/application/controllers/producao8c.php
+END
+producao8d.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/121/application/controllers/producao8d.php
+END
+ctrl_system.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/22/application/controllers/ctrl_system.php
+END
+login.php
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/newpnera/!svn/ver/26/application/controllers/login.php
+END
+producao8e.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/121/application/controllers/producao8e.php
+END
+relatorio_geral.php
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/newpnera/!svn/ver/110/application/controllers/relatorio_geral.php
+END
+relatorio_geral_pnera2.php
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/newpnera/!svn/ver/134/application/controllers/relatorio_geral_pnera2.php
+END
+professor.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/121/application/controllers/professor.php
+END
+educando.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/newpnera/!svn/ver/130/application/controllers/educando.php
+END
+relatorio_qualitativo.php
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/newpnera/!svn/ver/66/application/controllers/relatorio_qualitativo.php
+END
+observacao.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/130/application/controllers/observacao.php
+END
+request.php
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/newpnera/!svn/ver/136/application/controllers/request.php
+END
+instituicao.php
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/newpnera/!svn/ver/125/application/controllers/instituicao.php
+END
+curso.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/newpnera/!svn/ver/130/application/controllers/curso.php
+END
+ctrl_login.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/121/application/controllers/ctrl_login.php
+END
+requisicao.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/124/application/controllers/requisicao.php
+END
+parceiro.php
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/newpnera/!svn/ver/121/application/controllers/parceiro.php
+END
+producao9a.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/93/application/controllers/producao9a.php
+END
+relatorio_quantitativo.php
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/newpnera/!svn/ver/68/application/controllers/relatorio_quantitativo.php
+END
+producao9c.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/93/application/controllers/producao9c.php
+END
+relatorio_geral_concluido.php
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/newpnera/!svn/ver/135/application/controllers/relatorio_geral_concluido.php
+END
+producao9d.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/93/application/controllers/producao9d.php
+END
+producao9e.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/93/application/controllers/producao9e.php
+END
+caracterizacao.php
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/newpnera/!svn/ver/134/application/controllers/caracterizacao.php
+END
+producao9f.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/93/application/controllers/producao9f.php
+END
+relatorio_estatistico.php
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/newpnera/!svn/ver/75/application/controllers/relatorio_estatistico.php
+END
+producao9g.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/newpnera/!svn/ver/93/application/controllers/producao9g.php
+END
+ctrl_curso.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/124/application/controllers/ctrl_curso.php
+END
+producao9b_livro.php
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/newpnera/!svn/ver/115/application/controllers/producao9b_livro.php
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/newpnera/!svn/ver/2/application/controllers/index.html
+END
+ctrl_conta.php
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/newpnera/!svn/ver/126/application/controllers/ctrl_conta.php
+END

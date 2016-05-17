@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/RichText
+END
+TextElement.php
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/RichText/TextElement.php
+END
+Run.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/RichText/Run.php
+END
+ITextElement.php
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/RichText/ITextElement.php
+END

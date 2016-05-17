@@ -1,0 +1,474 @@
+/* HTML / BODY */
+
+	/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);*/
+	
+	html, body {
+		font-family: 'Open Sans', sans-serif;
+	}
+
+/* HEADER */
+
+	#header {
+		clear: both;
+		width: 100%;
+		height: 80px;
+		border-bottom: 5px solid #5bb75b;
+		position: fixed;
+		top: 0px;
+		background-color: #fff;
+		z-index: 9000;
+	}
+
+	#header > .navbar {
+	  	background-color: #fff !important;
+	  	padding: 0 !important;
+	  	margin-bottom: 0 !important;
+	}
+
+	#header > .navbar > .container {
+		height: 75px !important;
+		width: auto !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	#header > .navbar > .container > .navbar-brand {
+		position: absolute;
+	  	padding: 0 15px 0 15px !important;
+	  	margin: 0 !important;
+	  	background-color: #fff !important;
+	  	z-index: 1;
+	}
+
+	#logo {
+		background: url(img/data_pronera.png) no-repeat;
+		background-position: center;
+		background-size: 150px 58px;
+		height: 75px;
+		width: 180px;
+		float: left;
+		z-index: 2;
+	}
+
+/* MIDDLE */
+
+	#middle {
+		width:1020px;
+		height:100%;
+		min-height:400px;
+		overflow:hidden;
+		line-height:18px;
+		margin: 0 auto;
+		margin-top:150px;
+		background:white;
+		box-shadow: 0 0 1px rgba(0, 0, 0, 0.1),0 0 10px rgba(0, 0, 0, 0.31);
+		padding-top:0px;
+		margin-bottom:30px;
+	}
+
+	#content {
+		width:1000px;
+		height:100%;
+		background:white;
+		padding: 20px;
+	}
+
+/* FOOTER */
+
+	#footer {
+		clear: both;
+		width: 100%;
+		height: 100px;
+		background: url(img/footer_new_1024.png) no-repeat center white;
+		border-radius: 0px 0px 15px 15px;
+		border-top: 2px solid #5bb75b;
+		z-index: 999;
+		position: absolute;
+	}
+
+/* LOGIN */
+
+	.box-control {
+		height: auto;
+		background-color: #FFF;
+		width: 500px;
+		float: left;
+		margin: 30px;
+	}
+
+	.box-control.box-inline {
+		width: 420px !important;
+	}
+
+	.box-control.box-inline input,  .box-control.box-inline button {
+		width: 350px !important;
+	}
+
+	.box-control.box-inline label {
+		float: left;
+		margin-left: 45px !important;
+	}
+
+	.box-center {
+		height: auto;
+		width: auto;
+		border: 1px rgba(0, 0, 0, 0.1) solid;
+	}
+
+	.box-control > h2, .box-control > h5 {
+		text-align: center;
+	}
+
+	.box-control > .form-horizontal {
+		margin: 0 auto;
+	}
+
+	.box-control .col-lg-12 {
+		text-align: center;
+	}
+
+	.center {
+		margin: 0 auto !important;
+	}
+
+	.box-control label {
+		width: 250px;
+		text-align: left !important;
+	}
+
+	.box-control input, .box-control button {
+		width: 250px;
+		height: 35px;
+		font-size: 17px !important;
+	}
+
+	.box-control .btn-inline {
+		width: 125px !important;
+		height: 35px !important;
+		font-size: 17px !important;
+	}
+
+	.logo {
+		float: left;
+	}
+
+	.logo img {
+		width: 363px;
+	}	
+
+	label[for=cpf] {
+		margin-bottom: -10px;
+	}
+
+	.control-label {
+		display: none;
+	}
+
+	.control-label.form {
+		margin: 5px 0 0 10px;
+	}
+
+	#label-esqueci-senha {
+		padding-top: 10px;
+	}
+
+/* MENUS */
+
+	.overflow-menu {
+		position: absolute;
+		right: 15px;
+		/*left: 290px;*/
+		left: 40px;
+		width: auto;
+		height: 75px;
+	}
+
+	#top_menu {
+		/*width: 2000px !important;*/
+		width: auto;
+		margin:	13px 0 13px 13px !important;
+	}
+
+	#top_menu > li {
+		float: right !important;
+		position: relative;
+	  	display: block;
+	}
+
+	#top_menu > li > a {
+	  	position: relative;
+	  	display: block;
+	  	padding: 10px 15px;
+	  	padding-top: 15px;
+	  	padding-bottom: 15px;
+	  	line-height: 20px;
+	  	color: #777777;
+	  	border-radius: 4px;
+	}
+
+	@media screen and (max-width: 1100px) {
+
+		#top_menu > li > a {
+		  	font-size: 9.8px;
+		}
+	}
+
+	@media screen and (min-width: 1101px) {
+
+		#top_menu > li > a {
+		  	font-size: 12px;
+		}
+	}
+
+	#top_menu > li > a:hover,
+	#top_menu > li > a:focus {
+	  	text-decoration: none;
+	  	background-color: #eeeeee;
+	  	color: #333333;
+	  	background-color: transparent;
+	}
+
+	#top_menu .caret {
+	  	border-top-color: #777 !important;
+	  	border-bottom-color: #777 !important;
+	}
+
+	#top_menu a:hover .caret {
+	  	border-top-color: #777 !important;
+	  	border-bottom-color: #777 !important;
+	}
+
+	#top_menu > li > .drop {
+	  	margin-top: 0;
+	  	border-top-right-radius: 0;
+	  	border-top-left-radius: 0;
+	}
+
+	#top_menu > .active > a,
+	#top_menu > .active > a:hover,
+	#top_menu > .active > a:focus {
+	  	color: #fff !important;
+	  	background-color: #5bb75b !important;
+	}	
+
+	#top_menu > .active > a > .caret {
+	  	border-top-color: #fff !important;
+	  	border-bottom-color: #fff !important;
+	}
+
+	#top_menu > .open > a,
+	#top_menu > .open > a:hover,
+	#top_menu > .open > a:focus {
+	  background-color: #F5F5F5;
+	}
+
+	#top_menu > .open > a .caret,
+	#top_menu > .open > a:hover .caret,
+	#top_menu > .open > a:focus .caret {
+	  	border-top-color: #555555;
+	  	border-bottom-color: #555555;
+	}
+
+  	#top_menu > .dropdown.active > a .caret {
+    	border-top-color: #fff;
+    	border-bottom-color: #fff;
+  	}  	
+
+	.drop > li > a {
+	  	font-size: 12px !important;
+	}
+
+	.drop > li > a:hover,
+	.drop > li > a:focus {
+	  	color: #000 !important;
+        background-image: -webkit-gradient(linear, left 0%, left 100%, from(#d5d5d5), to(#d5d5d5)) !important;
+        background-image: -webkit-linear-gradient(top, #d5d5d5, 0%, #d5d5d5, 100%) !important;
+        background-image: -moz-linear-gradient(top, #d5d5d5 0%, #d5d5d5 100%) !important;
+        background-image: linear-gradient(to bottom, #d5d5d5 0%, #d5d5d5 100%) !important;
+	}
+
+	.navbar-toggle {
+		top: 14px;
+		border-color: gray;
+	}
+
+	.navbar-toggle span {
+		background-color: gray;
+	}
+
+/* MESSAGE */
+
+	#status {
+		position: fixed;
+		width: 100%;
+		padding: 7px !important;
+		top: 81px;
+		display: none;
+		text-align: center;
+		z-index: 1000;
+	}
+
+	.status.glyphicon {
+		float: right;
+		margin-right: 10px;
+	}
+
+	.status.glyphicon:hover {
+		cursor: pointer;
+	}
+
+/* COURSE INFO */
+
+	#course_info {
+		display: block;
+		position: fixed;
+		width: 100%;
+		top: 80px;
+		margin-bottom: 0;
+		z-index: 1000;
+	}
+
+	#course_info > nav > .container > .navbar-header a {
+		cursor: default;
+		font-size: 15px;
+	}
+
+	button#submit {
+		letter-spacing: 1px;
+		margin-top: 10px;
+		border-color: #333;
+	}
+
+/* FORMS */
+
+	.form-horizontal.spacer {
+		margin-top: 95px;
+	}
+
+	.text-danger {
+		display: none;
+		color: #b94a48;
+		padding-top: 2px;
+	}
+
+	.text-danger label {
+		font-weight: bold;
+	}
+
+	.text-danger.select {
+		margin: 0 0 0 10px;
+	}
+
+	.text-danger.select.estado {
+		/*margin-top: 37px;*/
+		width: 200px;
+	}
+
+	.text-danger.select.estado2 {
+		margin-top: 4px;
+		width: 200px;
+	}
+
+	.text-danger.select.municipio {
+		/*margin-top: 37px;*/
+		width: 300px;
+	}
+
+	.dialog {
+		display: none;
+		text-align: center;
+	}
+
+	.has-error > div > div.radio > label > input[type="radio"],
+	.has-error > div > div.checkbox > label > input[type="checkbox"] {
+		outline-style: dashed;
+		outline-width: thin;
+		outline-color: #953b39;
+		outline-offset: 1px;
+	}
+
+	.bold {
+		font-weight: bold !important;
+	}
+
+	.listDecimal {
+		list-style-type: decimal;
+	}
+
+	.listNone {
+		list-style-type: none;
+	}
+
+	.li-rel > a {
+		color: #4F4F4F;
+	}
+
+	.li-rel > a:hover {
+		text-decoration: none;
+		color: #000;
+		font-weight: bold;
+	}
+
+	.table-box {
+		border: 1px solid #061;
+		width: auto;
+		height: auto;
+		border-radius: 5px;
+		padding: 25px;
+	}
+
+	.table-box.table-box-lg {
+		width: 850px;
+	}
+
+	.table-box.table-box-small {
+		width: 700px;
+	}
+
+	.table-size {
+		margin: 30px 0 10px 40px;
+		width: 600px
+	}
+
+	.table-size.table-size-lg {
+		width: 700px !important;
+	}
+
+/* TABS */
+
+	.tab-pane {
+		border-right: 1px #dddddd solid;
+		border-bottom: 1px #dddddd solid;
+		border-left: 1px #dddddd solid;
+		min-height: 332px;
+	}
+
+/* TABLE */
+
+	.table {
+		cursor: pointer;
+	}
+
+	.table > ul > li.buttons {
+		float: left;
+		margin-left: 3px;
+	}
+
+	ul.buttons {
+		margin: 5px 0px 20px 0px;
+	}
+
+	.dataTables_empty {
+		cursor: auto;
+	}
+
+/* MODAL */
+
+	.ui-widget-overlay {
+		z-index: 9998 !important;
+	}
+
+	.ui-dialog {
+		z-index: 9999 !important;
+		position: fixed !important;
+	}

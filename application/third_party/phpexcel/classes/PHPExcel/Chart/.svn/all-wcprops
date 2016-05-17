@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart
+END
+Layout.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/Layout.php
+END
+Exception.php
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/Exception.php
+END
+Legend.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/Legend.php
+END
+Title.php
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/Title.php
+END
+DataSeries.php
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/DataSeries.php
+END
+DataSeriesValues.php
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/DataSeriesValues.php
+END
+PlotArea.php
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Chart/PlotArea.php
+END

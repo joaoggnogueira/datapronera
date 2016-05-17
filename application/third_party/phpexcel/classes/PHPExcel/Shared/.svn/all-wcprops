@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared
+END
+Escher.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/Escher.php
+END
+Drawing.php
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/Drawing.php
+END
+OLERead.php
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/OLERead.php
+END
+PasswordHasher.php
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/PasswordHasher.php
+END
+XMLWriter.php
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/XMLWriter.php
+END
+Date.php
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/Date.php
+END
+ZipStreamWrapper.php
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/ZipStreamWrapper.php
+END
+File.php
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/File.php
+END
+OLE.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/OLE.php
+END
+ZipArchive.php
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/ZipArchive.php
+END
+Excel5.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/Excel5.php
+END
+Font.php
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/Font.php
+END
+String.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/String.php
+END
+CodePage.php
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/newpnera/!svn/ver/133/application/third_party/phpexcel/classes/PHPExcel/Shared/CodePage.php
+END

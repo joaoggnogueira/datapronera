@@ -258,7 +258,7 @@ class Curso extends CI_Controller {
 			'id_superintendencia' => $this->input->post('superintendencia'),
 			'id_pesquisador' => $this->input->post('pesquisador'),
 			'id_modalidade' => $id_modalidade,
-                        'data' => $this->input->post('data')
+                        'data' => $this->input->post('data') //CHANGE
 		);
 
 		if ($this->curso_m->update_record($curso, $this->input->post('id_curso'))) {

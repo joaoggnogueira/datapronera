@@ -197,7 +197,6 @@
 					<input type="text" class="form-control" id="modalidade_outros" name="modalidade_outros" value="<?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "OUTROS") echo $modalidade[0]->modalidade_curso_descr;?>" />
 		    </div>
 	    </div>-->
-
 	    <div class="form-group">
 	      	<label>3. Superintendência</label>
 	      	<div class="form-group">

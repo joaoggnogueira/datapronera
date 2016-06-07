@@ -286,7 +286,8 @@ class Caracterizacao extends CI_Controller {
             }
 
             $curso = array(
-                'id_modalidade' => $id_modalidade
+                'id_modalidade' => $id_modalidade,
+                'data'          => $this->input->post('data')
             );
 
             if ($this->curso_m->update_record($curso, $this->session->userdata('id_curso'))) {

@@ -1,433 +1,420 @@
-<?php 
-	
+<?php
+
 class Curso extends CI_Controller {
 
-	public function __construct() {
-        parent::__construct(); 
+    public function __construct() {
+        parent::__construct();
 
-        $this->load->database();		 // Loading Database 
+        $this->load->database();   // Loading Database 
         $this->load->library('session'); // Loading Session
-        $this->load->helper('url'); 	 // Loading Helper
-        
-		$this->load->model('curso_m');
-		$this->load->model('responsavel_m');
-		$this->load->model('caracterizacao_m');
-		$this->load->model('instituicao_m');
+        $this->load->helper('url');   // Loading Helper
+
+        $this->load->model('curso_m');
+        $this->load->model('responsavel_m');
+        $this->load->model('caracterizacao_m');
+        $this->load->model('instituicao_m');
     }
 
-	function index() {
+    function index() {
 
-    	$this->session->set_userdata('curr_content', 'cadastro_curso');
-    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        $this->session->set_userdata('curr_content', 'cadastro_curso');
+        $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-    	$data['content'] = $this->session->userdata('curr_content');		
-		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		$html = array(
-			'content' => $this->load->view($data['content'], '', true)
-			//'top_menu' => $this->load->view($data['top_menu'], '', true)
-		);
+        $html = array(
+            'content' => $this->load->view($data['content'], '', true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
 
-		$response = array(
-			'success' => true,
-			'html' => $html
-		);
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
 
-		echo json_encode($response);
-	}	
+        echo json_encode($response);
+    }
 
-	function index_add() {
+    function index_add() {
 
-		$curso['id'] = 0;
+        $curso['id'] = 0;
 
-    	$this->session->set_userdata('curr_content', 'formulario_cad_curso');
-    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        $this->session->set_userdata('curr_content', 'formulario_cad_curso');
+        $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-    	$data['content'] = $this->session->userdata('curr_content');		
-		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		$valores['curso'] = $curso;
-		$valores['operacao'] =  $this->input->post('operacao');
+        $valores['curso'] = $curso;
+        $valores['operacao'] = $this->input->post('operacao');
 
-		$html = array(
-			'content' => $this->load->view($data['content'], $valores, true)
-			//'top_menu' => $this->load->view($data['top_menu'], '', true)
-		);
+        $html = array(
+            'content' => $this->load->view($data['content'], $valores, true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
 
-		$response = array(
-			'success' => true,
-			'html' => $html
-		);
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
 
-		echo json_encode($response);
-	}
+        echo json_encode($response);
+    }
 
-	function index_update() {
-		
-		$curso['id'] = $this->input->post('id_curso');
-		
-		if ($dados = $this->curso_m->get_record($curso['id'])) {
+    function index_update() {
 
-			$this->session->set_userdata('curr_content', 'formulario_cad_curso');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        $curso['id'] = $this->input->post('id_curso');
 
-	    	$data['content'] = $this->session->userdata('curr_content');		
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        if ($dados = $this->curso_m->get_record($curso['id'])) {
 
-			$valores['dados'] = $dados;
-			$valores['curso'] = $curso;
-			$valores['operacao'] =  $this->input->post('operacao');
+            $this->session->set_userdata('curr_content', 'formulario_cad_curso');
+            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-			$html = array(
-				'content' => $this->load->view($data['content'], $valores, true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true)
-			);
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-			$response = array(
-				'success' => true,
-				'html' => $html
-			);
+            $valores['dados'] = $dados;
+            $valores['curso'] = $curso;
+            $valores['operacao'] = $this->input->post('operacao');
 
-		}  else {
+            $html = array(
+                'content' => $this->load->view($data['content'], $valores, true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            );
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha na requisição, tente novamente em instantes'
-			);
-		}
+            $response = array(
+                'success' => true,
+                'html' => $html
+            );
+        } else {
 
-		echo json_encode($response);
-	}
+            $response = array(
+                'success' => false,
+                'message' => 'Falha na requisição, tente novamente em instantes'
+            );
+        }
 
-	function add() {
+        echo json_encode($response);
+    }
 
-		// Starts transaction
-		$this->db->trans_begin();
+    function add() {
 
-		if ($this->input->post('modalidade') == 'OUTRA') {
+        // Starts transaction
+        $this->db->trans_begin();
 
-			$modalidade = array(
-				'nome' => trim($this->input->post('modalidade_descricao')),
-				'descricao' => null,
-				'nivel' => null
-			);
+        if ($this->input->post('modalidade') == 'OUTRA') {
 
-			// Inserts course's genre
-			$id_modalidade = $this->curso_m->add_record_modalidade($modalidade);
+            $modalidade = array(
+                'nome' => trim($this->input->post('modalidade_descricao')),
+                'descricao' => null,
+                'nivel' => null
+            );
 
-		} else {
-			$id_modalidade = $this->input->post('modalidade');
-		}
-
-		$curso = array(
-			'nome' => trim($this->input->post('nome')),
-			'ativo_inativo' => 'A',
-			'status' => 'AN',
-			'id_superintendencia' => $this->input->post('superintendencia'),
-			'id_pesquisador' => 
-				(strlen($this->input->post('pesquisador')) > 0 ?
-					$this->input->post('pesquisador') : NULL),
-			'id_modalidade' => $id_modalidade,
-                        'data' => $this->input->post('data'),
-			'obs' => null
-		);
-
-		// Inserts a new course
-		if ($inserted_id = $this->curso_m->add_record($curso)) {
-
-			$responsavel = array(
-				'id_curso' => $inserted_id
-			);	
-
-			// Inserts a new form 1
-			if ($this->responsavel_m->add_record($responsavel)) {
-
-				$caracterizacao = array(
-					'id_curso' => $inserted_id
-				);
-
-				// Inserts a new form 2
-				if ($this->caracterizacao_m->add_record($caracterizacao)) {
-
-					$instituicao = array(
-						'id_curso' => $inserted_id
-					);
-
-					// Inserts a new form 5
-					if ($this->instituicao_m->add_record($instituicao)) {
-
-						if ($this->db->trans_status() !== false) {
-
-							$this->log->save("CURSO ADICIONADO: ID '".$inserted_id."'");
-
-							$this->db->trans_commit();
-
-							$this->session->set_userdata('curr_content', 'cadastro_curso');
-					    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
-
-					    	$data['content'] = $this->session->userdata('curr_content');		
-							//$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-							$html = array(
-								'content' => $this->load->view($data['content'], '', true)
-								//'top_menu' => $this->load->view($data['top_menu'], '', true)
-							);
-
-							$response = array(
-								'success' => true,
-								'html'    => $html,
-								'message' => 'Cadastro efetuado com sucesso'
-							);
-
-						} else {
-				
-							$this->db->trans_rollback();
-
-							$response = array(
-								'success' => false,
-								'message' => 'Falha ao efetuar cadastro'
-							);
-						}
-
-					} else {
-				
-						$this->db->trans_rollback();
-
-						$response = array(
-							'success' => false,
-							'message' => 'Falha ao efetuar cadastro'
-						);
-					}
-
-				} else {
-				
-					$this->db->trans_rollback();
-
-					$response = array(
-						'success' => false,
-						'message' => 'Falha ao efetuar cadastro'
-					);
-				}
-
-			} else {
-				
-				$this->db->trans_rollback();
-
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao efetuar cadastro'
-				);
-			}
+            // Inserts course's genre
+            $id_modalidade = $this->curso_m->add_record_modalidade($modalidade);
+        } else {
+            $id_modalidade = $this->input->post('modalidade');
+        }
+
+        $curso = array(
+            'nome' => trim($this->input->post('nome')),
+            'ativo_inativo' => 'A',
+            'status' => 'AN',
+            'id_superintendencia' => $this->input->post('superintendencia'),
+            'id_pesquisador' =>
+            (strlen($this->input->post('pesquisador')) > 0 ?
+                    $this->input->post('pesquisador') : NULL),
+            'id_modalidade' => $id_modalidade,
+            'data' => $this->input->post('data'),
+            'obs' => null
+        );
+
+        // Inserts a new course
+        if ($inserted_id = $this->curso_m->add_record($curso)) {
 
-		} else {
-				
-			$this->db->trans_rollback();
+            $responsavel = array(
+                'id_curso' => $inserted_id
+            );
+
+            // Inserts a new form 1
+            if ($this->responsavel_m->add_record($responsavel)) {
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao efetuar cadastro'
-			);
-		}
-
-		echo json_encode($response);
-	}
-
-	function update() {
-
-		// Starts transaction
-		$this->db->trans_begin();
-
-		if ($this->input->post('modalidade') == 'OUTRA') {
-
-			$modalidade = array(
-				'nome' => trim($this->input->post('modalidade_descricao')),
-				'descricao' => null,
-				'nivel' => null
-			);
-
-			// Inserts course's genre
-			$id_modalidade = $this->curso_m->add_record_modalidade($modalidade);
+                $caracterizacao = array(
+                    'id_curso' => $inserted_id
+                );
+
+                // Inserts a new form 2
+                if ($this->caracterizacao_m->add_record($caracterizacao)) {
+
+                    $instituicao = array(
+                        'id_curso' => $inserted_id
+                    );
+
+                    // Inserts a new form 5
+                    if ($this->instituicao_m->add_record($instituicao)) {
+
+                        if ($this->db->trans_status() !== false) {
+
+                            $this->log->save("CURSO ADICIONADO: ID '" . $inserted_id . "'");
+
+                            $this->db->trans_commit();
 
-		} else {
-			$id_modalidade = $this->input->post('modalidade');
-		}
+                            $this->session->set_userdata('curr_content', 'cadastro_curso');
+                            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-		$curso = array(
-			'nome' => trim($this->input->post('nome')),
-			'ativo_inativo' => 'A',
-			'id_superintendencia' => $this->input->post('superintendencia'),
-			'id_pesquisador' => $this->input->post('pesquisador'),
-			'id_modalidade' => $id_modalidade,
-                        'data' => $this->input->post('data')
-		);
+                            $data['content'] = $this->session->userdata('curr_content');
+                            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		if ($this->curso_m->update_record($curso, $this->input->post('id_curso'))) {
+                            $html = array(
+                                'content' => $this->load->view($data['content'], '', true)
+                                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+                            );
 
-			if ($this->db->trans_status() !== false) {
+                            $response = array(
+                                'success' => true,
+                                'html' => $html,
+                                'message' => 'Cadastro efetuado com sucesso'
+                            );
+                        } else {
+
+                            $this->db->trans_rollback();
 
-				$this->log->save("CURSO ATUALIZADO: ID '".$this->input->post('id_curso')."'");
+                            $response = array(
+                                'success' => false,
+                                'message' => 'Falha ao efetuar cadastro'
+                            );
+                        }
+                    } else {
+
+                        $this->db->trans_rollback();
+
+                        $response = array(
+                            'success' => false,
+                            'message' => 'Falha ao efetuar cadastro'
+                        );
+                    }
+                } else {
+
+                    $this->db->trans_rollback();
+
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Falha ao efetuar cadastro'
+                    );
+                }
+            } else {
 
-				$this->db->trans_commit();
+                $this->db->trans_rollback();
 
-				$this->session->set_userdata('curr_content', 'cadastro_curso');
-		    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao efetuar cadastro'
+                );
+            }
+        } else {
 
-		    	$data['content'] = $this->session->userdata('curr_content');		
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+            $this->db->trans_rollback();
 
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true)
-				);
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao efetuar cadastro'
+            );
+        }
 
-				$response = array(
-					'success' => true,
-					'html'    => $html,
-					'message' => 'Cadastro atualizado com sucesso'
-				);
+        echo json_encode($response);
+    }
 
-			} else {
-	
-				$this->db->trans_rollback();
+    function update() {
 
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao atualizar cadastro'
-				);
-			}
+        // Starts transaction
+        $this->db->trans_begin();
 
-		} else {
-	
-			$this->db->trans_rollback();
+        if ($this->input->post('modalidade') == 'OUTRA') {
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao atualizar cadastro'
-			);
-		}
+            $modalidade = array(
+                'nome' => trim($this->input->post('modalidade_descricao')),
+                'descricao' => null,
+                'nivel' => null
+            );
 
-		echo json_encode($response);
-	}
+            // Inserts course's genre
+            $id_modalidade = $this->curso_m->add_record_modalidade($modalidade);
+        } else {
+            $id_modalidade = $this->input->post('modalidade');
+        }
 
-	function deactivate() {
+        $curso = array(
+            'nome' => trim($this->input->post('nome')),
+            'ativo_inativo' => 'A',
+            'id_superintendencia' => $this->input->post('superintendencia'),
+            'id_pesquisador' => $this->input->post('pesquisador'),
+            'id_modalidade' => $id_modalidade,
+            'data' => $this->input->post('data')
+        );
 
-		if ($this->curso_m->toggle_record($this->input->post('id_curso'), 'I')) {
+        if ($this->curso_m->update_record($curso, $this->input->post('id_curso'))) {
 
-			$this->log->save("CURSO DESATIVADO: ID '".$this->input->post('id_curso')."'");
+            if ($this->db->trans_status() !== false) {
 
-			$this->session->set_userdata('curr_content', 'cadastro_curso');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+                $this->log->save("CURSO ATUALIZADO: ID '" . $this->input->post('id_curso') . "'");
 
-	    	$data['content'] = $this->session->userdata('curr_content');		
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+                $this->db->trans_commit();
 
-			$html = array(
-				'content' => $this->load->view($data['content'], '', true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true)
-			);
+                $this->session->set_userdata('curr_content', 'cadastro_curso');
+                $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-			$response = array(
-				'success' => true,
-				'html'    => $html,
-				'message' => 'Cadastro desativado com sucesso'
-			);
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		} else {
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true)
+                );
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao desativar cadastro'
-			);
-		}
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro atualizado com sucesso'
+                );
+            } else {
 
-		echo json_encode($response);
-	}
+                $this->db->trans_rollback();
 
-	function reactivate() {
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao atualizar cadastro'
+                );
+            }
+        } else {
 
-		if ($this->curso_m->toggle_record($this->input->post('id_curso'), 'A')) {
+            $this->db->trans_rollback();
 
-			$this->log->save("CURSO REATIVADO: ID '".$this->input->post('id_curso')."'");
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao atualizar cadastro'
+            );
+        }
 
-			$this->session->set_userdata('curr_content', 'cadastro_curso');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        echo json_encode($response);
+    }
 
-	    	$data['content'] = $this->session->userdata('curr_content');		
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+    function deactivate() {
 
-			$html = array(
-				'content' => $this->load->view($data['content'], '', true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true)
-			);
+        if ($this->curso_m->toggle_record($this->input->post('id_curso'), 'I')) {
 
-			$response = array(
-				'success' => true,
-				'html'    => $html,
-				'message' => 'Cadastro reativado com sucesso'
-			);
+            $this->log->save("CURSO DESATIVADO: ID '" . $this->input->post('id_curso') . "'");
 
-		} else {
+            $this->session->set_userdata('curr_content', 'cadastro_curso');
+            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao reativar cadastro'
-			);
-		}
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		echo json_encode($response);
-	}
+            $html = array(
+                'content' => $this->load->view($data['content'], '', true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            );
 
-	function toogle_status($status) {
+            $response = array(
+                'success' => true,
+                'html' => $html,
+                'message' => 'Cadastro desativado com sucesso'
+            );
+        } else {
 
-		if ($status == 'AN') {
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao desativar cadastro'
+            );
+        }
 
-			$course = $this->input->post('id_curso');
-			$msg_log = "CURSO REABILITADO PARA CADASTRO: ID '".$course."'";
+        echo json_encode($response);
+    }
 
-			$msg_success = "Cadastro reabilitado com sucesso";
-			$msg_error = "Falha ao reabilidar cadastro";
+    function reactivate() {
 
-		} else {
+        if ($this->curso_m->toggle_record($this->input->post('id_curso'), 'A')) {
 
-			$course = $this->session->userdata('id_curso');
-			$msg_log = "CADASTRO DE CURSO FINALIZADO: ID '".$course."'";
+            $this->log->save("CURSO REATIVADO: ID '" . $this->input->post('id_curso') . "'");
 
-			$msg_success = "Cadastro de curso finalizado com sucesso";
-			$msg_error = "Falha ao finalizar cadastro de curso";
-		}
+            $this->session->set_userdata('curr_content', 'cadastro_curso');
+            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-		if ($this->curso_m->toogle_status($course, $status)) {
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-			$this->log->save($msg_log);
+            $html = array(
+                'content' => $this->load->view($data['content'], '', true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            );
 
-			$this->session->set_userdata('curr_content', 'cursos');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
-	    	$this->session->set_userdata('curr_course_info', 'blank.php');
+            $response = array(
+                'success' => true,
+                'html' => $html,
+                'message' => 'Cadastro reativado com sucesso'
+            );
+        } else {
 
-	    	$data['content'] = $this->session->userdata('curr_content');	
-			$data['top_menu'] = $this->session->userdata('curr_top_menu');
-	    	$data['course_info'] = $this->session->userdata('curr_course_info');
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao reativar cadastro'
+            );
+        }
 
-			$html = array(
-				'content' => $this->load->view($data['content'], '', true),
-				'top_menu' => $this->load->view($data['top_menu'], '', true),
-				'course_info' => $this->load->view($data['course_info'], '', true)
-			);
+        echo json_encode($response);
+    }
 
-			$response = array(
-				'success' => true,
-				'html'    => $html,
-				'message' => $msg_success
-			);
+    function toogle_status($status) {
 
-		} else {
+        if ($status == 'AN') {
 
-			$response = array(
-				'success' => false,
-				'message' => $msg_error
-			);
-		}
+            $course = $this->input->post('id_curso');
+            $msg_log = "CURSO REABILITADO PARA CADASTRO: ID '" . $course . "'";
 
-		echo json_encode($response);
-	}
+            $msg_success = "Cadastro reabilitado com sucesso";
+            $msg_error = "Falha ao reabilidar cadastro";
+        } else {
+
+            $course = $this->session->userdata('id_curso');
+            $msg_log = "CADASTRO DE CURSO FINALIZADO: ID '" . $course . "'";
+
+            $msg_success = "Cadastro de curso finalizado com sucesso";
+            $msg_error = "Falha ao finalizar cadastro de curso";
+        }
+
+        if ($this->curso_m->toogle_status($course, $status)) {
+
+            $this->log->save($msg_log);
+
+            $this->session->set_userdata('curr_content', 'cursos');
+            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+            $this->session->set_userdata('curr_course_info', 'blank.php');
+
+            $data['content'] = $this->session->userdata('curr_content');
+            $data['top_menu'] = $this->session->userdata('curr_top_menu');
+            $data['course_info'] = $this->session->userdata('curr_course_info');
+
+            $html = array(
+                'content' => $this->load->view($data['content'], '', true),
+                'top_menu' => $this->load->view($data['top_menu'], '', true),
+                'course_info' => $this->load->view($data['course_info'], '', true)
+            );
+
+            $response = array(
+                'success' => true,
+                'html' => $html,
+                'message' => $msg_success
+            );
+        } else {
+
+            $response = array(
+                'success' => false,
+                'message' => $msg_error
+            );
+        }
+
+        echo json_encode($response);
+    }
+
 }

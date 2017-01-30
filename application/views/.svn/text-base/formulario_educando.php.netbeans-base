@@ -2,119 +2,31 @@
     $this->session->set_userdata('curr_content', 'educando');
 ?>
 <script type="text/javascript">
+
     var id = "<?php echo $educando['id']; ?>";
     var urlEstados = "<?php echo site_url('requisicao/get_estados'); ?>";
     var urlAcampamentos = "<?php echo site_url('educando/get_tipo_acamp').'/'; ?>" + id;
 
-    //var oTable;
-    $(document).ready(function() {
+	// recupera estados e municipios selecionando oque está no banco de dados
+ 	$.get(urlEstados, function(estados) {
+		$('#educando_sel_est').html(estados);
+		$('#educando_sel_mun').html('<option> Selecione o Estado </option>');
+	});
 
-        // recupera estados e municipios selecionando oque está no banco de dados
-        $.get(urlEstados, function(estados) {
-            $('#educando_sel_est').html(estados);
-            $('#educando_sel_mun').html('<option> Selecione o Estado </option>');
-        }).done(function() {
-            //Deixa selecionado o estado atual se caso for update
-            var idEstado = <?php if(array_key_exists(0, $municipio_estado)) echo $municipio_estado[0]->estado; else echo 0;?>;
-            if(idEstado > 0){
-                $('#educando_sel_est option[value="'+idEstado+'"]').attr('selected', true);
-                var urlMunicipios = "<?php echo site_url('requisicao/get_municipios'); ?>";
-                //função adaptada do listCities(); localizado em functions.js
-                $('#educando_sel_est').change(function () {
-                    var idEstado = $('#educando_sel_est').val();
-                    $('#educando_sel_mun').html("<option>Aguarde...</option>");
-                    $.get(urlMunicipios + '/' + idEstado, function (cities) {
-                            $('#educando_sel_mun').html(cities);
-                    }).done(function() {
-                        var idMunicipio = <?php if(array_key_exists(0, $municipio_estado)) echo $municipio_estado[0]->cidade; else echo 0; ?>;
-                        $('#educando_sel_mun option[value="'+idMunicipio+'"]').attr('selected', true);
-                    });
-                }).change();
+	$.get(urlAcampamentos, function(response) {
+		$('#educando_tipo_terr option[value="'+response+'"]').attr("selected", true);
+	});
 
-            }else{
-                var urlMunicipios = "<?php echo site_url('requisicao/get_municipios'); ?>";
-                $("#educando_sel_est").listCities(urlMunicipios, 'educando_sel_mun');
-            }
-        });
-        //Lista Municipios
-        $.get(urlAcampamentos, function(response) {
-            $('#educando_tipo_terr option[value="'+response+'"]').attr("selected", true);
-        });
-        
+	//var oTable;
+
+	$(document).ready(function() {
+
         var url = "<?php echo site_url('request/get_educando_mun').'/'; ?>" + id;
+        var urlMunicipios = "<?php echo site_url('requisicao/get_municipios'); ?>";
 
-        // Dados do WebService
-        var assentamentos = <?php echo $assentamentos; ?>;
-            assentamentos = $.unique(assentamentos);
+		// Lista de Municípios
+        $("#educando_sel_est").listCities(urlMunicipios, 'educando_sel_mun');
 
-        //ORDENA JSON DOS ASSENTAMENTOS
-        function sortJSON(data, key, way) {
-            return data.sort(function(a, b) {
-                var x = a[key]; var y = b[key];
-                if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
-                if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
-            });
-        }
-        assentamentos = sortJSON(assentamentos,'Nome', '123'); // 123 or 321
-        var nome_assentamentos = '';
-        $.each( assentamentos, function( key, value ) {
-          nome_assentamentos  += '<option value="'+assentamentos[key].Nome+'">'+assentamentos[key].Nome+'</option>';
-        });
-        //CASO FOR ASSENTAMENTO, CRIA SELECTBOX
-        $( "#educando_tipo_terr" ).change(function() {
-            console.log(assentamentos);
-            if($(this).val() == "ASSENTAMENTO"){
-                $("#educando_nome_terr").remove();
-                $("#educando_territorio").append(
-                    $('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
-                        .append('<option selected disabled value="">Selecione</option>')
-                        .append(nome_assentamentos)
-                )
-                $('#educando_nome_terr').select2();
-            }else{
-                $("#educando_nome_terr").select2('destroy'); 
-                $("#educando_nome_terr").remove();
-                $("#educando_territorio").append('<input type="text" class="form-control tamanho-n" id="educando_nome_terr" name="educando_nome_terr">')
-            }
-        });
-        /*
-        //ATUALIZA ASSENTAMENTOS CONFORME ESTADO
-        $( "#educando_sel_est" ).change(function() {
-            var urlAssentamentos = "<?php echo site_url('requisicao/get_assentamentos').'/'; ?>" + $('#educando_sel_est option:selected').text();
-            if($("#educando_tipo_terr").val() == "ASSENTAMENTO"){
-                $.get(urlAssentamentos, function(assentamentos) {
-                    $("#educando_nome_terr").select2('destroy');
-                    $("#educando_nome_terr").remove();
-                    $("#educando_territorio").append(
-                        $('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
-                            .append('<option selected disabled value="">Selecione</option>')
-                            .append(assentamentos)
-                    )
-                    $('#educando_nome_terr').select2();
-                });
-            }
-        });
-        //CASO FOR ASSENTAMENTO, CRIA SELECTBOX
-        $( "#educando_tipo_terr" ).change(function() {
-            var urlAssentamentos = "<?php echo site_url('requisicao/get_assentamentos').'/'; ?>" + $('#educando_sel_est option:selected').text();
-            if($(this).val() == "ASSENTAMENTO"){
-                $.get(urlAssentamentos, function(assentamentos) {
-                    $("#educando_nome_terr").remove();
-                    $("#educando_territorio").append(
-                        $('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
-                            .append('<option selected disabled value="">Selecione</option>')
-                            .append(assentamentos)
-                    )
-                    $('#educando_nome_terr').select2();
-                });
-            }else{
-                $("#educando_nome_terr").select2('destroy');
-                $("#educando_nome_terr").remove();
-                $("#educando_territorio").append('<input type="text" class="form-control tamanho-n" id="educando_nome_terr" name="educando_nome_terr">')
-            }
-        });
-        */
-        /*
         var table = new Table({
             url      : url,
             table    : $('#cities_table'),
@@ -122,7 +34,7 @@
         });
 
         table.hideColumns([0,1,3]);
-        */
+
         /* Masking Inputs */
         $('#educando_data_nasc').mask('99/99/9999');
         $('#inicio_curso').mask('99/9999');
@@ -181,7 +93,7 @@
                 }, [370,550]);
             }
         });
-        /* FUNÇÃO ADD MUNICIO TABELA
+
         $('#educando_botao_mun').click(function () {
             var form = Array(
                 {
@@ -218,7 +130,7 @@
                 }
             }
         });
-        */
+
         /* Add a click handler for the delete row
         $('#deletar').click( function() {
             var anSelected = fnGetSelected( oTable );
@@ -307,11 +219,7 @@
                     'message' : 'Informe o nome do território onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                     'extra'   : null
                 },
-                {
-                    'id'      : 'educando_sel_est',
-                    'message' : 'Informe o nome o Estado onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
-                    'extra'   : null
-                },
+
                 {
                     'name'    : 'reducando_concluinte',
                     'ni'      : $('#ckEducandoConcluinte_ni').prop('checked'),
@@ -340,8 +248,8 @@
                     educando_nome_terr : $('#educando_nome_terr').val().toUpperCase(),
                     ckEducandoConcluinte_ni : $('#ckEducandoConcluinte_ni').prop('checked'),
                     reducando_concluinte : $("input:radio[name=reducando_concluinte]:checked").val(),
-                    municipios : $('#educando_sel_mun').val(),
-                    //mun_excluidos: table.getDeletedRows(1),
+                    municipios : table.getAll(),
+                    mun_excluidos: table.getDeletedRows(1),
                     inicio_curso : $('#inicio_curso_hidden').val(),
                     atualizar_ic : $('#atualizar_ic').val()
                 };
@@ -353,15 +261,15 @@
                 // Faz requisição de login ao servidor (retorna um objeto JSON)
                 request(urlRequest, formData);
             }
-        });
+		});
 
-        $('#reset').click(function () {
+		$('#reset').click(function () {
 
             var urlRequest = "<?php echo site_url('educando/index/'); ?>";
 
             // Faz requisição de login ao servidor (retorna um objeto JSON)
             request(urlRequest, null, 'hide');
-        });
+		});
 
     });
 
@@ -376,6 +284,7 @@
 
   <fieldset>
     <legend> Caracteriza&ccedil;&atilde;o do(a) Educando(a) </legend>
+
     <div class="form-group controles">
         <?php
             if ($this->session->userdata('status_curso') != '2P' && $this->session->userdata('status_curso') != 'CC' && $operacao != 'view') {
@@ -396,18 +305,18 @@
     <div class="form-group">
       <label class="negacao">2. G&ecirc;nero</label>
 
-        <div class="checkbox negacao-smaller">
-            <label> <input type="checkbox" name="ckSexo_ni" id="ckSexo_ni" <?php if ($retrivial && $dados[0]->genero == 'N') echo "checked"; ?>> N&atilde;o informado </label>
-        </div>
+  		<div class="checkbox negacao-smaller">
+	      	<label> <input type="checkbox" name="ckSexo_ni" id="ckSexo_ni" <?php if ($retrivial && $dados[0]->genero == 'N') echo "checked"; ?>> N&atilde;o informado </label>
+	    </div>
 
-        <div class="radio form-group">
+	    <div class="radio form-group">
             <div>
                 <div class="radio"><label> <input type="radio" name="reducando_sexo" id="reducando_sexo_01" value="M" <?php if ($retrivial && $dados[0]->genero == 'M') echo "checked"; ?>> Masculino </label> </div>
                 <div class="radio"><label> <input type="radio" name="reducando_sexo" id="reducando_sexo_02" value="F" <?php if ($retrivial && $dados[0]->genero == 'F') echo "checked"; ?>> Feminino</label> </div>
                 <p class="text-danger"><label for="reducando_sexo"><label></p>
             </div>
-        </div>
-    </div>
+     	</div>
+	</div>
 
     <div class="form-group">
       <label class="negacao">3. CPF (somente n&uacute;meros)</label>
@@ -437,85 +346,72 @@
         </div>
     </div>
 
-    <div class="form-group">
+	<div class="form-group">
       <label class="negacao">5. Data de nascimento do(a) educando(a)</label>
 
-        <div class="checkbox negacao-smaller">
-            <label> <input type="checkbox" name="ckEducando_data_nasc" id="ckEducando_data_nasc" <?php if ($retrivial && $dados[0]->data_nascimento == '01/01/1900') echo "checked"; ?>> N&atilde;o informado </label>
-        </div>
+		<div class="checkbox negacao-smaller">
+	      	<label> <input type="checkbox" name="ckEducando_data_nasc" id="ckEducando_data_nasc" <?php if ($retrivial && $dados[0]->data_nascimento == '01/01/1900') echo "checked"; ?>> N&atilde;o informado </label>
+	    </div>
 
-        <div class="form-group">
+		<div class="form-group">
             <div>
                 <input type="text" class="form-control tamanho-sm2" id="educando_data_nasc" name="educando_data_nasc" value="<?php if ($retrivial && $dados[0]->data_nascimento != '01/01/1900' && $dados[0]->data_nascimento != '00/00/0000') echo $dados[0]->data_nascimento; ?>">
                 <label class="control-label form" for="educando_data_nasc"></label>
             </div>
-        </div>
-    </div>
+		</div>
+	</div>
 
-    <div class="form-group">
-        <label class="negacao">6. Idade do(a) educando(a) no ingresso do curso</label>
+	<div class="form-group">
+		<label class="negacao">6. Idade do(a) educando(a) no ingresso do curso</label>
 
-        <div class="checkbox negacao-smaller">
-            <label> <input type="checkbox" name="ckEducando_idade" id="ckEducando_idade" <?php if ($retrivial && $dados[0]->idade == '-1') echo "checked"; ?>> N&atilde;o informado </label>
-        </div>
+		<div class="checkbox negacao-smaller">
+	      	<label> <input type="checkbox" name="ckEducando_idade" id="ckEducando_idade" <?php if ($retrivial && $dados[0]->idade == '-1') echo "checked"; ?>> N&atilde;o informado </label>
+	    </div>
 
-        <div class="form-group">
+		<div class="form-group">
             <div>
                 <input type="text" class="form-control tamanho-smaller" id="educando_idade" name="educando_idade" value="<?php if ($retrivial && $dados[0]->idade != '-1') echo $dados[0]->idade; ?>">
                 <label class="control-label form" for="educando_idade"></label>
             </div>
-        </div>
+		</div>
 
-    </div>
+	</div>
 
-    <div class="form-group">
-        <label>7. Tipo e nome do territ&oacute;rio onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso</label>
-         <div class="form-group interno">
-            <label>a. Estado do educando</label>
+	<div class="form-group">
+      	<label>7. Tipo e nome do territ&oacute;rio onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso</label>
+
+		<div class="form-group interno">
+			<label>a. Tipo do territ&oacute;rio</label>
             <div>
-                <select class="form-control select_estado" id="educando_sel_est" name="educando_sel_est"></select>
-                <p class="text-danger select estado"><label for="educando_sel_est"><label></p>
-            </div>
-        </div>
-        <div class="form-group interno">
-            <label>b. Município do educando</label>
-            <div>
-                <select class="form-control select_municipio" id="educando_sel_mun" name="educando_sel_mun"></select>
-                <p class="text-danger select municipio"><label for="educando_sel_mun"><label></p>
-            </div>
-        </div>
-        <div class="form-group interno">
-            <label>c. Tipo do territ&oacute;rio</label>
-            <div>
-                <select class="form-control" name="educando_tipo_terr" id="educando_tipo_terr">
-                    <option selected disabled value="">Selecione</option>
-                    <option value="ACAMPAMENTO">ACAMPAMENTO</option>
-                    <option value="ASSENTAMENTO">ASSENTAMENTO</option>
-                    <option value="COMUNIDADE">COMUNIDADE</option>
-                    <option value="QUILOMBOLA">QUILOMBOLA</option>
-                    <option value="COMUNIDADE RIBEIRINHA">COMUNIDADE RIBEIRINHA</option>
-                    <option value="FLORESTA NACIONAL">FLORESTA NACIONAL</option>
-                    <option value="RESEX">RESEX</option>
-                    <option value="FLONA">FLONA</option>
-                    <option value="RDS">RDS</option>
-                    <option value="OUTRO">OUTRO</option>
-                </select>
+    			<select class="form-control" name="educando_tipo_terr" id="educando_tipo_terr">
+    				<option selected disabled value="">Selecione</option>
+    				<option value="ACAMPAMENTO">ACAMPAMENTO</option>
+    				<option value="ASSENTAMENTO">ASSENTAMENTO</option>
+    				<option value="COMUNIDADE">COMUNIDADE</option>
+    				<option value="QUILOMBOLA">QUILOMBOLA</option>
+    				<option value="COMUNIDADE RIBEIRINHA">COMUNIDADE RIBEIRINHA</option>
+    				<option value="FLORESTA NACIONAL">FLORESTA NACIONAL</option>
+    				<option value="RESEX">RESEX</option>
+    				<option value="FLONA">FLONA</option>
+    				<option value="RDS">RDS</option>
+    				<option value="OUTRO">OUTRO</option>
+    			</select>
                 <p class="text-danger select"><label for="educando_tipo_terr"><label></p>
             </div>
         </div>
 
-        <div class="form-group interno">
-            <label>d. Nome do territ&oacute;rio</label>
-            <div id="educando_territorio">
+	    <div class="form-group interno">
+			<label>b. Nome do territ&oacute;rio</label>
+            <div>
                 <input type="text" class="form-control tamanho-n" id="educando_nome_terr" name="educando_nome_terr" value="<?php if ($retrivial) echo $dados[0]->nome_territorio; ?>">
                 <label class="control-label form" for="educando_nome_terr"></label>
             </div>
-        </div>
+	    </div>
     </div>
-    <!--
-    <div class="table-box table-box-lg">
-        <label>8. Munic&iacute;pio(s) do territ&oacute;rio onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso</label>
-        <div class="form-group">
+
+ 	<div class="table-box table-box-lg">
+      	<label>8. Munic&iacute;pio(s) do territ&oacute;rio onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso</label>
+      	<div class="form-group">
             <ul id="cities_controls" class="nav nav-pills buttons">
                 <li>
                     <select class="form-control select_estado" id="educando_sel_est" name="educando_sel_est"></select>
@@ -525,45 +421,45 @@
                     <select class="form-control select_municipio" id="educando_sel_mun" name="educando_sel_mun"></select>
                     <p class="text-danger select municipio"><label for="educando_sel_mun"><label></p>
                 </li>
-                <li class="buttons"><button type="button" class="btn btn-default" id="educando_botao_mun" name="educando_botao_mun">Adicionar</button></li>
+    	    	<li class="buttons"><button type="button" class="btn btn-default" id="educando_botao_mun" name="educando_botao_mun">Adicionar</button></li>
                 <li class="buttons"><button type="button" class="btn btn-default btn-disabled disabled delete-row" id="deletar" name="deletar"> Remover Selecionado </button></li>
             </ul>
-        </div>
+    	</div>
 
-        <div class="table-size">
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="cities_table">
-                <thead>
-                    <tr>
+    	<div class="table-size">
+	    	<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="cities_table">
+		        <thead>
+		            <tr>
                         <th style="width:  10px;"> FLAG </th>
                         <th style="width:  10px;"> CÓDIGO MUNICIPIO</th>
                         <th style="width: 250px;"> MUNICÍPIO </th>
                         <th style="width:  10px;"> CÓDIGO ESTADO </th>
                         <th style="width: 250px;"> ESTADO </th>
-                    </tr>
-                </thead>
+		            </tr>
+		        </thead>
 
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+		        <tbody>
+		        </tbody>
+		    </table>
+	    </div>
     </div>
-    -->
-    <div class="form-group">
-        <label class="negacao">8. O(A) educando(a) concluiu o curso ?</label>
 
-        <div class="checkbox negacao-smaller">
-            <label> <input type="checkbox" name="ckEducandoConcluinte_ni" id="ckEducandoConcluinte_ni" <?php if ($retrivial && $dados[0]->concluinte == 'I') echo "checked"; ?>> N&atilde;o informado </label>
-        </div>
+	<div class="form-group">
+      	<label class="negacao">9. O(A) educando(a) concluiu o curso ?</label>
 
-        <div class="radio form-group">
+      	<div class="checkbox negacao-smaller">
+	      	<label> <input type="checkbox" name="ckEducandoConcluinte_ni" id="ckEducandoConcluinte_ni" <?php if ($retrivial && $dados[0]->concluinte == 'I') echo "checked"; ?>> N&atilde;o informado </label>
+	    </div>
+
+	    <div class="radio form-group">
             <div>
                 <div class="radio"> <label> <input type="radio" name="reducando_concluinte" id="reducando_concluinte_02" value="S" <?php if ($retrivial && $dados[0]->concluinte == 'S') echo "checked"; ?>> Sim  </label> </div>
                 <div class="radio"> <label> <input type="radio" name="reducando_concluinte" id="reducando_concluinte_01" value="N" <?php if ($retrivial && $dados[0]->concluinte == 'N') echo "checked"; ?>> N&atilde;o </label> </div>
                 <p class="text-danger"><label for="reducando_concluinte"><label></p>
             </div>
-        </div>
-    </div>
-    <!--<input type="text" id="municipios_objeto" name="municipios_objeto" hidden/>-->
+	    </div>
+	</div>
+	<!--<input type="text" id="municipios_objeto" name="municipios_objeto" hidden/>-->
 
     <input type="hidden" id="inicio_curso_hidden" name="inicio_curso_hidden" value="<?php echo $dados[0]->inicio_curso; ?>"/>
     <input type="hidden" id="atualizar_ic" name="atualizar_ic" value="0"/>

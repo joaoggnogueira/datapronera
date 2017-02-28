@@ -5,7 +5,7 @@
 
 		function get_record($id)
 		{
-			$this->db->select('p.*, pp.realizacao, pp.certificacao, pp.gestao, pp.outros, pp.complemento parc_complemento,pp.demandante, pp.colegiado');
+			$this->db->select('p.*, pp.realizacao, pp.certificacao, pp.gestao, pp.outros, pp.complemento parc_complemento');
 			$this->db->from('parceiro p');
 			$this->db->join('parceiro_parceria pp', 'p.id = pp.id_parceiro', 'left');
 			$this->db->where('p.id', $id);

@@ -123,7 +123,7 @@ class Parceiro extends CI_Controller {
 		$tipo = $this->input->post('rparceiro_tipo');
 		$tipo_outros = "";
 
-		$realizacao = $gestao = $certificacao = $outros = $colegiado = $demandante = 0;
+		$realizacao = $gestao = $certificacao = $outros = 0;
 		
 		if ($this->input->post('ckparceiro_tipo_01') == 'true') {			
 			$realizacao = 1;
@@ -136,16 +136,8 @@ class Parceiro extends CI_Controller {
 		if ($this->input->post('ckparceiro_tipo_03') == 'true') {	
 			$gestao = 1;
 		} 
-                
-		if ($this->input->post('ckparceiro_tipo_04') == 'true') {	
-			$demandante = 1;
-		} 
-                
-		if ($this->input->post('ckparceiro_tipo_05') == 'true') {	
-			$colegiado = 1;
-		} 
 
-		if ($this->input->post('ckparceiro_tipo_outro') == 'true') {		
+		if ($this->input->post('ckparceiro_tipo_04') == 'true') {		
 			$tipo_outros = $this->input->post('parceiro_tipo_outros');
 			$outros = 1;
 		}		
@@ -177,8 +169,6 @@ class Parceiro extends CI_Controller {
 				'certificacao' => $certificacao,
 				'gestao' => $gestao,
 				'outros' => $outros,
-                                'demandante' => $demandante,
-                                'colegiado' => $colegiado,
 				'complemento' => $tipo_outros,
 				'id_parceiro' => $inserted_id
 			);
@@ -255,7 +245,7 @@ class Parceiro extends CI_Controller {
 		$tipo = $this->input->post('rparceiro_tipo');
 		$tipo_outros = "";
 
-		$realizacao = $gestao = $certificacao = $outros = $colegiado = $demandante = 0;
+		$realizacao = $gestao = $certificacao = $outros = 0;
 		
 		if ($this->input->post('ckparceiro_tipo_01') == 'true') {			
 			$realizacao = 1;
@@ -268,15 +258,8 @@ class Parceiro extends CI_Controller {
 		if ($this->input->post('ckparceiro_tipo_03') == 'true') {	
 			$gestao = 1;
 		} 
-		if ($this->input->post('ckparceiro_tipo_04') == 'true') {	
-			$demandante = 1;
-		} 
-                
-		if ($this->input->post('ckparceiro_tipo_05') == 'true') {	
-			$colegiado = 1;
-		} 
 
-		if ($this->input->post('ckparceiro_tipo_outro') == 'true') {		
+		if ($this->input->post('ckparceiro_tipo_04') == 'true') {		
 			$tipo_outros = $this->input->post('parceiro_tipo_outros');
 			$outros = 1;
 		}		
@@ -308,8 +291,6 @@ class Parceiro extends CI_Controller {
 				'certificacao' => $certificacao,
 				'gestao' => $gestao,
 				'outros' => $outros,
-                                'demandante' => $demandante,
-                                'colegiado' => $colegiado,
 				'complemento' => $tipo_outros,
 				'id_parceiro' => $this->input->post('id')
 			);

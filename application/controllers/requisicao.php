@@ -15,9 +15,13 @@ class Requisicao extends CI_Controller {
     function index() {
         
     }
-    
+
     function get_modalidades() {
         return $this->requisicao_m->get_modalidades();
+    }
+
+    function get_tipo_instrumento_curso() {
+        return $this->requisicao_m->get_tipo_instrumento_curso();
     }
 
     function get_assentamentos() {
@@ -34,6 +38,10 @@ class Requisicao extends CI_Controller {
 
     function get_pesquisadores() {
         return $this->requisicao_m->get_pesquisadores($this->uri->segment(3));
+    }
+
+    function get_pesquisador_nome() {
+        return $this->requisicao_m->get_pesquisador_nome($this->uri->segment(3));
     }
 
     function get_superintendencias() {

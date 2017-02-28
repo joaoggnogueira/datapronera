@@ -231,6 +231,12 @@ class Caracterizacao extends CI_Controller {
             $numero_bolsistas = $this->input->post('num_bolsistas');
         }
 
+        if ($this->input->post('ckPrevisto_tempo_comunidade_ni') == 'true') {
+            $previsto_tempo_comunidade = "-1";
+        } else {
+            $previsto_tempo_comunidade = $this->input->post('rPrevisto_tempo_comunidade');
+        }
+
         $data = array(
             'area_conhecimento' => trim($this->input->post('area')),
             'nome_coordenador_geral' => trim($this->input->post('nome_coord_geral')),
@@ -263,6 +269,7 @@ class Caracterizacao extends CI_Controller {
             'avaliacao_mec' => trim($avaliacao_mec),
             'avaliacao_mec_descricao' => trim($avaliacao_mec_descr),
             'numero_bolsistas' => trim($numero_bolsistas),
+            'previsto_tempo_comunidade' => trim($previsto_tempo_comunidade),
             'id_curso' => $this->session->userdata('id_curso')
         );
 

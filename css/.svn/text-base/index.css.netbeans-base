@@ -373,11 +373,6 @@
 		/*margin-top: 37px;*/
 		width: 300px;
 	}
-        
-	.text-danger.select.equipe_superintendencia {
-		/*margin-top: 37px;*/
-		width: 300px;
-	}
 
 	.dialog {
 		display: none;

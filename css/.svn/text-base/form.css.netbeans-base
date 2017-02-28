@@ -58,7 +58,7 @@ textarea	{	width: 700px;  border-color: #D0D0D0; text-transform: uppercase; }
 
 .select_estado		{	width: 200px;	}
 .select_municipio	{	width: 300px;	}
-.select_equipe_superintendencia {width:300px;}
+
 .grid_manual{
 	margin: 15px 0px 15px 15px;
 	width: 650px;

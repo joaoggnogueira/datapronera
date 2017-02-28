@@ -1,439 +1,456 @@
-<?php
-
+<?php 
+	
 class Educando extends CI_Controller {
 
-    public function __construct() {
-        parent::__construct();
+	public function __construct() {
+        parent::__construct(); 
 
-        $this->load->database();   // Loading Database 
+        $this->load->database();		 // Loading Database 
         $this->load->library('session'); // Loading Session
-        $this->load->helper('url');  // Loading Helper
-
-        $this->load->model('educando_m');
-        $this->load->model('caracterizacao_m');
+        $this->load->helper('url'); 	// Loading Helper
+        
+		$this->load->model('educando_m');
+		$this->load->model('caracterizacao_m');
     }
 
-    function index() {
-
-        $this->session->set_userdata('curr_content', 'educando');
-        $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
-
-        $data['content'] = $this->session->userdata('curr_content');
-        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-        $html = array(
-            'content' => $this->load->view($data['content'], '', true)
-                //'top_menu' => $this->load->view($data['top_menu'], '', true)
-        );
-
-        $response = array(
-            'success' => true,
-            'html' => $html
-        );
-
-        echo json_encode($response);
-    }
-
-    function index_add() {
-
-        $educando['id'] = 0;
-
-        if ($dados = $this->educando_m->get_course_record($this->session->userdata('id_curso'))) {
-
-            $this->session->set_userdata('curr_content', 'formulario_educando');
-            $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
-
-            $data['content'] = $this->session->userdata('curr_content');
-            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-            /**
-             * WEB SERVICE SIPRA - NÃO DELETE:
-             */
-//            $client = new SoapClient("http://172.20.0.108/servicosipra/Projeto/SProjeto.svc?wsdl");
-//            $assentamentos = $client->ConsultarListaProjetos();
-//            $assentamentos = $assentamentos->ConsultarListaProjetosResult->ProjetoAssentamento;
-//            $valores['assentamentos'] = json_encode($assentamentos);
-
-            $valores['dados'] = $dados;
-            $valores['educando'] = $educando;
-            $valores['operacao'] = $this->input->post('operacao');
-
-
-            $municipio_estado = $this->educando_m->get_estado_municipio($educando['id']);
-            if (!isset($municipio_estado)) {
-                $municipio_estado[0]['estado'] == 0;
-                $municipio_estado[0]['cidade'] == 0;
-            }
-            $valores['municipio_estado'] = $municipio_estado;
-
-            $html = array(
-                'content' => $this->load->view($data['content'], $valores, true)
-                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
-            );
-
-            $response = array(
-                'success' => true,
-                'html' => $html
-            );
-        } else {
-
-            $response = array(
-                'success' => false,
-                'message' => 'Falha na requisição, tente novamente em instantes'
-            );
-        }
-
-        echo json_encode($response);
-    }
-
-    function index_update() {
-
-        $educando['id'] = $this->input->post('id_educando');
-
-        if ($dados = $this->educando_m->get_record($educando['id'])) {
-
-            $this->session->set_userdata('curr_content', 'formulario_educando');
-            $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
-
-            $data['content'] = $this->session->userdata('curr_content');
-            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-            $dados[0]->data_nascimento = implode("/", array_reverse(explode("-", $dados[0]->data_nascimento), true));
-            /**
-             * WEB SERVICE SIPRA - NÃO DELETE:
-             */
-            /*
-              $client = new SoapClient("http://172.20.0.108/servicosipra/Projeto/SProjeto.svc?wsdl");
-              $assentamentos = $client->ConsultarListaProjetos();
-              $assentamentos = $assentamentos->ConsultarListaProjetosResult->ProjetoAssentamento;
-              $valores['assentamentos'] = json_encode($assentamentos);
-             */
-            $valores['dados'] = $dados;
-            $valores['educando'] = $educando;
-            $valores['operacao'] = $this->input->post('operacao');
-
-            $municipio_estado = $this->educando_m->get_estado_municipio($educando['id']);
-            if (!isset($municipio_estado)) {
-                $municipio_estado[0]['estado'] == 0;
-                $municipio_estado[0]['cidade'] == 0;
-            }
-            $valores['municipio_estado'] = $municipio_estado;
-            $html = array(
-                'content' => $this->load->view($data['content'], $valores, true)
-                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
-            );
-
-            $response = array(
-                'success' => true,
-                'html' => $html
-            );
-        } else {
-
-            $response = array(
-                'success' => false,
-                'message' => 'Falha na requisição, tente novamente em instantes'
-            );
-        }
-
-        echo json_encode($response);
-    }
-
-    function add() {
-
-        if ($this->input->post('ckSexo_ni') == 'true') {
-            $sexo = 'N';
-        } else
-            $sexo = $this->input->post('reducando_sexo');
-
-        if ($this->input->post('ckEducando_data_nasc') == 'true') {
-            $data_nascimento = '1900-01-01';
-        } else {
-            $data_nascimento = implode("-", array_reverse(explode("/", $this->input->post('educando_data_nasc')), true));
-        }
-
-        if ($this->input->post('ckEducando_idade') == 'true') {
-            $idade = '-1';
-        } else {
-            $idade = $this->input->post('educando_idade');
-        }
-
-        if ($this->input->post('ckEducandoConcluinte_ni') == 'true') {
-            $concluinte = 'I';
-        } else {
-            $concluinte = $this->input->post('reducando_concluinte');
-        }
-
-        $cpf = ($this->input->post('ckCPF_ni') == 'true') ? 'NAOINFORMADO' :
-                trim($this->input->post('educando_cpf'));
-
-        $cpf = ($this->input->post('ckCPF_na') == 'true') ? 'NAOAPLICA' :
-                $cpf;
-
-        $rg = ($this->input->post('ckRg_ni') == 'true') ? 'NAOINFORMADO' :
-                trim($this->input->post('educando_rg'));
-
-        $rg = ($this->input->post('ckRg_na') == 'true') ? 'NAOAPLICA' :
-                $rg;
-
-        $data = array(
-            'nome' => trim($this->input->post('educando_nome')),
-            'rg' => $rg,
-            'cpf' => $cpf,
-            'genero' => trim($sexo),
-            'data_nascimento' => trim($data_nascimento),
-            'idade' => trim($idade),
-            'tipo_territorio' => trim($this->input->post('educando_tipo_terr')),
-            'nome_territorio' => trim($this->input->post('educando_nome_terr')),
-            'concluinte' => trim($concluinte),
-            'id_curso' => $this->session->userdata('id_curso')
-        );
-
-        // Starts transaction
-        $this->db->trans_begin();
-
-        if ($inserted_id = $this->educando_m->add_record($data)) {
-
-            if ($municipios = $this->input->post('municipios')) {
-
-                $data_mun = array(
-                    'id_educando' => $inserted_id,
-                    'id_cidade' => $municipios
-                );
-
-                if (!$this->educando_m->add_record_municipio($data_mun))
-                    break;
-
-                $this->log->save("MUNICÍPIO '" . $data_mun['id_cidade'] . "' ADICIONADO: EDUCANDO ID '" . $inserted_id . "'");
-            }
-
-            if ($this->input->post('atualizar_ic') == 1) {
-
-                $data_curso = array(
-                    'inicio_realizado' => $this->input->post('inicio_curso')
-                );
-
-                $this->caracterizacao_m->update_inicio_curso($data_curso, $this->session->userdata('id_curso'));
-
-                $this->log->save("DATA INÍCIO CURSO ATUALIZADA: CURSO ID '" . $this->session->userdata('id_curso') . "'");
-            }
-
-            if ($this->db->trans_status() !== false) {
-
-                $this->log->save("EDUCANDO ADICIONADO: ID '" . $inserted_id . "'");
-
-                $this->db->trans_commit();
-
-                $this->session->set_userdata('curr_content', 'educando');
-                $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
-
-                $data['content'] = $this->session->userdata('curr_content');
-                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-                $html = array(
-                    'content' => $this->load->view($data['content'], '', true)
-                        //'top_menu' => $this->load->view($data['top_menu'], '', true)
-                );
-
-                $response = array(
-                    'success' => true,
-                    'html' => $html,
-                    'message' => 'Cadastro efetuado com sucesso'
-                );
-            } else {
-
-                $this->db->trans_rollback();
-
-                $response = array(
-                    'success' => false,
-                    'message' => 'Falha ao efetuar cadastro'
-                );
-            }
-        } else {
+	function index() {
+
+    	$this->session->set_userdata('curr_content', 'educando');
+    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-            $this->db->trans_rollback();
+    	$data['content'] = $this->session->userdata('curr_content');
+		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+		$html = array(
+			'content' => $this->load->view($data['content'], '', true)
+			//'top_menu' => $this->load->view($data['top_menu'], '', true)
+		);
+
+		$response = array(
+			'success' => true,
+			'html' => $html
+		);
+
+		echo json_encode($response);
+	}
+
+	function index_add() {
+
+		$educando['id'] = 0;
+
+		if ($dados = $this->educando_m->get_course_record($this->session->userdata('id_curso'))) {
+
+			$this->session->set_userdata('curr_content', 'formulario_educando');
+	    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+
+	    	$data['content'] = $this->session->userdata('curr_content');
+			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+	    	/**
+	    	 * WEB SERVICE SIPRA - NÃO DELETE:
+	    	 */
+	    	/*
+			$client = new SoapClient("http://172.20.0.108/servicosipra/Projeto/SProjeto.svc?wsdl");
+			$assentamentos = $client->ConsultarListaProjetos();
+			$assentamentos = $assentamentos->ConsultarListaProjetosResult->ProjetoAssentamento;
+			$valores['assentamentos'] = json_encode($assentamentos);
+			*/
+
+			$valores['dados'] = $dados;
+			$valores['educando'] = $educando;
+			$valores['operacao'] =  $this->input->post('operacao');
+
+
+			$municipio_estado = $this->educando_m->get_estado_municipio($educando['id']);
+			if(!isset($municipio_estado)){
+				$municipio_estado[0]['estado'] == 0;
+				$municipio_estado[0]['cidade'] == 0;
+			}
+			$valores['municipio_estado'] = $municipio_estado;
+
+			$html = array(
+				'content' => $this->load->view($data['content'], $valores, true)
+				//'top_menu' => $this->load->view($data['top_menu'], '', true)
+			);
+
+			$response = array(
+				'success' => true,
+				'html' => $html
+			);
 
-            $response = array(
-                'success' => false,
-                'message' => 'Falha ao efetuar cadastro'
-            );
-        }
+		}  else {
+
+		 	$response = array(
+		 		'success' => false,
+		 		'message' => 'Falha na requisição, tente novamente em instantes'
+		 	);
+		}
 
-        echo json_encode($response);
-    }
+		echo json_encode($response);
+	}
+
+	function index_update() {
+
+		$educando['id'] = $this->input->post('id_educando');
+
+		if ($dados = $this->educando_m->get_record($educando['id'])) {
+
+			$this->session->set_userdata('curr_content', 'formulario_educando');
+	    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+
+	    	$data['content'] = $this->session->userdata('curr_content');
+			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+			$dados[0]->data_nascimento = implode("/", array_reverse(explode("-", $dados[0]->data_nascimento),true));
+			/**
+	    	 * WEB SERVICE SIPRA - NÃO DELETE:
+	    	 */
+			/*
+			$client = new SoapClient("http://172.20.0.108/servicosipra/Projeto/SProjeto.svc?wsdl");
+			$assentamentos = $client->ConsultarListaProjetos();
+			$assentamentos = $assentamentos->ConsultarListaProjetosResult->ProjetoAssentamento;
+			$valores['assentamentos'] = json_encode($assentamentos);
+			*/
+			$valores['dados'] = $dados;
+			$valores['educando'] = $educando;
+			$valores['operacao'] =  $this->input->post('operacao');
+
+			$municipio_estado = $this->educando_m->get_estado_municipio($educando['id']);
+			if(!isset($municipio_estado)){
+				$municipio_estado[0]['estado'] == 0;
+				$municipio_estado[0]['cidade'] == 0;
+			}
+			$valores['municipio_estado'] = $municipio_estado;
+			$html = array(
+				'content' => $this->load->view($data['content'], $valores, true)
+				//'top_menu' => $this->load->view($data['top_menu'], '', true)
+			);
 
-    function update() {
+			$response = array(
+				'success' => true,
+				'html' => $html
+			);
 
-        if ($this->input->post('ckSexo_ni') == 'true') {
-            $sexo = 'N';
-        } else
-            $sexo = $this->input->post('reducando_sexo');
+		}  else {
 
-        if ($this->input->post('ckEducando_data_nasc') == 'true') {
-            $data_nascimento = '1900-01-01';
-        } else {
-            $data_nascimento = implode("-", array_reverse(explode("/", $this->input->post('educando_data_nasc')), true));
-        }
+			$response = array(
+				'success' => false,
+				'message' => 'Falha na requisição, tente novamente em instantes'
+			);
+		}
 
-        if ($this->input->post('ckEducando_idade') == 'true') {
-            $idade = '-1';
-        } else {
-            $idade = $this->input->post('educando_idade');
-        }
+		echo json_encode($response);
+	}
 
-        if ($this->input->post('ckEducandoConcluinte_ni') == 'true') {
-            $concluinte = 'I';
-        } else {
-            $concluinte = $this->input->post('reducando_concluinte');
-        }
+	function add() {
 
-        $cpf = ($this->input->post('ckCPF_ni') == 'true') ? 'NAOINFORMADO' :
-                trim($this->input->post('educando_cpf'));
+		if ($this->input->post('ckSexo_ni') =='true')  {
+			$sexo = 'N';
 
-        $cpf = ($this->input->post('ckCPF_na') == 'true') ? 'NAOAPLICA' :
-                $cpf;
+		} else $sexo = $this->input->post('reducando_sexo');
 
-        $rg = ($this->input->post('ckRg_ni') == 'true') ? 'NAOINFORMADO' :
-                trim($this->input->post('educando_rg'));
+		if ($this->input->post('ckEducando_data_nasc') =='true')  {
+			$data_nascimento = '1900-01-01';
 
-        $rg = ($this->input->post('ckRg_na') == 'true') ? 'NAOAPLICA' :
-                $rg;
+		} else {
+			$data_nascimento =
+				implode("-", array_reverse(explode("/", $this->input->post('educando_data_nasc')),true));
+		}
+		
+		if ($this->input->post('ckEducando_idade') =='true')  {
+			$idade = '-1';
 
-        $data = array(
-            'nome' => trim($this->input->post('educando_nome')),
-            'rg' => $rg,
-            'cpf' => $cpf,
-            'genero' => trim($sexo),
-            'data_nascimento' => trim($data_nascimento),
-            'idade' => trim($idade),
-            'tipo_territorio' => trim($this->input->post('educando_tipo_terr')),
-            'nome_territorio' => trim($this->input->post('educando_nome_terr')),
-            'concluinte' => trim($concluinte),
-            'id_curso' => $this->session->userdata('id_curso')
-        );
+		} else {
+			$idade = $this->input->post('educando_idade');
+		}
 
-        // Starts transaction
-        $this->db->trans_begin();
+		if ($this->input->post('ckEducandoConcluinte_ni') =='true')  {
+			$concluinte = 'I';
 
-        if ($this->educando_m->update_record($data, $this->input->post('id'))) {
+		} else {
+			$concluinte = $this->input->post('reducando_concluinte');
+		}
 
-            // Algoritmo BURRO!
-            // $this->educando_m->delete_record_municipio($this->input->post('id'));
+		$cpf = ($this->input->post('ckCPF_ni') =='true') ? 'NAOINFORMADO' : 
+			trim($this->input->post('educando_cpf'));
 
-            /* if ($mun_excluidos = $this->input->post('mun_excluidos')) {
+		$cpf = ($this->input->post('ckCPF_na') =='true') ? 'NAOAPLICA' : 
+			$cpf;
 
-              foreach ($mun_excluidos as $excluido) {
+		$rg = ($this->input->post('ckRg_ni') =='true') ? 'NAOINFORMADO' : 
+			trim($this->input->post('educando_rg'));
 
-              $this->log->save("MUNICÍPIO '".$excluido."' REMOVIDO: EDUCANDO ID '".$this->input->post('id')."'");
+		$rg = ($this->input->post('ckRg_na') =='true') ? 'NAOAPLICA' : 
+			$rg;
 
-              if (! $this->educando_m->delete_record_municipio($excluido, $this->input->post('id'))) break;
+		$data = array(
+			'nome' => trim($this->input->post('educando_nome')),
+			'rg' =>  $rg,
+			'cpf' => $cpf,
+			'genero' => trim($sexo),
+			'data_nascimento' => trim($data_nascimento),
+			'idade' => trim($idade),
+			'tipo_territorio' => trim($this->input->post('educando_tipo_terr')),
+			'nome_territorio' => trim($this->input->post('educando_nome_terr')),
+                        'code_sipra_assentamento' => trim($this->input->post('terr_sipra_code')),
+			'concluinte' => trim($concluinte),
+			'id_curso' => $this->session->userdata('id_curso')
+		);
+                
+		// Starts transaction
+		$this->db->trans_begin();
 
-              }
-              }
-             */
-            if ($municipios = $this->input->post('municipios')) {
-                $data_mun = array(
-                    'id_cidade' => $municipios
-                );
+		if ($inserted_id = $this->educando_m->add_record($data)) {
 
-                $this->educando_m->update_record_municipio($data_mun, $this->input->post('id'));
+			if ($municipios = $this->input->post('municipios')) {
 
-                $this->log->save("MUNICÍPIO '" . $data_mun['id_cidade'] . "' ADICIONADO: EDUCANDO ID '" . $this->input->post('id') . "'");
-            }
+					$data_mun = array(	
+						'id_educando' => $inserted_id,
+						'id_cidade' => $municipios
+					);
 
-            if ($this->input->post('atualizar_ic') == 1) {
+					if (! $this->educando_m->add_record_municipio($data_mun)) break;
 
-                $data_curso = array(
-                    'inicio_realizado' => $this->input->post('inicio_curso')
-                );
+					$this->log->save("MUNICÍPIO '".$data_mun['id_cidade']."' ADICIONADO: EDUCANDO ID '".$inserted_id."'");
 
-                $this->caracterizacao_m->update_inicio_curso($data_curso, $this->session->userdata('id_curso'));
+			}
 
-                $this->log->save("DATA INÍCIO CURSO ATUALIZADA: CURSO ID '" . $this->session->userdata('id_curso') . "'");
-            }
+			if ($this->input->post('atualizar_ic') == 1) {
 
-            if ($this->db->trans_status() !== false) {
+				$data_curso = array(
+					'inicio_realizado' => $this->input->post('inicio_curso')
+				);
 
-                $this->log->save("EDUCANDO ATUALIZADO: ID '" . $this->input->post('id') . "'");
+				$this->caracterizacao_m->update_inicio_curso($data_curso, $this->session->userdata('id_curso'));
 
-                $this->db->trans_commit();
+				$this->log->save("DATA INÍCIO CURSO ATUALIZADA: CURSO ID '".$this->session->userdata('id_curso')."'");
+			}
 
-                $this->session->set_userdata('curr_content', 'educando');
-                $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+			if ($this->db->trans_status() !== false) {
 
-                $data['content'] = $this->session->userdata('curr_content');
-                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
+				$this->log->save("EDUCANDO ADICIONADO: ID '".$inserted_id."'");
 
-                $html = array(
-                    'content' => $this->load->view($data['content'], '', true)
-                        //'top_menu' => $this->load->view($data['top_menu'], '', true)
-                );
+				$this->db->trans_commit();
 
-                $response = array(
-                    'success' => true,
-                    'html' => $html,
-                    'message' => 'Cadastro atualizado'
-                );
-            } else {
+				$this->session->set_userdata('curr_content', 'educando');
+		    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-                $this->db->trans_rollback();
+		    	$data['content'] = $this->session->userdata('curr_content');
+				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-                $response = array(
-                    'success' => false,
-                    'message' => 'Falha ao atualizar cadastro'
-                );
-            }
-        } else {
+				$html = array(
+					'content' => $this->load->view($data['content'], '', true)
+					//'top_menu' => $this->load->view($data['top_menu'], '', true)
+				);
 
-            $this->db->trans_rollback();
+				$response = array(
+					'success' => true,
+					'html'    => $html,
+					'message' => 'Cadastro efetuado com sucesso'
+				);
 
-            $response = array(
-                'success' => false,
-                'message' => 'Falha ao atualizar cadastro'
-            );
-        }
+			} else {
 
-        echo json_encode($response);
-    }
+				$this->db->trans_rollback();
 
-    function remove() {
+				$response = array(
+					'success' => false,
+					'message' => 'Falha ao efetuar cadastro'
+				);
+			}
 
-        if ($this->educando_m->delete_record($this->input->post('id_educando'))) {
+		} else {
 
-            $this->log->save("EDUCANDO REMOVIDO: ID '" . $this->input->post('id_educando') . "'");
+			$this->db->trans_rollback();
 
-            $this->session->set_userdata('curr_content', 'educando');
-            $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+			$response = array(
+				'success' => false,
+				'message' => 'Falha ao efetuar cadastro'
+			);
+		}
 
-            $data['content'] = $this->session->userdata('curr_content');
-            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
+		echo json_encode($response);
+	}
 
-            $html = array(
-                'content' => $this->load->view($data['content'], '', true)
-                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
-            );
+	function update() {
 
-            $response = array(
-                'success' => true,
-                'html' => $html,
-                'message' => 'Cadastro removido'
-            );
-        } else {
+		if ($this->input->post('ckSexo_ni') =='true')  {
+			$sexo = 'N';
 
-            $response = array(
-                'success' => false,
-                'message' => 'Falha ao remover cadastro'
-            );
-        }
+		} else $sexo = $this->input->post('reducando_sexo');
 
-        echo json_encode($response);
-    }
+		if ($this->input->post('ckEducando_data_nasc') =='true')  {
+			$data_nascimento = '1900-01-01';
 
-    function get_tipo_acamp() {
+		} else {
+			$data_nascimento =
+				implode("-", array_reverse(explode("/", $this->input->post('educando_data_nasc')),true));
+		}
 
-        $query = $this->educando_m->get_tipo_acamp($this->uri->segment(3));
-        echo $query;
-    }
+		if ($this->input->post('ckEducando_idade') =='true')  {
+			$idade = '-1';
 
+		} else {
+			$idade = $this->input->post('educando_idade');
+		}
+
+		if ($this->input->post('ckEducandoConcluinte_ni') =='true')  {
+			$concluinte = 'I';
+
+		} else {
+			$concluinte = $this->input->post('reducando_concluinte');
+		}
+
+		$cpf = ($this->input->post('ckCPF_ni') =='true') ? 'NAOINFORMADO' :
+			trim($this->input->post('educando_cpf'));
+
+		$cpf = ($this->input->post('ckCPF_na') =='true') ? 'NAOAPLICA' :
+			$cpf;
+
+		$rg = ($this->input->post('ckRg_ni') =='true') ? 'NAOINFORMADO' :
+			trim($this->input->post('educando_rg'));
+
+		$rg = ($this->input->post('ckRg_na') =='true') ? 'NAOAPLICA' :
+			$rg;
+
+		$data = array(
+			'nome' => trim($this->input->post('educando_nome')),
+			'rg' =>  $rg,
+			'cpf' => $cpf,
+			'genero' => trim($sexo),
+			'data_nascimento' => trim($data_nascimento),
+			'idade' => trim($idade),
+			'tipo_territorio' => trim($this->input->post('educando_tipo_terr')),
+			'nome_territorio' => trim($this->input->post('educando_nome_terr')),
+                        'code_sipra_assentamento' => trim($this->input->post('terr_sipra_code')),
+			'concluinte' => trim($concluinte),
+			'id_curso' => $this->session->userdata('id_curso')
+		);
+
+		// Starts transaction
+		$this->db->trans_begin();
+
+		if ($this->educando_m->update_record($data, $this->input->post('id'))) {
+
+			// Algoritmo BURRO!
+			// $this->educando_m->delete_record_municipio($this->input->post('id'));
+
+			/*if ($mun_excluidos = $this->input->post('mun_excluidos')) {
+
+			    foreach ($mun_excluidos as $excluido) {
+
+			    	$this->log->save("MUNICÍPIO '".$excluido."' REMOVIDO: EDUCANDO ID '".$this->input->post('id')."'");
+
+					if (! $this->educando_m->delete_record_municipio($excluido, $this->input->post('id'))) break;
+
+				}
+			}
+			*/
+			if ($municipios = $this->input->post('municipios')) {
+						$data_mun = array(
+							'id_cidade' => $municipios
+						);
+
+						$this->educando_m->update_record_municipio($data_mun, $this->input->post('id'));
+
+						$this->log->save("MUNICÍPIO '".$data_mun['id_cidade']."' ADICIONADO: EDUCANDO ID '".$this->input->post('id')."'");
+			}
+
+			if ($this->input->post('atualizar_ic') == 1) {
+
+				$data_curso = array(
+					'inicio_realizado' => $this->input->post('inicio_curso')
+				);
+
+				$this->caracterizacao_m->update_inicio_curso($data_curso, $this->session->userdata('id_curso'));
+
+				$this->log->save("DATA INÍCIO CURSO ATUALIZADA: CURSO ID '".$this->session->userdata('id_curso')."'");
+			}
+
+			if ($this->db->trans_status() !== false) {
+
+				$this->log->save("EDUCANDO ATUALIZADO: ID '".$this->input->post('id')."'");
+
+				$this->db->trans_commit();
+
+				$this->session->set_userdata('curr_content', 'educando');
+		    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+
+		    	$data['content'] = $this->session->userdata('curr_content');
+				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+				$html = array(
+					'content' => $this->load->view($data['content'], '', true)
+					//'top_menu' => $this->load->view($data['top_menu'], '', true)
+				);
+
+				$response = array(
+					'success' => true,
+					'html'    => $html,
+					'message' => 'Cadastro atualizado'
+				);
+
+			} else {
+
+				$this->db->trans_rollback();
+
+				$response = array(
+					'success' => false,
+					'message' => 'Falha ao atualizar cadastro'
+				);
+			}
+
+		} else {
+
+			$this->db->trans_rollback();
+
+			$response = array(
+				'success' => false,
+				'message' => 'Falha ao atualizar cadastro'
+			);
+		}
+
+		echo json_encode($response);
+	}
+
+	function remove() {
+
+		if ($this->educando_m->delete_record($this->input->post('id_educando'))) {
+
+			$this->log->save("EDUCANDO REMOVIDO: ID '".$this->input->post('id_educando')."'");
+
+			$this->session->set_userdata('curr_content', 'educando');
+	    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+
+	    	$data['content'] = $this->session->userdata('curr_content');
+			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+			$html = array(
+				'content' => $this->load->view($data['content'], '', true)
+				//'top_menu' => $this->load->view($data['top_menu'], '', true)
+			);
+
+			$response = array(
+				'success' => true,
+				'html'    => $html,
+				'message' => 'Cadastro removido'
+			);
+
+		} else {
+
+			$response = array(
+				'success' => false,
+				'message' => 'Falha ao remover cadastro'
+			);
+		}
+
+		echo json_encode($response);
+	}
+
+	function get_tipo_acamp() {
+
+		$query = $this->educando_m->get_tipo_acamp($this->uri->segment(3));
+		echo $query;
+	}
 }
-
-?>
+ ?>

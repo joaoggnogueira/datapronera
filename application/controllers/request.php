@@ -319,6 +319,46 @@ class Request extends CI_Controller {
         echo json_encode($output);
     }
 
+    function get_curso_pesquisadores($idCurso) {
+
+        if ($idCurso >= 0) {
+            $this->db->select('p.id as id,p.nome as nome');
+            $this->db->from('pessoa p');
+            $this->db->join('pesquisador_curso pc', 'pc.id_pessoa = p.id', 'left');
+            $this->db->where('pc.id_curso', $idCurso);
+            $this->db->order_by('p.id');
+            $query = $this->db->get();
+
+            $dados = $query->result();
+            /** Output * */
+            $output = array(
+                "sEcho" => 1,
+                "iTotalRecords" => 0,
+                "iTotalDisplayRecords" => 0,
+                "aaData" => array()
+            );
+
+            foreach ($dados as $item) {
+                $row = array();
+
+                $row[0] = 'R';
+                $row[1] = utf8_encode($item->id);
+                $row[2] = ($item->nome);
+
+                array_push($output['aaData'], $row);
+            }
+        } else {
+            $output = array(
+                "sEcho" => 1,
+                "iTotalRecords" => 0,
+                "iTotalDisplayRecords" => 0,
+                "aaData" => array()
+            );
+        }
+
+        echo json_encode($output);
+    }
+
     function get_carac_mun() {
 
         $this->db->select('cid.id_estado, e.sigla estado, cc.id_cidade, cid.nome cidade');

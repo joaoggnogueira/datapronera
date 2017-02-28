@@ -103,6 +103,17 @@ class Curso extends CI_Controller {
         // Starts transaction
         $this->db->trans_begin();
 
+        if ($this->input->post('instrumento') == 'OUTRO') {
+            $instrumento = array(
+                'nome' => trim($this->input->post('instrumento_descricao'))
+            );
+
+            // Inserts course's genre
+            $id_instrumento = $this->curso_m->add_record_instrumento($instrumento);
+        } else {
+            $id_instrumento = $this->input->post('instrumento');
+        }
+
         if ($this->input->post('modalidade') == 'OUTRA') {
 
             $modalidade = array(
@@ -122,20 +133,37 @@ class Curso extends CI_Controller {
             'ativo_inativo' => 'A',
             'status' => 'AN',
             'id_superintendencia' => $this->input->post('superintendencia'),
-            'id_pesquisador' =>
-            (strlen($this->input->post('pesquisador')) > 0 ?
-                    $this->input->post('pesquisador') : NULL),
+//            'id_pesquisador' =>
+//            (strlen($this->input->post('pesquisador')) > 0 ?
+//                    $this->input->post('pesquisador') : NULL),
             'id_modalidade' => $id_modalidade,
             'data' => $this->input->post('data'),
+            'id_instrumento' => $id_instrumento,
+            'nprocesso' => $this->input->post('nprocesso'),
+            'ninstrumento' => $this->input->post('ninstrumento'),
             'obs' => null
         );
-
         // Inserts a new course
-        if ($inserted_id = $this->curso_m->add_record($curso)) {
+        if (($inserted_id = $this->curso_m->add_record($curso))) {
 
             $responsavel = array(
                 'id_curso' => $inserted_id
             );
+
+            if (($pesquisadores = $this->input->post('pesquisadores'))) {
+                foreach ($pesquisadores as $pesquisador) {
+
+                    if ($pesquisador[0] == 'N') {
+                        $data_pesquisador = array(
+                            'id_curso' => $inserted_id,
+                            'id_pessoa' => $pesquisador[1]
+                        );
+                        if (!$this->curso_m->add_record_pesquisador($data_pesquisador)) {
+                            break;
+                        }
+                    }
+                }
+            }
 
             // Inserts a new form 1
             if ($this->responsavel_m->add_record($responsavel)) {
@@ -174,7 +202,7 @@ class Curso extends CI_Controller {
                             $response = array(
                                 'success' => true,
                                 'html' => $html,
-                                'message' => 'Cadastro efetuado com sucesso'
+                                'message' => 'Cadastro efetuado com sucesso!'
                             );
                         } else {
 
@@ -244,16 +272,53 @@ class Curso extends CI_Controller {
             $id_modalidade = $this->input->post('modalidade');
         }
 
+        if ($this->input->post('instrumento') == 'OUTRO') {
+            $instrumento = array(
+                'nome' => trim($this->input->post('instrumento_descricao'))
+            );
+
+            // Inserts course's genre
+            $id_instrumento = $this->curso_m->add_record_instrumento($instrumento);
+        } else {
+            $id_instrumento = $this->input->post('instrumento');
+        }
+
         $curso = array(
             'nome' => trim($this->input->post('nome')),
             'ativo_inativo' => 'A',
             'id_superintendencia' => $this->input->post('superintendencia'),
-            'id_pesquisador' => $this->input->post('pesquisador'),
+//            'id_pesquisador' => $this->input->post('pesquisador'),
             'id_modalidade' => $id_modalidade,
-            'data' => $this->input->post('data')
+            'data' => $this->input->post('data'),
+            'id_instrumento' => $id_instrumento,
+            'nprocesso' => $this->input->post('nprocesso'),
+            'ninstrumento' => $this->input->post('ninstrumento')
         );
 
         if ($this->curso_m->update_record($curso, $this->input->post('id_curso'))) {
+            
+            if ($pesquisadores_excluidos = $this->input->post('pesquisadores_excluidos')) {
+
+                foreach ($pesquisadores_excluidos as $excluido) {
+                    if (!$this->curso_m->delete_record_pesquisadores($excluido, $this->input->post('id_curso')))
+                        break;
+                }
+            }
+            
+            if (($pesquisadores = $this->input->post('pesquisadores'))) {
+                foreach ($pesquisadores as $pesquisador) {
+
+                    if ($pesquisador[0] == 'N') {
+                        $data_pesquisador = array(
+                            'id_curso' => $this->input->post('id_curso'),
+                            'id_pessoa' => $pesquisador[1]
+                        );
+                        if (!$this->curso_m->add_record_pesquisador($data_pesquisador)) {
+                            break;
+                        }
+                    }
+                }
+            }
 
             if ($this->db->trans_status() !== false) {
 

@@ -521,8 +521,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     }
 
     public function municipios_curso_modalidade() {
-
-        if ($result = $this->relatorio_geral_m_pnera2->municipios_curso_modalidade($this->session->userdata('access_level'))) {
+        $result = $this->relatorio_geral_m_pnera2->municipios_curso_modalidade($this->session->userdata('access_level'));
+        //var_dump($result);
+        if ($result) {
 
             $xls = array();
             $titles = array("MODALIDADE", "ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "CÓD. CURSO", "CURSO");

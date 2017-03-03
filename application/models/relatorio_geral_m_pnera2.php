@@ -26,6 +26,8 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
 		}
 
+		$this->db->group_by('cm.nome');
+
 		if (($query = $this->db->get()) != null) {
 			return $query->result_array();
 
@@ -93,6 +95,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 		$this->db->join('curso c', 's.id = c.id_superintendencia', 'left');
 		$this->db->where('c.ativo_inativo', 'A');
 		$this->db->where('c.status', '2P');
+		$this->db->group_by('s.id');
 		$this->db->order_by('s.id');
 
 		if (($query = $this->db->get()) != null) {
@@ -653,6 +656,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
 	function municipios_curso_modalidade($access_level) {
 
+
 		$this->db->select('
 			cm.nome AS modalidade,
 			e.sigla AS estado,
@@ -677,8 +681,8 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
 		}
 
-		$this->db->group_by('cm.nome, e.sigla, cd.nome, c.nome');
 
+		$this->db->group_by('c.nome, cm.nome, e.sigla, cd.cod_municipio, cd.nome, s.id, c.id');
 		if (($query = $this->db->get()) != null) {
 			return $query->result_array();
 
@@ -1017,7 +1021,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
 		}
 
-		$this->db->group_by('cd.cod_municipio');
+		$this->db->group_by('cd.cod_municipio, e.sigla, cd.nome, cd.id');
 		$this->db->order_by('e.sigla');
 
 		if (($query = $this->db->get()) != null) {
@@ -1419,6 +1423,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 		$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
 		$this->db->where('c.ativo_inativo', 'A');
 		$this->db->where('c.status', '2P');
+		$this->db->group_by('cm.nome');
 
 		if ($access_level <= 3) {
 			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1531,7 +1536,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
 		}
 
-		$this->db->group_by('e.sigla, cd.nome, p.nome');
+		$this->db->group_by('e.sigla, cd.nome, p.nome, cd.cod_municipio');
 
 		if (($query = $this->db->get()) != null) {
 			return $query->result_array();
@@ -1557,6 +1562,8 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 		if ($access_level <= 3) {
 			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
 		}
+		
+		$this->db->group_by('cm.nome');
 
 		if (($query = $this->db->get()) != null) {
 			return $query->result_array();

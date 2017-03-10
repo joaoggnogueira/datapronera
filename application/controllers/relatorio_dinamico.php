@@ -86,6 +86,7 @@ class Relatorio_dinamico extends CI_Controller {
      */
     public function dataModeler($informacoes, $tipo)
     {
+        //var_dump($informacoes);die;
         $this->load->library('pdf');
 
         $pdf = $this->pdf->load();
@@ -101,41 +102,48 @@ class Relatorio_dinamico extends CI_Controller {
 
         switch ($tipo) {
             case 'Curso':
-                $query = $this->relatorio_dinamico_m->cursoAdj($atributos);
+                $query = $this->relatorio_dinamico_m->cursoAdj($informacoes);
                 break;
 
             case 'Professor':
-                $query = $this->relatorio_dinamico_m->professorAdj($atributos);
+                $query = $this->relatorio_dinamico_m->professorAdj($informacoes);
                 break;
 
             case 'Educando':
-                $query = $this->relatorio_dinamico_m->educandoAdj($atributos);
+                $query = $this->relatorio_dinamico_m->educandoAdj($informacoes);
                 break;
 
             case 'Instituição de Ensino':
-                $query = $this->relatorio_dinamico_m->instituicaoEnsinoAdj($atributos);
+                $query = $this->relatorio_dinamico_m->instituicaoEnsinoAdj($informacoes);
                 break;
 
             case 'Parceiro':
-                $query = $this->relatorio_dinamico_m->parceiroAdj($atributos);
+                $query = $this->relatorio_dinamico_m->parceiroAdj($informacoes);
                 break;
         }
 
-        $data = array('query' => $query->result_array(), 'campos' => $informacoes);
+        $data = array('query' => $query->result_array(), 'campos' => $atributos, 'tipo' => $tipo);
+        // echo "<pre>";
+        // var_dump($query->result_array());
+        // echo "</pre>";
+        // die;
         $html = $this->load->view('relatorio/dinamico/relatorio', $data, true);
 
         $pdf->WriteHTML($html);
-        $pdf->Output("rldm.pdf", 'F');
+        $pdf->Output("rldm.pdf", 'I');
     }
 
-    private function montarAtributos($informacoes, $str='')
+    private function montarAtributos($informacoes)
     {
-        foreach ($informacoes as $value)
+        $temp = explode(',', $informacoes);
+        $atributos = array();
+        foreach ($temp as $value)
         {
-            $str = $str.$value.", ";
+            $aux = explode('.', $value);
+            array_push($atributos, substr($aux[1], 1, -1));
         }
 
-        return substr($str, 0, -2);
+        return $atributos;
     }
 
     /*

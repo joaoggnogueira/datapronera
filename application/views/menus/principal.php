@@ -113,9 +113,9 @@
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_pnera2/index'); ?>', null, 'hide');
 		">Relatórios Gerais - II PNERA</a></li>
-		<!--<li><a href="#" onclick="
-			request('<?php //echo site_url('relatorio_dinamico/index'); ?>', null, 'hide');
-		">Relatório Dinâmico</a></li>-->
+		<li><a href="#" onclick="
+			request('<?php echo site_url('relatorio_dinamico/index'); ?>', null, 'hide');
+		">Relatório Dinâmico</a></li>
 	</ul>
 </li>
 <li class="dropdown

@@ -6,6 +6,14 @@
 
         var url = "<?php echo site_url('relatorio_dinamico').'/'; ?>";
 
+        // Carrega os selects para filtro
+        $.get("<?php echo site_url('requisicao/get_modalidades'); ?>", function(modalidades) {
+            $('#curMod_select').html(modalidades);
+        });
+        $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function(superintendencias) {
+            $('#curSup_select').html(superintendencias);
+        });
+
         /**
          * Trotamento da seleção de tabelas principais, provindas do checkbox.
          * Aqui sera mostrado e 'escondido' o que for interessante e não relevante ao usuário.
@@ -15,7 +23,7 @@
             var str = "";
 
             //Isola a seleção
-            $( "select option:selected" ).each(function() {
+            $( "#tabelas option:selected" ).each(function() {
                 str += $( this ).val();
             });
 
@@ -80,6 +88,7 @@
             if ($("#curMod").is(":checked"))
             {
                 $('#dados_modalidade').css('display', 'block');
+                $('#curMod_select').css('display', 'block');
             }
             if ($("#curPes").is(":checked"))
             {
@@ -90,6 +99,7 @@
             if ($("#curSup").is(":checked"))
             {
                 $('#dados_superintendencia').css('display', 'block');
+                $('#curSup_select').css('display', 'block');
             }
         });
 
@@ -349,9 +359,9 @@
 
                 if( DadosSolicitados.length > 0)
                 {
-                    $.post(url + 'Router/curso',{data:DadosSolicitados},function(){
-                        window.open("<?php echo base_url('rldm.pdf'); ?>", '_blank');
-                    });
+                    $('<form target="_blank" action="'+url+'Router/curso" method="POST">' + 
+                        "<input id='data' name='data' value='" + DadosSolicitados + "' />" +
+                        '</form>').appendTo('body').submit().remove();
                 }
                 else
                 {
@@ -381,9 +391,9 @@
 
                 if( DadosSolicitados.length > 0)
                 {
-                    $.post(url + 'Router/professor',{data:DadosSolicitados},function(){
-                        window.open("<?php echo base_url('rldm.pdf'); ?>", '_blank');
-                    });
+                    $('<form target="_blank" action="'+url+'Router/professor" method="POST">' + 
+                        "<input id='data' name='data' value='" + DadosSolicitados + "' />" +
+                        '</form>').appendTo('body').submit().remove();
                 }
                 else
                 {
@@ -413,9 +423,9 @@
 
                 if( DadosSolicitados.length > 0)
                 {
-                    $.post(url + 'Router/educando',{data:DadosSolicitados},function() {
-                        window.open("<?php echo base_url('rldm.pdf'); ?>", '_blank');
-                    });
+                    $('<form target="_blank" action="'+url+'Router/educando" method="POST">' + 
+                        "<input id='data' name='data' value='" + DadosSolicitados + "' />" +
+                        '</form>').appendTo('body').submit().remove();
                 }
                 else
                 {
@@ -461,9 +471,9 @@
 
                 if( DadosSolicitados.length > 0)
                 {
-                    $.post(url + 'Router/ies',{data:DadosSolicitados},function(){
-                        window.open("<?php echo base_url('rldm.pdf'); ?>", '_blank');
-                    });
+                    $('<form target="_blank" action="'+url+'Router/ies" method="POST">' + 
+                        "<input id='data' name='data' value='" + DadosSolicitados + "' />" +
+                        '</form>').appendTo('body').submit().remove();
                 }
                 else
                 {
@@ -509,9 +519,9 @@
 
                 if( DadosSolicitados.length > 0)
                 {
-                    $.post(url + 'Router/parceiro',{data:DadosSolicitados},function(){
-                        window.open("<?php echo base_url('rldm.pdf'); ?>", '_blank');
-                    });
+                    $('<form target="_blank" action="'+url+'Router/parceiro" method="POST">' + 
+                        "<input id='data' name='data' value='" + DadosSolicitados + "' />" +
+                        '</form>').appendTo('body').submit().remove();
                 }
                 else
                 {
@@ -552,9 +562,9 @@
             <p>Escolha os possíveis relacionamentos a "Cursos":</p>
             <!-- Joins Primários -->
             <div id="relacionamento_curso" style="display:none;">
-                <input type="checkbox" id="curMod" value="cur_Mod"> Modalidade<br>
-                <input type="checkbox" id="curPes" value="cur_Pes"> Pessoa (Pesquisador)<br>
-                <input type="checkbox" id="curSup" value="cur_Sup"> Superintendência<br>
+                <input type="checkbox" id="curMod" value="cur_Mod"> Modalidade <select id="curMod_select" style="display:none;"></select><br>
+                <input type="checkbox" id="curPes" value="cur_Pes"> Pessoa (Pesquisador) <select id="cur_Pes_select" style="display:none;"></select><br>
+                <input type="checkbox" id="curSup" value="cur_Sup"> Superintendência <select id="curSup_select" style="display:none;"></select><br>
             </div>
             <!-- Joins Secundários -->
             <div id="relacionamento_curso_pessoa" style="display:none;">

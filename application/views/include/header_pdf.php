@@ -1,4 +1,4 @@
-<div align="center"><img src="/newpnera/css/img/footer.jpg" width="1024px"></img></div>
+<div align="center"><img src="/css/img/footer.jpg" width="1024px"></img></div>
 
 <br><br>
 

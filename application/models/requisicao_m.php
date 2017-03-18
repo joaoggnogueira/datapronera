@@ -111,6 +111,27 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
+    function get_all_pesquisadores() {
+        $this->db->select('id, nome');
+        $this->db->from('pessoa');
+        $this->db->where(
+                array(
+                    'ativo_inativo' => 'A'
+                )
+        );
+        $this->db->order_by('nome');
+
+        $query = $this->db->get();
+
+        $resultado = "<option value=\"0\" disabled selected> Selecione o Responsável </option>";
+
+        foreach ($query->result() as $row) {
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+        }
+
+        echo $resultado;
+    }
+
     function get_superintendencias() {
         $query = $this->db->get('superintendencia');
         $this->db->order_by('nome');

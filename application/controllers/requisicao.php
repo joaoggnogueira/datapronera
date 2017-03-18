@@ -36,6 +36,10 @@ class Requisicao extends CI_Controller {
         return $this->requisicao_m->get_municipios($this->uri->segment(3));
     }
 
+    function get_all_pesquisadores() {
+        return $this->requisicao_m->get_all_pesquisadores();
+    }
+
     function get_pesquisadores() {
         return $this->requisicao_m->get_pesquisadores($this->uri->segment(3));
     }

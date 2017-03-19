@@ -2,17 +2,17 @@
 	
 	$(document).ready(function () {
 
-		$('#submit').click(function () {
-            $('#dialog-fin-cs').dialogInit(function () {
-
-            	var urlRequest = "<?php echo site_url('curso/toogle_status/CC'); ?>";
-
-                request(urlRequest, null);
-
-                return true;
-
-            }, [500,220]);
-        });
+//		$('#submit').click(function () {
+//            $('#dialog-fin-cs').dialogInit(function () {
+//
+//            	var urlRequest = "<?php echo site_url('curso/toogle_status/CC'); ?>";
+//
+//                request(urlRequest, null);
+//
+//                return true;
+//
+//            }, [500,220]);
+//        });
 
 	});
 
@@ -26,7 +26,7 @@
 	      	<a class="navbar-brand" href="#"><?php echo $this->session->userdata('name_course'); ?></a>
 	    </div>
 
-	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+<!--	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	    	<?php
 
 	    		if ($this->session->userdata('status_curso') != '2P' &&
@@ -35,7 +35,7 @@
 	    		}
 	    	?>
 	    	
-	    </div>
+	    </div>-->
 
   	</div>
 </nav>

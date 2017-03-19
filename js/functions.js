@@ -176,7 +176,6 @@ function request(_url, _data, _fn) {
         timeout: 20000,
         success: function (data) {
 
-//            console.log(data);
 
             // Login autorizado
             if (data.success) {

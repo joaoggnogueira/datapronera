@@ -139,24 +139,87 @@ class Barchart extends CI_Model {
 	    $this->_bottomRightCell = $_bottomRightCell;
 	}
 
+	
+	public function create_header(){
+
+		$sizeOfFirstRow = count($this->_chart_data[0]); // count the first row to apply the header style
+		$this->_objPHPExcel->getActiveSheet()->mergeCells('A1:'.chr(64+$sizeOfFirstRow).'1');
+		$this->_objPHPExcel->getActiveSheet()->mergeCells('A2:'.chr(64+$sizeOfFirstRow).'2');
+		$this->_objPHPExcel->getActiveSheet()->mergeCells('A3:'.chr(64+$sizeOfFirstRow).'3');
+		$this->_objPHPExcel->getActiveSheet()->mergeCells('A4:'.chr(64+$sizeOfFirstRow).'4');
+		$this->_objPHPExcel->getActiveSheet()->mergeCells('A5:'.chr(64+$sizeOfFirstRow).'5');
+		$this->_objPHPExcel->getActiveSheet()->mergeCells('A6:'.chr(64+$sizeOfFirstRow).'6');
+
+		$style_line = array(
+		    'font'  => array(
+		        'bold'  => true
+		    ),
+		    'fill' => array(
+	            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+	            'color' => array('rgb' => 'AAFF80')
+        	),
+        	'alignment' => array(
+	            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+	        )
+	    );
+
+	    $style_pnera = array(
+		    'font'  => array(
+		        'bold'  => true
+		    ),
+		    'fill' => array(
+	            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+	            'color' => array('rgb' => 'E6E6E6')
+        	),
+        	'alignment' => array(
+	            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+	        )
+	    );
+
+	    $style = array(
+		    'fill' => array(
+	            'type' => PHPExcel_Style_Fill::FILL_SOLID,
+	            'color' => array('rgb' => 'E6E6E6')
+        	),
+        	'alignment' => array(
+	            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+	        )
+	    );
+
+	    $this->_objPHPExcel->getActiveSheet()->getStyle('A1:'.chr(64+$sizeOfFirstRow).'1')->applyFromArray($style_line);
+	    $this->_objPHPExcel->getActiveSheet()->getStyle('A6:'.chr(64+$sizeOfFirstRow).'6')->applyFromArray($style_line);
+	    $this->_objPHPExcel->getActiveSheet()->getStyle('A2:'.chr(64+$sizeOfFirstRow).'2')->applyFromArray($style_pnera);
+	    $this->_objPHPExcel->getActiveSheet()->getStyle('A3:'.chr(64+$sizeOfFirstRow).'3')->applyFromArray($style_pnera);
+	    $this->_objPHPExcel->getActiveSheet()->getStyle('A4:'.chr(64+$sizeOfFirstRow).'4')->applyFromArray($style);
+	    $this->_objPHPExcel->getActiveSheet()->getStyle('A5:'.chr(64+$sizeOfFirstRow).'5')->applyFromArray($style);
+
+	}
+
 	public function create_chart() {
+
+		//A manipulação dos dados do chart_data aumentou/diminuiu em 7, pois o novo cabeçalho de cada relatorio tem 7 linhas a mais no
+		//documento
 
 		if ($this->_chart_data == null) {
 			return;
 		}
+
+		//Creating Header
+		$this->create_header();
 			
 		// Prints table to worksheet		
 		$this->_objWorksheet->fromArray($this->_chart_data);
 
 		// Columnns data
-		$numDataColumns = count($this->_chart_data[0]) - $this->_num_legend_columns; //Count -1 because of the first column
+		$numDataColumns = count($this->_chart_data[7]) - $this->_num_legend_columns; //Count -1 because of the first column
 
 		// Rowsdata
 		$numDataRows = count($this->_chart_data) - 1; // Count -1 because of the first row
 
+
 		// Legend Column
 		$legendCol = $this->_legend_col;
-		$legendRow = 1;
+		$legendRow = 8;
 		$firstDataRow = $legendRow + 1;
 
 		// Formats the table with the format code received
@@ -164,7 +227,7 @@ class Barchart extends CI_Model {
 		for ($cont = 0; $cont < $numDataColumns; $cont++) {
 
 			$contChar++;
-			for ($cont2 = 0; $cont2 < $numDataRows; $cont2++) {
+			for ($cont2 = 7; $cont2 < $numDataRows; $cont2++) {
 				$aux = $cont2 + 2;
 				$this->_objPHPExcel->getActiveSheet()->getStyle("$contChar$aux")->getNumberFormat()->setFormatCode($this->_number_format);
 			}
@@ -205,7 +268,7 @@ class Barchart extends CI_Model {
 		$xAxisTickValues = array(
 			new PHPExcel_Chart_DataSeriesValues(
 				'String',
-				'Worksheet!$' . $legendCol . '$' . $firstDataRow .':$' . $legendCol . '$' . ($firstDataRow + $numDataRows - 1),
+				'Worksheet!$' . $legendCol . '$' . $firstDataRow .':$' . $legendCol . '$' . ($firstDataRow + $numDataRows - 8),
 				null,
 				4
 			),
@@ -228,7 +291,7 @@ class Barchart extends CI_Model {
 			$dataSeriesValues[] = 
 				new PHPExcel_Chart_DataSeriesValues(
 					'Number',
-					'Worksheet!$' . $contChar . '$' . $firstDataRow .':$' . $contChar . '$' . ($firstDataRow + $numDataRows - 1), 
+					'Worksheet!$' . $contChar . '$' . $firstDataRow .':$' . $contChar . '$' . ($firstDataRow + $numDataRows - 8), 
 				null, 
 				4
 			);

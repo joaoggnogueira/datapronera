@@ -44,6 +44,44 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         echo json_encode($response);
     }
 
+    private function create_header($name, $tipo){
+        $xls = array();
+        if($tipo == 1){
+            $cabe = array("------------------------------------------------------------------------------------------", "", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+            $cabe = array("Programa Nacional de Educação na Reforma Agrária (Pronera)", "", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+            $cabe = array("II Pesquisa Nacional sobre a Educação na Reforma Agrária (II PNERA)", "", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+            $cabe = array($name, "", "", "", "", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array("Data de Emissão: ".date('d/m/y'), "", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+            $cabe = array("------------------------------------------------------------------------------------------", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+            $cabe = array("", "", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+        }
+        if($tipo == 2){
+            $cabe = array("--------------------------------------------------------", "", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array("Programa Nacional de Educação na Reforma Agrária (Pronera)", "", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array("II Pesquisa Nacional sobre a Educação na Reforma Agrária (II PNERA)", "", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array($name, "", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array("Data de Emissão: ".date('d/m/y'), "", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array("--------------------------------------------------------","", "", "", "", "", "");
+            array_push($xls, $cabe);
+            $cabe = array("", "", "", "", "", "", "", "","","");
+            array_push($xls, $cabe);
+        }
+        
+        return $xls;
+    }
+
     private function leading_zeros($string, $length) {
 
         while (strlen($string) < $length) {
@@ -58,6 +96,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->cursos_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Cursos por modalidade", 2);
             $titles = array("MODALIDADE", "CURSOS");
 
             array_push($xls, $titles);
@@ -85,6 +124,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->cursos_nivel($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Cursos por nível", 2);
             $titles = array("NÍVEL", "CURSOS");
 
             array_push($xls, $titles);
@@ -125,6 +165,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if ($result = $this->relatorio_geral_m_pnera2->cursos_nivel_superintendencia($levels)) {
 
                 $xls = array();
+                $xls = $this->create_header("Cursos por nível e superintendência", 1);
                 array_push($xls, $titles);
 
                 foreach ($result as $row) {
@@ -147,6 +188,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->cursos_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Cursos por superintendência", 2);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "CURSOS");
 
             array_push($xls, $titles);
@@ -178,6 +220,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Alunos ingressantes por modalidade", 2);
             $titles = array("MODALIDADE", "ALUNOS INGRESSANTES");
 
             array_push($xls, $titles);
@@ -208,6 +251,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Alunos ingressantes por nível", 2);
             $titles = array("NÍVEL", "ALUNOS INGRESSANTES");
 
             array_push($xls, $titles);
@@ -251,6 +295,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if ($result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel_sr($levels)) {
 
                 $xls = array();
+                $xls = $this->create_header("Alunos ingressantes por nível e superintendência", 1);
                 array_push($xls, $titles);
 
                 foreach ($result as $row) {
@@ -271,7 +316,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-     public function alunos_concluintes_nivel_sr() {
+    public function alunos_concluintes_nivel_sr() {
 
         $titles = array();
         $levels = array();
@@ -289,6 +334,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel_sr($levels)) {
 
                 $xls = array();
+                $xls = $this->create_header("Alunos concluintes por nível e superintendência", 1);
                 array_push($xls, $titles);
 
                 foreach ($result as $row) {
@@ -314,6 +360,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Alunos ingressantes por superintendência", 2);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "ALUNOS INGRESSANTES");
 
             array_push($xls, $titles);
@@ -348,6 +395,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Alunos concluintes por modalidade", 2);
             $titles = array("MODALIDADE", "ALUNOS CONCLUINTES");
 
             array_push($xls, $titles);
@@ -378,6 +426,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Alunos concluintes por nível", 2);
             $titles = array("NÍVEL", "ALUNOS CONCLUINTES");
 
             array_push($xls, $titles);
@@ -408,6 +457,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Alunos concluintes por superintendência", 2);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "ALUNOS CONCLUINTES");
 
             array_push($xls, $titles);
@@ -445,6 +495,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->educandos_assentamento_modalidade()) {
 
             $xls = array();
+            $xls = $this->create_header("Educandos por assentamento e modalidade de curso", 1);
             $titles = array("NOME TERRITÓRIO", "EJA ALFABETIZACAO", "EJA ANOS INICIAIS", "EJA ANOS FINAIS",
                 "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)", "EJA NIVEL MEDIO (NORMAL)", "NIVEL MEDIO/TECNICO (CONCOMITANTE)",
                 "NIVEL MEDIO/TECNICO (INTEGRADO)", "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)", "GRADUACAO", "ESPECIALIZACAO",
@@ -474,6 +525,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->educandos_assentamento_nivel()) {
 
             $xls = array();
+            $xls = $this->create_header("Educandos por assentamento e nível de curso", 1);
             $titles = array("NOME TERRITÓRIO", "EJA FUNDAMENTAL", "ENSINO MÉDIO", "ENSINO SUPERIOR");
 
             array_push($xls, $titles);
@@ -500,6 +552,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->lista_educandos_cursos_sr()) {
 
             $xls = array();
+            $xls = $this->create_header("Educandos, superintendência e curso", 1);
             $titles = array("NOME EDUCANDO", "TIPO TERRITÓRIO", "NOME TERRITÓRIO", "CÓD. SR", "CÓD. CURSO", "NOME CURSO", "MODALIDADE CURSO");
 
             array_push($xls, $titles);
@@ -524,8 +577,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         $result = $this->relatorio_geral_m_pnera2->municipios_curso_modalidade($this->session->userdata('access_level'));
         //var_dump($result);
         if ($result) {
-
             $xls = array();
+            $xls = $this->create_header("Municípios de realização dos cursos por modalidade", 1);
             $titles = array("MODALIDADE", "ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "CÓD. CURSO", "CURSO");
 
             array_push($xls, $titles);
@@ -552,6 +605,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->municipios_curso($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Municípios de realização dos cursos", 1);
             $titles = array("ESTADO", "MUNICÍPIO", "CÓD. MUNICÍPIO", "CURSOS");
 
             array_push($xls, $titles);
@@ -585,6 +639,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->lista_cursos_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Lista de cursos por modalidade", 1);
             $titles = array("MODALIDADE","CÓDIGO", "CURSO");
 
             array_push($xls, $titles);
@@ -611,6 +666,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->titulacao_educadores($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Escolaridade/titulação dos educadores", 2);
             $titles = array("TITULAÇÃO", "% EDUCADORES");
 
             array_push($xls, $titles);
@@ -640,6 +696,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->titulacao_educadores_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Escolaridade/titulação dos educadores por superintendência", 2);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "% ENSINO FUNDAMENTAL COMPLETO", "% ENSINO FUNDAMENTAL INCOMPLETO",
                 "% ENSINO MÉDIO COMPLETO", "% ENSINO MÉDIO INCOMPLETO", "% GRADUADO(A)", "% ESPECIALISTA", "% MESTRE(A)", "% DOUTOR(A)");
 
@@ -666,6 +723,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->educadores_nivel($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Educadores por nível", 2);
             $titles = array("NÍVEL", "EDUCADORES");
 
             array_push($xls, $titles);
@@ -696,6 +754,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->educadores_curso($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Educadores por curso", 2);
             $titles = array("CÓDIGO", "CURSO", "EDUCADORES");
 
             array_push($xls, $titles);
@@ -733,6 +792,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->educadores_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Educadores por superintendência", 2);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "EDUCADORES");
 
             array_push($xls, $titles);
@@ -767,6 +827,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->genero_educadores_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Participação de homens e mulheres como educadores dos cursos por modalidade", 2);
             $titles = array("MODALIDADE", "% MASCULINO", "% FEMININO");
 
             array_push($xls, $titles);
@@ -797,6 +858,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->educandos_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Educandos por superintendência", 2);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "EDUCANDOS");
 
             array_push($xls, $titles);
@@ -831,6 +893,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->municipio_origem_educandos($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Município de origem dos educandos", 1);
             $titles = array("ESTADO", "MUNICÍPIO", "CÓD MUNICÍPIO", "EDUCANDOS");
 
             array_push($xls, $titles);
@@ -853,6 +916,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->territorio_educandos_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Território de origem dos educandos por modalidade", 1);
             $titles = array("MODALIDADE", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
                 "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO");
 
@@ -876,6 +940,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->territorio_educandos_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Território de origem dos educandos por superintendência", 1);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
                 "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO");
 
@@ -900,6 +965,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->idade_educandos_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Idade média dos educandos por modalidade", 2);
             $titles = array("MODALIDADE", "MÉDIA DE IDADE (ANOS)");
 
             array_push($xls, $titles);
@@ -929,6 +995,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->genero_educandos_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Participação de homens e mulheres como educandos nos cursos por modalidade", 2);
             $titles = array("MODALIDADE", "% MASCULINO", "% FEMININO");
 
             array_push($xls, $titles);
@@ -959,6 +1026,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->localizacao_instituicoes_ensino($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Localização das instituições de ensino", 1);
             $titles = array("ESTADO", "MUNICÍPIO", "CÓD MUNICÍPIO", "INSTITUIÇÃO DE ENSINO");
 
             array_push($xls, $titles);
@@ -981,6 +1049,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Instituições de ensino que realizaram cursos por modalidade", 2);
             $titles = array("MODALIDADE", "INSTITUIÇÕES DE ENSINO");
 
             array_push($xls, $titles);
@@ -1008,6 +1077,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_nivel($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Instituições de ensino que realizaram cursos por nível", 2);
             $titles = array("NÍVEL", "INSTITUIÇÕES DE ENSINO");
 
             array_push($xls, $titles);
@@ -1035,6 +1105,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Instituições de ensino que realizaram cursos por superintendência", 1);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "INSTITUIÇÕES DE ENSINO");
 
             array_push($xls, $titles);
@@ -1063,6 +1134,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_municipio($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Instituições de ensino que realizaram cursos por municípios", 2);
             $titles = array("ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "INSTITUIÇÕES DE ENSINO");
 
             array_push($xls, $titles);
@@ -1093,6 +1165,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_estado()) {
 
             $xls = array();
+            $xls = $this->create_header("Instituições de ensino que realizaram cursos por estados", 2);
             $titles = array("ESTADO", "INSTITUIÇÕES DE ENSINO");
 
             array_push($xls, $titles);
@@ -1120,6 +1193,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->cursos_natureza_inst_ensino($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Natureza das instituições de ensino e número de cursos realizados", 2);
             $titles = array("NATUREZA", "CURSOS");
 
             array_push($xls, $titles);
@@ -1147,6 +1221,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->instituicao_ensino_cursos($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Lista das instituições de ensino e número de cursos realizados", 1);
             $titles = array("INSTITUIÇÃO DE ENSINO", "CURSOS");
 
             array_push($xls, $titles);
@@ -1169,6 +1244,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->organizacoes_demandantes_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Organizações demandantes por modalidade", 2);
             $titles = array("MODALIDADE", "ORGANIZAÇÕES DEMANDANTES");
 
             array_push($xls, $titles);
@@ -1196,6 +1272,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->membros_org_demandantes_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Porcentagem dos membros das organizações demandantes participantes de cursos do PRONERA por modalidade", 2);
             $titles = array("MODALIDADE", "% ESTUDARAM NO PRONERA", "% NÃO ESTUDARAM NO PRONERA");
 
             array_push($xls, $titles);
@@ -1230,6 +1307,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->organizacao_demandante_cursos($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Lista das organizações demandantes e número de cursos demandados", 1);
             $titles = array("ORGANIZAÇÃO DEMANDANTE", "CURSOS");
 
             array_push($xls, $titles);
@@ -1252,6 +1330,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->localizacao_parceiros($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Localização dos parceiros", 1);
             $titles = array("ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "PARCEIRO");
 
             array_push($xls, $titles);
@@ -1274,6 +1353,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->parceiros_modalidade($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Parceiros por modalidade", 2);
             $titles = array("MODALIDADE", "PARCEIROS");
 
             array_push($xls, $titles);
@@ -1301,6 +1381,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->parceiros_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Parceiros por superintendência", 1);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "PARCEIROS");
 
             array_push($xls, $titles);
@@ -1329,6 +1410,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->parceiros_natureza($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Parceiros por natureza da parceria", 2);
             $titles = array("NATUREZA", "PARCEIROS");
 
             array_push($xls, $titles);
@@ -1356,6 +1438,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->lista_parceiros($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Lista dos parceiros", 1);
             $titles = array("PARCEIRO");
 
             array_push($xls, $titles);
@@ -1378,6 +1461,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->producoes_estado()) {
 
             $xls = array();
+            $xls = $this->create_header("Produções por tipo de produção", 1);
             $titles = array("ESTADO", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS");
 
             array_push($xls, $titles);
@@ -1400,6 +1484,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->producoes_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Produções por tipo de produção", 1);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS");
 
             array_push($xls, $titles);
@@ -1423,6 +1508,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->producoes_tipo($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Produções por tipo de produção", 2);
             $titles = array("TIPO", "PRODUÇÕES");
 
             array_push($xls, $titles);
@@ -1450,6 +1536,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->pesquisa_estado()) {
 
             $xls = array();
+            $xls = $this->create_header("Produções por tipo de produção", 1);
             $titles = array("ESTADO", "MONOGRAFIAS/DISSERTAÇÕES", "LIVROS/COLETÂNEAS", "CAP. LIVROS", "ARTIGOS", "VÍDEOS/DOCUMENTÁRIOS", "PERIÓDICOS", "EVENTOS");
 
             array_push($xls, $titles);
@@ -1467,11 +1554,12 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-     public function pesquisa_superintendencia() {
+    public function pesquisa_superintendencia() {
 
         if ($result = $this->relatorio_geral_m_pnera2->pesquisa_superintendencia()) {
 
             $xls = array();
+            $xls = $this->create_header("Produções por tipo de produção", 1);
             $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "MONOGRAFIAS/DISSERTAÇÕES", "LIVROS/COLETÂNEAS", "CAP. LIVROS", "ARTIGOS", "VÍDEOS/DOCUMENTÁRIOS", "PERIÓDICOS", "EVENTOS");
 
             array_push($xls, $titles);
@@ -1495,6 +1583,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if ($result = $this->relatorio_geral_m_pnera2->pesquisa_tipo($this->session->userdata('access_level'))) {
 
             $xls = array();
+            $xls = $this->create_header("Produções por tipo de produção", 2);
             $titles = array("TIPO", "PRODUÇÕES");
 
             array_push($xls, $titles);
@@ -1516,4 +1605,5 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             $this->barchart->create_chart();
         }
     }
+
 }

@@ -1,25 +1,22 @@
 <?php
-
-    if (! defined('BASEPATH')) {
-        exit('No direct script access allowed');
-
-    } else if (! $this->system->is_logged_in()) {
-        echo index_page();        
-    }
-    
+if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+} else if (!$this->system->is_logged_in()) {
+    echo index_page();
+}
 ?>
 
 <script type="text/javascript">
 
-    function access (cod, name) {
+    function access(cod, name) {
 
         var value = cod.split(".");
         var id = parseInt(value[1]);
 
         var formData = {
-           id_curso     : id,
-           codigo       : cod,
-           nome         : name 
+            id_curso: id,
+            codigo: cod,
+            nome: name
         };
 
         var urlRequest = "<?php echo site_url('request/acessar_curso'); ?>";
@@ -30,27 +27,65 @@
     $(document).ready(function () {
 
         var tableRunning = new Table({
-            url      : "<?php echo site_url('request/get_curso/AN/CO'); ?>",
-            table    : $('#running-courses'),
-            controls : $('#running-controls')
+            url: "<?php echo site_url('request/get_curso/AN/CO'); ?>",
+            table: $('#running-courses'),
+            controls: $('#running-controls')
         });
 
         var tableFinished = new Table({
-            url      : "<?php echo site_url('request/get_curso/CC'); ?>",
-            table    : $('#finished-courses'),
-            controls : $('#finished-controls')
+            url: "<?php echo site_url('request/get_curso/CC'); ?>",
+            table: $('#finished-courses'),
+            controls: $('#finished-controls')
         });
 
         var tableIIPnera = new Table({
-            url      : "<?php echo site_url('request/get_curso/2P'); ?>",
-            table    : $('#ii-pnera-courses'),
-            controls : $('#ii-pnera-controls')
+            url: "<?php echo site_url('request/get_curso/2P'); ?>",
+            table: $('#ii-pnera-courses'),
+            controls: $('#ii-pnera-controls')
         });
-        
+
+        tableRunning.hideColumns([2]);
+        tableFinished.hideColumns([2]);
+
         /* Add a click handler to leave users able to access the courses (row) */
+
+        $("#finalizar_cadastro").click(function () {
+            $('#dialog-fin-cs').dialogInit(function () {
+                var cod = parseInt(tableRunning.getSelectedByIndex(0).split(".")[1]);
+                var urlRequest = "<?php echo site_url('curso/toogle_status_by_cod/'); ?>" + "/CC/" + cod;
+                $.ajax({
+                    url: urlRequest,
+                    type: 'POST',
+                    dataType: 'json',
+                    timeout: 20000,
+                    success: function (data) {
+                        if (data.success) {
+                            var selected = tableRunning.getSelectedData();
+                            tableFinished.addData(selected);
+                            tableRunning.deleteSelectedRow();
+                        }
+                        console.log(data);
+                        showMessage('status', data);
+                    },
+                    error: function (data) {
+
+                        // Falha na requisição
+                        var error = {
+                            'success': false,
+                            'message': 'Falha na requisição. Tente novamente em instantes.'
+                        };
+
+                        showMessage('status', error); // Exibe mensagem de erro
+                    }
+
+                });
+                return true;
+            }, [500, 220]);
+        });
+
         $('#running-access').click(function () {
 
-            var cod  = tableRunning.getSelectedByIndex(0);
+            var cod = tableRunning.getSelectedByIndex(0);
             var nome = tableRunning.getSelectedByIndex(1);
 
             access(cod, nome);
@@ -58,7 +93,7 @@
 
         $('#finished-access').click(function () {
 
-            var cod  = tableFinished.getSelectedByIndex(0);
+            var cod = tableFinished.getSelectedByIndex(0);
             var nome = tableFinished.getSelectedByIndex(1);
 
             access(cod, nome);
@@ -66,7 +101,7 @@
 
         $('#ii-pnera-access').click(function () {
 
-            var cod  = tableIIPnera.getSelectedByIndex(0);
+            var cod = tableIIPnera.getSelectedByIndex(0);
             var nome = tableIIPnera.getSelectedByIndex(1);
 
             access(cod, nome);
@@ -81,7 +116,7 @@
                 var codigo = parseInt(value[1]);
 
                 var formData = {
-                   id_curso : codigo
+                    id_curso: codigo
                 };
 
                 var urlRequest = "<?php echo site_url('curso/toogle_status/AN'); ?>";
@@ -90,7 +125,7 @@
 
                 return true;
 
-            }, [450,220]);
+            }, [450, 220]);
         });
 
         // Navigation tabs
@@ -114,8 +149,8 @@
         <div id="grid">
             <ul id="running-controls" class="nav nav-pills buttons">        
                 <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="running-access">Acessar Curso</button></li>                
+                <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="finalizar_cadastro">Finalizar Cadastro</button></li>
             </ul> 
-            
             <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="running-courses">
                 <thead>
                     <tr>
@@ -144,16 +179,14 @@
                 <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="return-status">Reabilitar Cadastro</button></li>
 
                 <?php
-
-                    // SUPERVISOR, COORD. GERAL, ADMINISTRADOR 
-                    /*if ($this->session->userdata('access_level') > 2) {
-                        echo '<li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="return-status">Reabilitar Cadastro</button></li>';
-                    }*/
-                    
+// SUPERVISOR, COORD. GERAL, ADMINISTRADOR 
+                /* if ($this->session->userdata('access_level') > 2) {
+                  echo '<li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="return-status">Reabilitar Cadastro</button></li>';
+                  } */
                 ?>
 
             </ul> 
-            
+
             <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="finished-courses">
                 <thead>
                     <tr>
@@ -182,7 +215,6 @@
             <ul id="ii-pnera-controls" class="nav nav-pills buttons">        
                 <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="ii-pnera-access">Acessar Curso</button></li>
             </ul> 
-            
             <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="ii-pnera-courses">
                 <thead>
                     <tr>
@@ -199,4 +231,9 @@
         </div>
 
     </div>
+</div>
+
+<div id="dialog-fin-cs" name="dialog-fin-cs" class="dialog" title="Confirmar submiss&atilde;o">
+    <br />
+    <h4>Ao finalizar o cadastro os dados do curso não poderão mais ser alterados. Deseja proseguir?</h4>
 </div>

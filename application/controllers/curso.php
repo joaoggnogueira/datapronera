@@ -73,7 +73,7 @@ class Curso extends CI_Controller {
 
             $data['content'] = $this->session->userdata('curr_content');
             //$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
+            $dados[0]->data = implode("/", array_reverse(explode("-", $dados[0]->data),true));
             $valores['dados'] = $dados;
             $valores['curso'] = $curso;
             $valores['operacao'] = $this->input->post('operacao');
@@ -137,7 +137,7 @@ class Curso extends CI_Controller {
 //            (strlen($this->input->post('pesquisador')) > 0 ?
 //                    $this->input->post('pesquisador') : NULL),
             'id_modalidade' => $id_modalidade,
-            'data' => $this->input->post('data'),
+            'data' => implode("-", array_reverse(explode("/", $this->input->post('data')),true)),
             'id_instrumento' => $id_instrumento,
             'nprocesso' => $this->input->post('nprocesso'),
             'ninstrumento' => $this->input->post('ninstrumento'),
@@ -289,7 +289,7 @@ class Curso extends CI_Controller {
             'id_superintendencia' => $this->input->post('superintendencia'),
 //            'id_pesquisador' => $this->input->post('pesquisador'),
             'id_modalidade' => $id_modalidade,
-            'data' => $this->input->post('data'),
+            'data' => implode("-", array_reverse(explode("/", $this->input->post('data')),true)),
             'id_instrumento' => $id_instrumento,
             'nprocesso' => $this->input->post('nprocesso'),
             'ninstrumento' => $this->input->post('ninstrumento')
@@ -424,6 +424,43 @@ class Curso extends CI_Controller {
             $response = array(
                 'success' => false,
                 'message' => 'Falha ao reativar cadastro'
+            );
+        }
+
+        echo json_encode($response);
+    }
+    
+    function toogle_status_by_cod($status,$cod) {
+
+        if ($status == 'AN') {
+
+            $course = $cod;
+            $msg_log = "CURSO REABILITADO PARA CADASTRO: ID '" . $course . "'";
+
+            $msg_success = "Cadastro reabilitado com sucesso";
+            $msg_error = "Falha ao reabilidar cadastro";
+        } else {
+
+            $course = $cod;
+            $msg_log = "CADASTRO DE CURSO FINALIZADO: ID '" . $course . "'";
+
+            $msg_success = "Cadastro de curso finalizado com sucesso";
+            $msg_error = "Falha ao finalizar cadastro de curso";
+        }
+
+        if ($this->curso_m->toogle_status($course, $status)) {
+
+            $this->log->save($msg_log);
+
+            $response = array(
+                'success' => true,
+                'message' => $msg_success
+            );
+        } else {
+
+            $response = array(
+                'success' => false,
+                'message' => $msg_error
             );
         }
 

@@ -171,6 +171,20 @@ Table.prototype.nodeExists = function (_node) {
     return false;
 }
 
+Table.prototype.nodeExistsById = function (_node,row_id) {
+
+    var nodes = this.oTable.fnGetNodes();
+
+    for (var i = 0; i < nodes.length; i++) {
+        var data = this.oTable.fnGetData(nodes[i]);
+        if (_node[row_id]==data[row_id]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 Table.prototype.fnGetSelected = function () {
 
     var aReturn = new Array();

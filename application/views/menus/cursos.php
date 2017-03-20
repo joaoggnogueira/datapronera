@@ -29,6 +29,16 @@
 	request('<?php echo site_url('observacao/index/'); ?>', null, 'hide');
 ">Observa&ccedil;&otilde;es</a></li>
 
+<li
+	<?php
+		if ($this->session->userdata('curr_content') == 'fiscalizacao') {
+			echo 'class="active"';
+		}
+	?>
+><a href="#" onclick="
+	request('<?php echo site_url('fiscalizacao/index/'); ?>', null, 'hide');
+    ">Acompanhamento/Fiscaliza&ccedil;&atilde;o</a></li>
+
 <li class="dropdown
 	<?php
 		if (strpos($this->session->userdata('curr_content'),'producao8') !== false) {

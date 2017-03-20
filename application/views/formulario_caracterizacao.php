@@ -590,7 +590,7 @@ if (empty($dados)) {
             <label>1. Nome do curso</label>
             <textarea class="form-control tamanho-exlg" id="nome" name="nome" readonly><?php echo $dados[0]->nome; ?></textarea>
         </div>
-        <div class="form-group">
+<!--        <div class="form-group">
             <label>1.1 Data de criação do curso</label>
             <p><?php
                 if ($dados[0]->data != null)
@@ -598,9 +598,9 @@ if (empty($dados)) {
                 else
                     echo 'Não Possui';
                 ?></p>
-        </div>
+        </div>-->
         <div class="form-group">
-            <label>1.2 Superintendência</label>
+            <label>1.1 Superintendência</label>
             <p><?php echo $dados[0]->superintendencia; ?></p>
         </div>
         <div class="form-group">

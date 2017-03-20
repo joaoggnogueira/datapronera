@@ -42,7 +42,7 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
             }
         });
         var id = "<?php echo $curso['id']; ?>";
-
+        $('#data').mask('99/99/9999');
         //Antigo Campos:
         //Responsável pela pesquisa
 <?PHP if ($operacao != 'add'): ?>

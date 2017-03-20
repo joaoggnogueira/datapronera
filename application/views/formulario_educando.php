@@ -106,7 +106,10 @@ else
                     $("#educando_territorio").append($('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
                             .append('<option selected disabled value="">Selecione</option>')
                             .append(assentamentos));
-                    $('#educando_nome_terr option[value="<?= $dados[0]->code_sipra_assentamento ?>"]').attr('selected', true);
+                    <?PHP if ($retrivial && $dados[0]->tipo_territorio == "ASSENTAMENTO" && $dados[0]->code_sipra_assentamento): ?>
+                        $('#educando_nome_terr option[value="<?= $dados[0]->code_sipra_assentamento ?>"]').attr('selected', true);
+                    <?PHP endif; ?>
+                
                     $('#educando_nome_terr').select2();
                 });
             }

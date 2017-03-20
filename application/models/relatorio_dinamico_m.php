@@ -2,227 +2,280 @@
 
 class Relatorio_dinamico_m extends CI_Model {
 
-	/**
-     * Este método retorna todas as informações referentes aos Cursos com os seus dados Adjacentes
-     * @method cursoAdj
-     * @param  [Array]   $informacoes [Dados selecionados pelo usuário para ser buscado]
-     * @return [Array]   [Resultados]
-     */
-    public function cursoAdj($informacoes)
-    {
-    	$informacoes = $this->db->escape_str($informacoes);
+    public function abaSuperIntendencias($where = ""){
 
-    	$informacoesNull = $this->rmPes($informacoes);
+        $query = $this->db->query("
+        SELECT
+          s.id AS ID,
+          s.nome AS NOME,
+          s.nome_responsavel AS RESPONSÁVEL,
+          CASE(s.ativo_inativo)
+          WHEN 'A' THEN 'ATIVA'
+          ELSE 'NÃO INFORMADO' END AS STATUS,
+          e.sigla AS ESTADO
+        FROM
+          `superintendencia` s,
+          `estado` e
+        WHERE
+          s.id_estado = e.id
+          $where
+        ");
+        return $query->result_array();
+    }
+      
+    public function abaCursos($where = ""){
 
-    	$query = $this->db->query
-    	("SELECT
+        $query = $this->db->query("
+            SELECT c.id as ID, c.nome as NOME, 
+              c.id_superintendencia as SUPERINDENTÊNCIA, 
+              CASE cm.nome
+                WHEN 'EJA ALFABETIZACAO' THEN 'EJA FUNDAMENTAL'
+                WHEN 'EJA ANOS INICIAIS' THEN 'EJA FUNDAMENTAL'
+                WHEN 'EJA ANOS FINAIS' THEN 'EJA FUNDAMENTAL'
+                WHEN 'EJA NIVEL MEDIO (MAGISTERIO/FORMAL)' THEN 'ENSINO MÉDIO'
+                WHEN 'EJA NIVEL MEDIO (NORMAL)' THEN 'ENSINO MÉDIO'
+                WHEN 'NIVEL MEDIO/TECNICO (CONCOMITANTE)' THEN 'ENSINO MÉDIO'
+                WHEN 'NIVEL MEDIO/TECNICO (INTEGRADO)' THEN 'ENSINO MÉDIO'
+                WHEN 'NIVEL MEDIO PROFISSIONAL (POS-MEDIO)' THEN 'ENSINO MÉDIO'
+                WHEN 'GRADUACAO' THEN 'ENSINO SUPERIOR'
+                WHEN 'ESPECIALIZACAO' THEN 'ENSINO SUPERIOR'
+                WHEN 'RESIDENCIA AGRARIA' THEN 'ENSINO SUPERIOR'
+                WHEN 'MESTRADO' THEN 'ENSINO SUPERIOR'
+                WHEN 'DOUTORADO' THEN 'ENSINO SUPERIOR'
+              END AS NIVEL_CURSO,
+                c.obs as OBSERVAÇÃO_CURSO,
+                cr.area_conhecimento as AREA_CONHECIMENTO,
+                cr.nome_coordenador_geral as COORDENADOR_GERAL,
+                cr.titulacao_coordenador_geral as TITULAÇÃO_COORDENADOR_GERAL,
+                cr.nome_coordenador as COORDENADOR_PROJETO,
+                cr.titulacao_coordenador as TITULAÇÃO_COORDENADOR_PROJETO,
+                cr.nome_vice_coordenador as VICE_COORDENADOR,
+                cr.titulacao_vice_coordenador as TITULACAO_VICE_COORDENADOR,
+                cr.nome_coordenador_pedagogico as COORDENADOR_PEDAGÓGICO,
+                cr.titulacao_coordenador_pedagogico as TITULAÇÃO_COORDENADOR_PEDAGÓGICO,
+                cr.duracao_curso as DURAÇÃO_CURSO_ANOS,
+                cr.inicio_previsto as MÊS_ANO_PREVISTO_INICIO,
+                cr.termino_previsto as MÊS_ANO_PREVISTO_TÉRMINO,
+                cr.inicio_realizado as MES_ANO_REALIZADO_INICIO,
+                cr.termino_realizado as MÊS_ANO_REALIZADO_TÉRMINO,
+                if(cr.numero_turmas=-1,'NAO INFORMADO',cr.numero_turmas) as NÚMERO_TURMAS,
+                if(cr.numero_ingressantes=-1,'NAO INFORMADO',cr.numero_ingressantes) as NÚMERO_INGRESSANTES,
+                if(cr.numero_concluintes=-1,'NAO INFORMADO',cr.numero_concluintes) as NÚMERO_CONCLUINTES,
+                if(cr.numero_bolsistas=-1,'NAO INFORMADO',cr.numero_bolsistas) as NÚMERO_BOLSISTAS    
+            FROM `curso` c, `curso_modalidade` cm, `caracterizacao` cr  
+            WHERE c.id_modalidade = cm.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
 
-			$informacoes
-
-			FROM curso Cur
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-			INNER JOIN pessoa Pes ON Pes.id = Cur.id_pesquisador
-			INNER JOIN cidade Cid ON Cid.id = Pes.id_cidade
-			INNER JOIN estado Est ON Est.id = Cid.id_estado
-			INNER JOIN funcao Fun ON Fun.id = Pes.id_funcao
-
-			UNION
-
-			SELECT
-
-			$informacoesNull
-
-			FROM curso Cur
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-			AND Cur.id_pesquisador IS NULL
-    	");
-
-		return $query;
+            ");
+        return $query->result_array();
     }
 
-    /**
-     * Este método retorna todas as informações referentes aos Professores com os seus dados Adjacentes
-     * @method professorAdj
-     * @param  [Array]   $informacoes [Dados selecionados pelo usuário para ser buscado]
-     * @return [Array]   [Resultados]
-     */
-    public function professorAdj($informacoes)
-    {
-    	$informacoes = $this->db->escape_str($informacoes);
+    public function abaCidadeCursos($where = ""){
 
-    	$query = $this->db->query
-    	("SELECT
-
-			$informacoes
-
-			FROM professor Pro
-			INNER JOIN curso Cur ON Cur.id = Pro.id_curso
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-    	");
-
-		return $query;
+        $query = $this->db->query("
+            SELECT cr.id_curso as ID_CURSO, ci.nome as CIDADE, e.sigla as ESTADO   
+            FROM `caracterizacao_cidade` cc, `caracterizacao` cr, `cidade` ci, `estado` e, `curso` c 
+            WHERE cr.id_curso = c.id AND cc.id_caracterizacao = cr.id AND cc.id_cidade = ci.id 
+            AND ci.id_estado = e.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
+        return $query->result_array();
     }
 
-    /**
-     * Este método retorna todas as informações referentes aos educandos com os seus dados Adjacentes
-     * @method educandoAdj
-     * @param  [Array]   $informacoes [Dados selecionados pelo usuário para ser buscado]
-     * @return [Array]   [Resultados]
-     */
-    public function educandoAdj($informacoes)
-    {
-    	$informacoes = $this->db->escape_str($informacoes);
+    public function abaEducandos($where = ""){
+        // if($where != ""){
+        //     $where = $this->db->escape_str($where);
+        // }
 
-    	$informacoesNull = $this->rmEdu($informacoes);
+        //var_dump($where);die;
 
-    	$query = $this->db->query
-    	("SELECT
+        $query = $this->db->query("
+            SELECT DISTINCT  e.id_curso as CURSO_VINCULADO, e.id as ID, e.nome as NOME,
+            CASE e.genero
+            WHEN 'M' THEN 'MASCULINO'
+            WHEN 'F' THEN 'FEMININO'
+            WHEN 'N' THEN 'NÃO INFORMADO'
+            END as GÊNERO,
+            DATE_FORMAT(e.data_nascimento, '%d/%m/%y') as DATA_NASCIMENTO,
+            if(e.idade=-1,'NAO INFORMADO',e.idade) as IDADE,
+            e.tipo_territorio as TIPO_TERRITÓRIO,
+            e.nome_territorio as NOME_TERRITÓRIO,
+            CASE e.concluinte
+            WHEN 'I' THEN 'NÃO INFORMADO'
+            WHEN 'S' THEN 'SIM'
+            WHEN 'N' THEN 'NÃO'
+            END as CONCLUINTE
+            FROM `educando` e, `curso` c
+            WHERE e.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
 
-    		$informacoes
+        return $query->result_array();
+    }
+    
+    
+    public function abaCidadeEducandos($where = ""){
 
-    		FROM Educando Edu
-    		INNER JOIN educando_cidade EduCid ON EduCid.id_cidade = Edu.id_cidade AND EduCid.id_educando = Edu.id
-    		INNER JOIN cidade Cid ON EduCid.id_cidade = Cid.id
-			INNER JOIN estado Est ON Est.id = Cid.id_estado
-			INNER JOIN curso Cur ON Cur.id = Edu.id_curso
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-
-			UNION
-
-			SELECT
-
-    		$informacoesNull
-
-    		FROM Educando Edu
-    		INNER JOIN curso Cur ON Cur.id = Edu.id_curso
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-    	");
-
-    	return $query;
+        $query = $this->db->query("
+            SELECT ed.id_curso as CURSO_VINCULADO, ec.id_educando as ID_EDUCANDO, c.nome as NOME_CIDADE, e.sigla as ESTADO 
+            FROM `educando`ed, `educando_cidade` ec, `cidade` c, `estado` e 
+            WHERE ed.id = ec.id_educando AND ec.id_cidade = c.id AND c.id_estado = e.id
+            $where
+        ");
+        return $query->result_array();
     }
 
-    /**
-     * Este método retorna todas as informações referentes a Instituições de Ensino com os seus dados Adjacentes
-     * @method instituicaoEnsinoAdj
-     * @param  [Array]   $informacoes [Dados selecionados pelo usuário para ser buscado]
-     * @return [Array]   [Resultados]
-     */
-    public function instituicaoEnsinoAdj($informacoes)
-    {
-    	$informacoes = $this->db->escape_str($informacoes);
-
-    	$informacoesNull = $this->rmPes($informacoes);
-
-    	$query = $this->db->query
-    	("SELECT
-
-			$informacoes
-
-			FROM instituicao_ensino InsEn
-			INNER JOIN curso Cur ON InsEn.id_curso = Cur.id
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-
-			INNER JOIN pessoa Pes ON Pes.id = Cur.id_pesquisador
-
-			INNER JOIN cidade Cid ON Cid.id = Pes.id_cidade
-			INNER JOIN estado Est ON Est.id = Cid.id_estado
-			INNER JOIN funcao Fun ON Fun.id = Pes.id_funcao
-
-			UNION
-
-			SELECT
-
-			$informacoesNull
-
-			FROM instituicao_ensino InsEn
-			INNER JOIN curso Cur ON InsEn.id_curso = Cur.id
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-
-			AND Cur.id_pesquisador IS NULL
-    	");
-
-		return $query;
+    public function abaProfessores($where = ""){
+        // if($where != ""){
+        //     $where = $this->db->escape_str($where);
+        // }
+        $query = $this->db->query("
+            SELECT DISTINCT p.id_curso as CURSO_VINCULADO, p.id as ID, p.nome as NOME,
+            CASE p.genero 
+            WHEN 'M' THEN 'MASCULINO' 
+            WHEN 'F' THEN 'FEMININO' 
+            WHEN 'I' THEN 'NÃO INFORMADO' END as GÊNERO, 
+            p.titulacao as TITULAÇÃO 
+            FROM `professor` p, `curso` c 
+            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
+        return $query->result_array();
     }
 
-    /**
-     * Este método retorna todas as informações referentes a Parceiros com os seus dados Adjacentes
-     * @method parceiroAdj
-     * @param  [Array]   $informacoes [Dados selecionados pelo usuário para ser buscado]
-     * @return [Array]   [Resultados]
-     */
-    public function parceiroAdj($informacoes)
-    {
-    	$informacoes = $this->db->escape_str($informacoes);
+    public function abaDisciplinas($where = ""){
 
-    	$informacoesNull = $this->rmPes($informacoes);
+        $query = $this->db->query("
+            SELECT d.id_curso as CURSO_VINCULADO, d.id as ID, d.nome as NOME, d.id_professor as PROFESSOR_RESPONSÁVEL
+            FROM `disciplina` d, `curso`c
+            WHERE d.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
+        return $query->result_array();
+        
+    }
 
-    	$query = $this->db->query
-    	("SELECT
+    public function abaInstituicoesEnsino($where = ""){
 
-			$informacoes
+        $query = $this->db->query("
+            SELECT DISTINCT ie.id_curso as CURSO_VINCULADO, ie.id as ID, ie.nome as NOME, ie.sigla as SIGLA, ie.unidade as UNIDADE,
+            if(ie.departamento='NI','NAO INFORMADO',ie.departamento) as DEPARTAMENTO,
+            ie.rua as LOGRADOURO, ie.numero as Nº, 
+            if(ie.complemento='NI','NAO INFORMADO',ie.complemento) as COMPLEMENTO,
+            ie.bairro as BAIRRO, ie.cep as CEP,
+            ie.telefone1 as TELEFONE_1, ie.telefone2 as TELEFONE_2,
+            if(ie.pagina_web='NI','NAO INFORMADO',ie.pagina_web) as PAGINA_WEB,
+            ie.campus as CAMPUS, ie.natureza_instituicao as NATUREZA_INSTITUIÇÃO
+            FROM `instituicao_ensino` ie, `curso` c
+            WHERE ie.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
+        return $query->result_array();
+    }
 
-			FROM parceiro Par
-			INNER JOIN curso Cur ON Par.id_curso = Cur.id
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-			INNER JOIN pessoa Pes ON Pes.id = Cur.id_pesquisador
-			INNER JOIN cidade Cid ON Cid.id = Pes.id_cidade
-			INNER JOIN estado Est ON Est.id = Cid.id_estado
-			INNER JOIN funcao Fun ON Fun.id = Pes.id_funcao
+    public function abaCidadesInstituicoesEnsino($where = ""){
 
-			UNION
+        $query = $this->db->query("
+            SELECT DISTINCT ie.id_curso as CURSO_VINCULADO, ie.id as ID_INSTITUIÇÃO_ENSINO, c.nome as CIDADE, e.sigla as ESTADO 
+            FROM `instituicao_ensino` ie, `cidade`c, `estado`e 
+            WHERE ie.id_cidade IS NOT NULL AND ie.id_cidade = c.id AND c.id_estado = e.id
+            $where
+        ");
+        return $query->result_array();
+    }
 
-			SELECT
+    public function abaOrganizacoesDemandantes($where = ""){
 
-			$informacoesNull
+        $query = $this->db->query("
+            SELECT od.id_curso as CURSO_VINCULADO, od.id as ID, od.nome as NOME, od.abrangencia as ABRANGÊNCIA,
+            DATE_FORMAT(od.data_fundacao_nacional, '%d/%m/%y') as DATA_FUNDAÇÃO_NACIONAL,
+            DATE_FORMAT(od.data_fundacao_estadual, '%d/%m/%y') as DATA_FUNDAÇÃO_ESTADUAL,
+            if(od.numero_acampamentos=-1,'NAO INFORMADO',od.numero_acampamentos) as Nº_ACAMPAMENTOS,
+            if(od.numero_assentamentos=-1,'NAO INFORMADO',od.numero_assentamentos) as Nº_ASSENTAMENTOS,
+            if(od.numero_familias_assentadas=-1,'NAO INFORMADO',od.numero_familias_assentadas) as Nº_FAMÍLIAS_ASSENTADAS,
+            if(od.numero_pessoas=-1,'NAO INFORMADO',od.numero_pessoas) as Nº_PESSOAS_ENVOLVIDAS_CURSO,
+            od.fonte_informacao as FONTE_INFORMAÇÕES
+            FROM `organizacao_demandante` od, `curso` c 
+            WHERE od.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
+        return $query->result_array();
+    }
 
-			FROM parceiro Par
-			INNER JOIN curso Cur ON Par.id_curso = Cur.id
-			INNER JOIN superintendencia Sup ON Sup.id = Cur.id_superintendencia
-			INNER JOIN curso_modalidade Moda ON Moda.id = Cur.id_modalidade
-			AND Cur.id_pesquisador IS NULL
-		");
+    public function abaCoordenadoresOrganizacoesDemandantes($where = ""){
 
-		return $query;
-	}
+        $query = $this->db->query("
+            SELECT DISTINCT o.id_curso as CURSO_VINCULADO, od.id_organizacao_demandante as ORGANIZAÇÃO_DEMANDANTE_VINCULADA,
+            od.id as ID, od.nome as NOME, od.grau_escolaridade_epoca as GRAU_ESCOLARIDADE_EPOCA_CURSO,
+            od.grau_escolaridade_atual as GRAU_ESCOLARIDADE_ATUAL,
+            CASE od.estuda_pronera
+            WHEN 'I' THEN 'NÃO INFORMADO'
+            WHEN 'S' THEN 'SIM'
+            WHEN 'N' THEN 'NÃO'
+            END as ESTUDOU_CURSO_PRONERA
+            FROM `organizacao_demandante_coordenador` od, `organizacao_demandante` o 
+            WHERE o.id = od.id_organizacao_demandante
+            $where
+        ");
+        return $query->result_array();
 
-	private function rmPes($dados)
-	{
-		$informacoesNull = str_replace('Pes.`cpf`', 			'NULL', $dados);
-    	$informacoesNull = str_replace('Pes.`rg`', 				'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`rg_emissor`', 		'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`nome`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`genero`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`data_nascimento`', 'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`telefone_1`', 		'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`telefone_2`', 		'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`ativo_inativo`', 	'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`logradouro`', 		'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`numero`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`bairro`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`cep`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Pes.`complemento`', 	'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Cid.`nome`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Est.`sigla`', 			'NULL', $informacoesNull);
-    	$informacoesNull = str_replace('Fun.`funcao`', 			'NULL', $informacoesNull);
+    }
 
-    	return $informacoesNull;
-	}
+    public function abaParceiros($where = ""){
 
-	private function rmEdu($dados)
-	{
-    	$informacoesNull = str_replace('Cid.`nome`', 			'NULL', $dados);
-    	$informacoesNull = str_replace('Est.`sigla`', 			'NULL', $informacoesNull);
+        $query = $this->db->query("
+            SELECT DISTINCT  p.id_curso as CURSO_VINCULADO, p.id as ID, p.nome as NOME, p.sigla as SIGLA,
+            p.rua as LOGRADOURO, p.numero as Nº, 
+            if(p.complemento='NI','NAO INFORMADO',p.complemento) as COMPLEMENTO,
+            p.bairro as BAIRRO, p.cep as CEP,
+            p.telefone1 as TELEFONE_1, p.telefone2 as TELEFONE_2,
+            if(p.pagina_web='NI','NAO INFORMADO',p.pagina_web) as PAGINA_WEB,
+            p.natureza as NATUREZA_INSTITUIÇÃO,
+            p.abrangencia as ABRANGÊNCIA
+            FROM `parceiro` p, `curso`c
+            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P' 
+            $where
+        ");
 
-    	return $informacoesNull;
-	}
+        return $query->result_array();
+
+    }
+    public function abaCidadesParceiros($where = ""){
+
+        $query = $this->db->query("
+            SELECT p.id as ID_PARCEIRO, c.nome as CIDADE, e.sigla as ESTADO 
+            FROM `parceiro` p, `cidade`c, `estado`e, `curso` cp
+            WHERE p.id_cidade IS NOT NULL AND p.id_cidade = c.id AND c.id_estado = e.id AND p.id_curso = cp.id
+            $where
+        ");
+
+        return $query->result_array();
+
+    }
+
+    public function abaTiposParceiros($where = ""){
+        $query = $this->db->query("
+            SELECT pp.id_parceiro as ID_PARCEIRO,
+            CASE realizacao 
+            WHEN 1 THEN 'SIM' 
+            WHEN 0 THEN 'NÃO' END as REALIZAÇÃO_CURSO,
+            CASE certificacao 
+            WHEN 1 THEN 'SIM' 
+            WHEN 0 THEN 'NÃO' END as CERTIFICAÇÃO_CURSO, 
+            CASE gestao 
+            WHEN 1 THEN 'SIM' 
+            WHEN 0 THEN 'NÃO' END as GESTÃO_ORÇAMENTÁRIA, 
+            CASE outros
+            WHEN 1 THEN 'SIM' 
+            WHEN 0 THEN 'NÃO' END as OUTRAS,
+            pp.complemento as COMPLEMENTO
+            FROM `parceiro_parceria` pp, `parceiro` p, `curso` c
+            WHERE pp.id_parceiro = p.id AND p.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            $where
+        ");
+
+        return $query->result_array();
+    }
 }
 
 /* End of file relatorio_dinamico_m.php */

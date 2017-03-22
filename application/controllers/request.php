@@ -592,8 +592,9 @@ class Request extends CI_Controller {
 
     function get_fiscalizacao() {
 
-        $this->db->select('f.id fiscalizacao_id, f.titulo titulo, f.data data');
+        $this->db->select('f.id fiscalizacao_id, t.nome tipo, f.data data');
         $this->db->from('fiscalizacao f');
+        $this->db->join('fiscalizacao_tipo t', 't.id = f.id_tipo', 'left');
         $this->db->where('f.id_curso', $this->session->userdata('id_curso'));
         $this->db->order_by('data');
         $query = $this->db->get();
@@ -615,7 +616,7 @@ class Request extends CI_Controller {
             $data = $data_nacional[2] . "/" . $data_nacional[1] . "/" . $data_nacional[0];
 
             $row[0] = utf8_encode($item->fiscalizacao_id);
-            $row[1] = ($item->titulo);
+            $row[1] = ($item->tipo);
             $row[2] = $data;
 
             $output['aaData'][] = $row;
@@ -673,12 +674,22 @@ class Request extends CI_Controller {
         echo json_encode($output);
     }
 
+    function get_funcao() {
+        $this->db->select('f.funcao as funcao');
+        $this->db->from('pessoa p');
+        $this->db->join('funcao f', 'p.id_funcao = f.id', 'left');
+        $this->db->where('p.id', $this->uri->segment(3));
+        $query = $this->db->get();
+        echo $query->result()[0]->funcao;
+    }
+
     function get_fiscalizadores($idFiscalizacao) {
         if ($idFiscalizacao >= 0) {
-            $this->db->select('m.id_pessoa as id_pessoa, s.id as id_superintendencia,p.nome as nome, m.funcao as funcao');
+            $this->db->select('m.id_pessoa as id_pessoa, s.id as id_superintendencia,p.nome as nome, f.funcao as funcao');
             $this->db->from('fiscalizacao_membro m');
             $this->db->join('pessoa p', 'p.id = m.id_pessoa', 'left');
             $this->db->join('superintendencia s', 's.id = p.id_superintendencia', 'left');
+            $this->db->join('funcao f', 'f.id = p.id_funcao', 'left');
             $this->db->where('m.id_fiscalizacao', $this->uri->segment(3));
             $this->db->order_by('p.nome');
             $query = $this->db->get();
@@ -698,7 +709,7 @@ class Request extends CI_Controller {
 
                 $row[0] = 'R';
                 $row[1] = ($item->id_pessoa);
-                $row[2] = 'SR - '.($item->id_superintendencia);
+                $row[2] = 'SR - ' . ($item->id_superintendencia);
                 $row[3] = ($item->nome);
                 $row[4] = ($item->funcao);
 

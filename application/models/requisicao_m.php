@@ -10,6 +10,26 @@ class Requisicao_m extends CI_Model {
         $this->load->helper('url');  // Loading Helper
     }
 
+    function get_tipo_fiscalizacao(){
+        $this->db->where(array(
+            'nome <>' => ''
+        ));
+
+        $this->db->order_by('nome');
+        $query = $this->db->get('fiscalizacao_tipo');
+
+        $resultado = "<option value=\"0\" disabled selected> Selecione o tipo </option>";
+
+        foreach ($query->result() as $row) {
+
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+        }
+
+        $resultado .= "<option value=\"OUTRO\"> OUTRO </option>";
+
+        echo $resultado;
+    }
+    
     function get_tipo_instrumento_curso() {
         $this->db->where(array(
             'nome <>' => ''
@@ -131,7 +151,7 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-
+    
     function get_superintendencias() {
         $query = $this->db->get('superintendencia');
         $this->db->order_by('nome');
@@ -298,7 +318,7 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-
+    
     function get_funcoes() {
 
         $where = array(

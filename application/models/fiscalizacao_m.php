@@ -80,6 +80,15 @@ class Fiscalizacao_m extends CI_Model {
         $this->db->delete('fiscalizacao_membro');
         return;
     }
+    
+    function add_record_tipo($tipo){
+        if (($this->db->insert('fiscalizacao_tipo', $tipo) != null) && ($this->db->affected_rows() > 0)
+        ) {
+            return $this->db->insert_id();
+        } else {
+            return false;
+        }
+    }
 
 }
 

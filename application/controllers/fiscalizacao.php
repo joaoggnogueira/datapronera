@@ -109,7 +109,6 @@ class Fiscalizacao extends CI_Controller {
     function add() {
 
         $data = array(
-            'titulo' => trim($this->input->post('titulo')),
             'resumo' => trim($this->input->post('resumo')),
             'data' => implode("-", array_reverse(explode("/", $this->input->post('data')), true)),
             'id_curso' => $this->session->userdata('id_curso')
@@ -117,17 +116,31 @@ class Fiscalizacao extends CI_Controller {
 
         // Starts transaction
         $this->db->trans_begin();
+        
+        if ($this->input->post('tipo') == 'OUTRO') {
 
-        if ($inserted_id = $this->fiscalizacao_m->add_record($data)) {
+            $tipo = array(
+                'nome' => trim($this->input->post('tipo_descricao')),
+            );
 
-            if ($membros = $this->input->post('membros')) {
+            // Inserts course's genre
+            $id_tipo = $this->fiscalizacao_m->add_record_tipo($tipo);
+            $this->log->save("TIPO DE FISCALIZAÇÃO '" . $tipo["nome"] . "' ADICIONADO: ID '" . $id_tipo . "'");
+        } else {
+            $id_tipo = $this->input->post('tipo');
+        }
+            
+        $data["id_tipo"] = $id_tipo;
+        
+        if (($inserted_id = $this->fiscalizacao_m->add_record($data))) {
+
+            if (($membros = $this->input->post('membros'))) {
 
                 foreach ($membros as $membro) {
 
                     $coord = array(
                         'id_fiscalizacao' => $inserted_id,
-                        'id_pessoa' => $membro[1],
-                        'funcao' => trim($membro[4])
+                        'id_pessoa' => $membro[1]
                     );
 
                     if (!$this->fiscalizacao_m->add_record_membro($coord))
@@ -163,7 +176,7 @@ class Fiscalizacao extends CI_Controller {
 
                 $response = array(
                     'success' => false,
-                    'message' => 'Falha ao efetuar cadastro'
+                    'message' => 'Falha ao efetuar cadastro. Erro 0x2'
                 );
             }
         } else {
@@ -172,7 +185,7 @@ class Fiscalizacao extends CI_Controller {
 
             $response = array(
                 'success' => false,
-                'message' => 'Falha ao efetuar cadastro'
+                'message' => 'Falha ao efetuar cadastro. Erro 0x1'
             );
         }
 
@@ -182,7 +195,6 @@ class Fiscalizacao extends CI_Controller {
     function update() {
 
         $data = array(
-            'titulo' => trim($this->input->post('titulo')),
             'resumo' => trim($this->input->post('resumo')),
             'data' => implode("-", array_reverse(explode("/", $this->input->post('data')), true)),
             'id_curso' => $this->session->userdata('id_curso')
@@ -191,6 +203,21 @@ class Fiscalizacao extends CI_Controller {
         // Starts transaction
         $this->db->trans_begin();
 
+        if ($this->input->post('tipo') == 'OUTRO') {
+
+            $tipo = array(
+                'nome' => trim($this->input->post('tipo_descricao')),
+            );
+
+            // Inserts course's genre
+            $id_tipo = $this->fiscalizacao_m->add_record_tipo($tipo);
+            $this->log->save("TIPO DE FISCALIZAÇÃO '" . $tipo["nome"] . "' ADICIONADO: ID '" . $id_tipo . "'");
+        } else {
+            $id_tipo = $this->input->post('tipo');
+        }
+        
+        $data["id_tipo"] = $id_tipo;
+        
         if ($this->fiscalizacao_m->update_record($data, $this->input->post('id'))) {
 
             // Algoritmo BURRO!
@@ -214,8 +241,7 @@ class Fiscalizacao extends CI_Controller {
                     if ($membro[0] == 'N') {
                         $coord = array(
                             'id_fiscalizacao' => $this->input->post('id'),
-                            'id_pessoa' => $membro[1],
-                            'funcao' => trim($membro[4])
+                            'id_pessoa' => $membro[1]
                         );
 
                         if (!$this->fiscalizacao_m->add_record_membro($coord))

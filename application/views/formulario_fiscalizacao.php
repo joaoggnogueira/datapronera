@@ -1,5 +1,6 @@
 <?php
 $this->session->set_userdata('curr_content', 'fiscalizacao');
+$retrivial = ($operacao != 'add');
 ?>
 <script type="text/javascript">
 
@@ -26,6 +27,8 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
             $('#superintendencia').listCities(urlPesquisadores, 'fiscalizacao_sel_pessoa_equipe');
 
             if (super_curso != 0) {
+                var value = $('#superintendencia option[value="' + super_curso + '"]').html();
+                $('#superintendencia option[value="' + super_curso + '"]').html(value+" (SR do CURSO)");
                 $('#superintendencia option[value="' + super_curso + '"]').attr("selected", true);
                 $('#superintendencia').change();
             }
@@ -43,11 +46,6 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
                         'id': 'fiscalizacao_sel_pessoa_equipe',
                         'message': 'Selecione o pesquisador',
                         'extra': null
-                    },
-                    {
-                        'id': 'funcao',
-                        'message': 'Informe a função do pesquisador',
-                        'extra': null
                     }
             );
 
@@ -56,24 +54,45 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
                 var cod_pesquisador = $('#fiscalizacao_sel_pessoa_equipe').val();
                 var pesquisador = $('#fiscalizacao_sel_pessoa_equipe option:selected').text();
                 var superintendencia = $('#superintendencia').val();
-                var funcao = $('#funcao').val().toUpperCase();
-
-                var node = ['N', cod_pesquisador, "SR - "+superintendencia, pesquisador, funcao];
+                var url = "<?php echo site_url('/request/get_funcao').'/'; ?>"+cod_pesquisador;
                 
-                if (!table.nodeExistsById(node,1)) {
-
-                    table.addData(node);
-
-                    $('#fiscalizacao_sel_pessoa_equipe').val(0);
-                    $('#funcao').val("");
-
-                } else {
-                    $('#fiscalizacao_sel_pessoa_equipe').showErrorMessage('Pesquisador já adicionado!');
-                }
+                $.get(url, function (funcao) {
+                    var node = ['N', cod_pesquisador, "SR - "+superintendencia, pesquisador, funcao];
+                    if (!table.nodeExistsById(node,1)) {
+                        table.addData(node);
+                        $('#fiscalizacao_sel_pessoa_equipe').val(0);
+                    } else {
+                        $('#fiscalizacao_sel_pessoa_equipe').showErrorMessage('Pesquisador já adicionado!');
+                    }
+                });
             }
         });
         /* Máscara para inputs */
         $('#data').mask("99/99/9999");
+
+        // Tipo
+        $.get("<?php echo site_url('requisicao/get_tipo_fiscalizacao'); ?>", function (modalidade) {
+            $('#tipo').html(modalidade);
+            
+            var fiscalizacao_tipo = "<?php echo ($retrivial?$dados[0]->id_tipo:0); ?>";
+
+            if (fiscalizacao_tipo != 0) {
+                $('#tipo option[value="' + fiscalizacao_tipo + '"]').attr("selected", true);
+            }
+        });
+
+        $('#tipo').change(function (e) {
+
+            if (e.target.value == 'OUTRO') {
+                $('#tipo_descricao').show().focus();
+
+            } else {
+                $('#tipo_descricao').hide();
+                $('#tipo_descricao').hideErrorMessage();
+            }
+        });
+        
+        
 
         contador = 0;
         $('#botao_movim_coord').click(function () {
@@ -97,24 +116,24 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
             );
 
             if (isFormComplete(form)) {
-                var nome = $('#movimento_nome_membro').val().toUpperCase();
-                var esc = $('#movimento_grau_membro').val().toUpperCase();
-                var estudo = $("input:radio[name=rmovimento_estudo]:checked").val();
 
-                var node = ['N', 0, nome, esc, "#", estudo];
-
-                if (!table.nodeExists(node)) {
+                var cod_pesquisador = $('#fiscalizacao_sel_pessoa_equipe').val();
+                var pesquisador = $('#fiscalizacao_sel_pessoa_equipe option:selected').text();
+                var superintendencia = $('#superintendencia').val();
+                $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function (superintendencia) {
+                    
+                });
+                var node = ['N', cod_pesquisador, "SR - "+superintendencia, pesquisador, "Carregando"];
+                
+                if (!table.nodeExistsById(node,1)) {
 
                     table.addData(node);
 
-                    $('#movimento_nome_membro').val("");
-                    $('#movimento_grau_membro').val("");
-                    $('input:radio[name=rmovimento_estudo]').prop('checked', false);
+                    $('#fiscalizacao_sel_pessoa_equipe').val(0);
+                    $('#funcao').val("");
 
                 } else {
-                    $('#movimento_nome_membro').showErrorMessage('Membro já cadastrado');
-                    $('#movimento_grau_membro').showErrorMessage('');
-                    $('input:radio[name=rmovimento_estudo]').showErrorMessage('');
+                    $('#fiscalizacao_sel_pessoa_equipe').showErrorMessage('Pesquisador já adicionado!');
                 }
             }
         });
@@ -123,8 +142,14 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
 
             var form = Array(
                     {
-                        'id': 'titulo',
-                        'message': 'Informe um titulo ',
+                        'id': 'tipo',
+                        'message': 'Informe o tipo da fiscalização',
+                        'extra': null
+                    },
+                    {
+                        'id': 'tipo_descricao',
+                        'ni': (($('#tipo').val() == 'OUTRO') ? false : true),
+                        'message': 'Especifique o tipo da fiscalização',
                         'extra': null
                     },
                     {
@@ -143,7 +168,8 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
 
                 var formData = {
                     id: id,
-                    titulo: $('#titulo').val().toUpperCase(),
+                    tipo: $('#tipo').val(),
+                    tipo_descricao: $('#tipo_descricao').val().toUpperCase(),
                     resumo: $("#resumo").val(),
                     data: $('#data').val(),
                     membros: table.getAll(),
@@ -172,7 +198,6 @@ $this->session->set_userdata('curr_content', 'fiscalizacao');
 </script>
 
 <?php
-$retrivial = ($operacao != 'add');
 $countInput = 0;
 $countBoxMembers = 97;
 ?>
@@ -189,13 +214,19 @@ $countBoxMembers = 97;
             ?>
             <input type="button" id="reset" class="btn btn-default" value="Voltar">
         </div>
-
         <div class="form-group">
-            <label><?= ++$countInput; ?>. Titulo</label>
-            <div>
-                <input maxlength="90" type="text" class="form-control tamanho-lg" id="titulo" name="titulo"
-                       value="<?php if ($retrivial) echo $dados[0]->titulo; ?>">
-                <label class="control-label form" for="titulo"></label>
+            <label><?= ++$countInput; ?>. Tipo do Acompanhamento/Fiscalização</label>
+            <div class="form-group">
+                <div>
+                    <select class="form-control" id="tipo" name="tipo"></select>
+                    <p class="text-danger select"><label for="tipo"></label></p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <input type="text" class="form-control tamanho-lg" id="tipo_descricao" name="tipo_descricao" placeHolder="Especifique" style="display: none;">
+                    <label class="control-label form bold" for="tipo_descricao"></label>
+                </div>
             </div>
         </div>
 
@@ -235,19 +266,12 @@ $countBoxMembers = 97;
                 </div>
             </div>
             <div class="form-group interno">
-                <label> <?= chr($countBoxMembers++) ?>. Fun&ccedil;&atilde;o </label>
-                <div>
-                    <input rows="90" type="text" class="form-control tamanho-lg" id="funcao" name="funcao" accept="">
-                    <label class="control-label form" for="funcao"></label>
-                </div>
-            </div>
-            <div class="form-group interno">
                 <ul id="members_controls" class="nav nav-pills buttons">
                     <li class="buttons">
-                        <button type="button" id="botao_add_memb" class="btn btn-default">Adicionar Membro</button>
+                        <button type="button" style="margin-top: 10px" id="botao_add_memb" class="btn btn-default">Adicionar Membro</button>
                     </li>
                     <li class="buttons">
-                        <button type="button" class="btn btn-default btn-disabled disabled delete-row" id="deletar" name="deletar"> Remover Selecionado </button>
+                        <button type="button" style="margin-top: 10px" class="btn btn-default btn-disabled disabled delete-row" id="deletar" name="deletar"> Remover Selecionado </button>
                     </li>
                 </ul>
             </div>

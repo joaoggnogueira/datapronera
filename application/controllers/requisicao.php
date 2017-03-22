@@ -19,7 +19,11 @@ class Requisicao extends CI_Controller {
     function get_modalidades() {
         return $this->requisicao_m->get_modalidades();
     }
-
+    
+    function get_tipo_fiscalizacao(){
+        return $this->requisicao_m->get_tipo_fiscalizacao();
+    }
+    
     function get_tipo_instrumento_curso() {
         return $this->requisicao_m->get_tipo_instrumento_curso();
     }

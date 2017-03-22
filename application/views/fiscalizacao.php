@@ -93,7 +93,7 @@
         <thead>
             <tr>
                 <th width=  "10px;"> CÓDIGO </th>
-                <th width= "380px"> TITULO </th>
+                <th width= "380px"> TIPO </th>
                 <th width= "140px"> DATA </th>
             </tr>
         </thead>

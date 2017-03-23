@@ -20,56 +20,89 @@
     		<li>
 		    	<h4>Cursos</h4>
 		    	<ul>
-		    		<li class="li-rel">Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos por modalidade <b>(nominal)</b> 
-		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso_modalidade/1'); ?>">XLS</a> 
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso_modalidade/1'); ?>">XLS</a>  
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso_modalidade/2'); ?>">PDF</a>
+		    			Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos por modalidade <b>(nominal)</b> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel">Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos <b>(total nacional)</b> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso/2'); ?>">PDF</a>
+		    		Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos <b>(total nacional)</b> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel">Cursos por modalidade <b>(total nacional)</b> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_modalidade/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_modalidade/2'); ?>">PDF</a>
+		    		Cursos por modalidade <b>(total nacional)</b> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel">Cursos por n&iacute;vel <b>(total nacional)</b> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_nivel/1'); ?>">XLS</a> 
-		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_nivel/2'); ?>">PDF</a> </li>
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_nivel/2'); ?>">PDF</a> 
+		    		Cursos por n&iacute;vel <b>(total nacional)</b> 
+		    		</li>
 		    		<br>
-		    		<li class="li-rel">Cursos por n&iacute;vel e superintend&ecirc;ncia <b>(total nacional)</b> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_nivel_superintendencia/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_nivel_superintendencia/2'); ?>">PDF</a> 
+		    		Cursos por n&iacute;vel e superintend&ecirc;ncia <b>(total nacional)</b> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel">Cursos por superintend&ecirc;ncia <b>(total nacional)</b></a> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_superintendencia/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_superintendencia/2'); ?>">PDF</a> 
+		    		Cursos por superintend&ecirc;ncia <b>(total nacional)</b></a> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel">Alunos ingressantes por modalidade <b>(total nacional)</b></a> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/2'); ?>">PDF</a> 
+		    		Alunos ingressantes por modalidade <b>(total nacional)</b></a> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel">Alunos ingressantes por n&iacute;vel <b>(total nacional)</b></a> 
+		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/2'); ?>">PDF</a> 
+		    		Alunos ingressantes por n&iacute;vel <b>(total nacional)</b></a> 
 		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia'); ?>">Alunos ingressantes por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/2'); ?>">PDF</a> 
+		    		Alunos ingressantes por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr'); ?>">Alunos ingressantes por n&iacute;vel e superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/2'); ?>">PDF</a> 
+		    			Alunos ingressantes por n&iacute;vel e superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade'); ?>">Alunos concluintes por modalidade <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/2'); ?>">PDF</a> 
+		    			Alunos concluintes por modalidade <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel'); ?>">Alunos concluintes por n&iacute;vel <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/2'); ?>">PDF</a> 
+		    			Alunos concluintes por n&iacute;vel <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia'); ?>">Alunos concluintes por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/2'); ?>">PDF</a> 
+		    			Alunos concluintes por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr'); ?>">Alunos concluintes por n&iacute;vel e superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/2'); ?>">PDF</a> 
+		    			Alunos concluintes por n&iacute;vel e superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<!--<li class="li-rel">
 		    			<a href="<?php //echo site_url('relatorio_geral_pnera2/informacoes_relevantes'); ?>"><i>Informa&ccedil;&otilde;es Relevantes:
 		    				<ul class="listNone">
@@ -80,7 +113,11 @@
 		    			</a>
 		    		</li>-->
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade'); ?>">Lista de cursos por modalidade <b>(nominal)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade/2'); ?>">PDF</a> 
+		    			Lista de cursos por modalidade <b>(nominal)</b>
+		    		</li>
 		    	</ul>
 		    </li>
 

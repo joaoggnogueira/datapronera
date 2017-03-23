@@ -162,7 +162,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
 	function alunos_ingressantes_nivel_sr($levels) {
 
-		$select = "SELECT s.id, s.nome,";
+		$select = "SELECT s.id, s.nome as superintendencia,";
 
 		$stms = array();
 		foreach ($levels as $level) {

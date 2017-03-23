@@ -4,7 +4,6 @@ class Request extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-
         $this->load->database();   // Loading Database
         $this->load->library('session'); // Loading Session
         $this->load->helper('url');  // Loading Helper
@@ -680,7 +679,8 @@ class Request extends CI_Controller {
         $this->db->join('funcao f', 'p.id_funcao = f.id', 'left');
         $this->db->where('p.id', $this->uri->segment(3));
         $query = $this->db->get();
-        echo $query->result()[0]->funcao;
+        $dados = $query->result();
+        echo $dados[0]->funcao;
     }
 
     function get_fiscalizadores($idFiscalizacao) {

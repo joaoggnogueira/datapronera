@@ -60,7 +60,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
 	function cursos_nivel_superintendencia($levels) {
 
-		$select = "SELECT s.id, s.nome,";
+		$select = "SELECT s.id AS id, s.nome AS nome, ";
 
 		$stms = array();
 		foreach ($levels as $level) {

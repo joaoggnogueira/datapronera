@@ -1,5 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/** Include path **/        
+set_include_path(__DIR__ . '/../third_party/spout-2.7.1/src/Spout/Autoloader');
+
+/** PHPExcel **/
+include_once("autoload.php");
+
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
 class Relatorio_dinamico extends CI_Controller {
 
 	private $access_level;
@@ -50,19 +59,6 @@ class Relatorio_dinamico extends CI_Controller {
         date_default_timezone_set('Europe/London');
 
         define('EOL',(PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
-
-        /** Include path **/        
-        set_include_path(__DIR__ . '/../third_party/phpexcel/classes');
-
-        /** PHPExcel **/
-        include 'PHPExcel.php';
-
-        $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
-        $cacheSettings = array( ' memoryCacheSize ' => '8MB');
-        PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
-
-        $this->excel = new PHPExcel();
-
 
         /** CRIO ARRAYS PRIMERO **/
         $array = array();
@@ -127,99 +123,87 @@ class Relatorio_dinamico extends CI_Controller {
 
         /** GERO XLS **/
 
+        $writer = WriterFactory::create(Type::XLSX); // for XLSX files
+        //$writer = WriterFactory::create(Type::CSV); // for CSV files
+        //$writer = WriterFactory::create(Type::ODS); // for ODS files
+
+        //$writer->openToFile($filePath); // write data to a file or to a PHP stream
+        $writer->openToBrowser('rel_dinamico.xlsx'); // stream data directly to the browser
+
         /** SUPERINTENDENCIAS **/
-        $this->excel->setActiveSheetIndex(0);
-        $this->excel->getActiveSheet()->setTitle('Superintendências');
-        $this->excel->getActiveSheet()->fromArray($array[0], NULL, 'A1');
+        $currentSheet = $writer->getCurrentSheet();
+        $currentSheet->setName('Superintendências');
+        $writer->addRows($array[0]);
 
         /** CURSOS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(1);
-        $this->excel->getActiveSheet()->setTitle('Cursos');
-        $this->excel->getActiveSheet()->fromArray($array[1], NULL, 'A1');
+
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Cursos');
+        $writer->addRows($array[1]); // writes the row to the new sheet
 
         /** CIDADES_CURSOS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(2);
-        $this->excel->getActiveSheet()->setTitle('Cidades Cursos');
-        $this->excel->getActiveSheet()->fromArray($array[2], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Cidades Cursos');
+        $writer->addRows($array[2]); // writes the row to the new sheet
 
         /** EDUCANDOS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(3);
-        $this->excel->getActiveSheet()->setTitle('Educandos');
-        $this->excel->getActiveSheet()->fromArray($array[3], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Educandos');
+        $writer->addRows($array[3]); // writes the row to the new sheet
 
         /** CIDADES_EDUCANDOS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(4);
-        $this->excel->getActiveSheet()->setTitle('Cidades Educandos');
-        $this->excel->getActiveSheet()->fromArray($array[4], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Cidades Educandos');
+        $writer->addRows($array[4]); // writes the row to the new sheet
 
         /** PROFESSORES **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(5);
-        $this->excel->getActiveSheet()->setTitle('Professores');
-        $this->excel->getActiveSheet()->fromArray($array[5], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Professores');
+        $writer->addRows($array[5]); // writes the row to the new sheet
 
         /** DISCIPLINAS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(6);
-        $this->excel->getActiveSheet()->setTitle('Disciplinas');
-        $this->excel->getActiveSheet()->fromArray($array[6], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Disciplinas');
+        $writer->addRows($array[6]); // writes the row to the new sheet
 
         /** INSTITUICOES DE ENSINO **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(7);
-        $this->excel->getActiveSheet()->setTitle('Instituições de Ensino');
-        $this->excel->getActiveSheet()->fromArray($array[7], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Instituições de Ensino');
+        $writer->addRows($array[7]); // writes the row to the new sheet
 
         /** CIDADES_INSTITUICOES_DE_ENSINO **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(8);
-        $this->excel->getActiveSheet()->setTitle('Cidades das IE');
-        $this->excel->getActiveSheet()->fromArray($array[8], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Cidades Instituições de Ensino');
+        $writer->addRows($array[8]); // writes the row to the new sheet
 
         /** ORGANIZAÇÕES DEMANDANTES **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(9);
-        $this->excel->getActiveSheet()->setTitle('Organizações Demandantes');
-        $this->excel->getActiveSheet()->fromArray($array[9], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Organizações Demandantes');
+        $writer->addRows($array[9]); // writes the row to the new sheet
 
         /** COORDENADORES DAS ORGANIZAÇÕES **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(10);
-        $this->excel->getActiveSheet()->setTitle('Coordenadores das Org.');
-        $this->excel->getActiveSheet()->fromArray($array[10], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Coordenadores Organizações');
+        $writer->addRows($array[10]); // writes the row to the new sheet
 
         /** PARCEIROS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(11);
-        $this->excel->getActiveSheet()->setTitle('Parceiros');
-        $this->excel->getActiveSheet()->fromArray($array[11], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Parceiros');
+        $writer->addRows($array[11]); // writes the row to the new sheet
 
         /** CIDADES PARCEIROS **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(12);
-        $this->excel->getActiveSheet()->setTitle('Cidades dos Parceiros');
-        $this->excel->getActiveSheet()->fromArray($array[12], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Cidades Parceiros');
+        $writer->addRows($array[12]); // writes the row to the new sheet
 
         /** TIPOS DE PARCERIA **/
-        $this->excel->createSheet();
-        $this->excel->setActiveSheetIndex(13);
-        $this->excel->getActiveSheet()->setTitle('Tipos de Parceria');
-        $this->excel->getActiveSheet()->fromArray($array[13], NULL, 'A1');
+        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
+        $currentSheet->setName('Tipos Parceria');
+        $writer->addRows($array[13]); // writes the row to the new sheet
 
-        $filename='rel_dinamico.xls'; //save our workbook as this file name
-        header('Content-Type: application/vnd.ms-excel'); //mime type
-        header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
-        header('Cache-Control: max-age=0'); //no cache
 
-        //save it to Excel5 format (excel 2003 .XLS file), change this to 'Excel2007' (and adjust the filename extension, also the header mime type)
-        //if you want to save it as .XLSX Excel 2007 format
-        $objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel2007');  
-        //force user to download the Excel file without writing it to server's HD
-        $objWriter->save('php://output');
+        $writer->close();
+
     }
 
 }

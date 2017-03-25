@@ -266,7 +266,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //errado
+    //sql errado
     public function cursos_nivel_superintendencia($tipo) {
         
         $titles = array();
@@ -501,7 +501,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //errado
+    //sql errado
     public function alunos_ingressantes_nivel_sr($tipo) {
 
         $titles = array();
@@ -694,7 +694,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //errado
+    //sql errado
     public function alunos_concluintes_nivel_sr($tipo) {
 
         $titles = array();
@@ -789,667 +789,991 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function titulacao_educadores() {
+    public function titulacao_educadores($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->titulacao_educadores($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Escolaridade/titulação dos educadores", 2);
+                $titles = array("TITULAÇÃO", "% EDUCADORES");
 
-            $xls = array();
-            $xls = $this->create_header("Escolaridade/titulação dos educadores", 2);
-            $titles = array("TITULAÇÃO", "% EDUCADORES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('R28');
+
+                $this->barchart->set_number_format('0.0');                           // decimal format
+
+                $this->barchart->set_chart_colors(array('6B8E23'));                  // array - colors
+                $this->barchart->set_title("ESCOLARIDADE/TITULAÇÃO DOS EDUCADORES"); // string
+
+                $this->barchart->set_chart_data($xls);                               // data array
+                $this->barchart->set_filename('TITULACAO-EDUCADORES.xls');           // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('R28');
-
-            $this->barchart->set_number_format('0.0');                           // decimal format
-
-            $this->barchart->set_chart_colors(array('6B8E23'));                  // array - colors
-            $this->barchart->set_title("ESCOLARIDADE/TITULAÇÃO DOS EDUCADORES"); // string
-
-            $this->barchart->set_chart_data($xls);                               // data array
-            $this->barchart->set_filename('TITULACAO-EDUCADORES.xls');           // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Escolaridade/titulação dos educadores';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/titulacao_educadores', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function titulacao_educadores_superintendencia() {
+    public function titulacao_educadores_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->titulacao_educadores_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Escolaridade/titulação dos educadores por superintendência", 1);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "% ENSINO FUNDAMENTAL COMPLETO", "% ENSINO FUNDAMENTAL INCOMPLETO",
+                    "% ENSINO MÉDIO COMPLETO", "% ENSINO MÉDIO INCOMPLETO", "% GRADUADO(A)", "% ESPECIALISTA", "% MESTRE(A)", "% DOUTOR(A)");
 
-            $xls = array();
-            $xls = $this->create_header("Escolaridade/titulação dos educadores por superintendência", 2);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "% ENSINO FUNDAMENTAL COMPLETO", "% ENSINO FUNDAMENTAL INCOMPLETO",
-                "% ENSINO MÉDIO COMPLETO", "% ENSINO MÉDIO INCOMPLETO", "% GRADUADO(A)", "% ESPECIALISTA", "% MESTRE(A)", "% DOUTOR(A)");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_number_format('0.0');                           // decimal format
+
+                $this->barchart->set_chart_data($xls);                               // data array
+                $this->barchart->set_filename('TITULACAO-EDUCADORES-SUPERINTENDENCIA.xls');           // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_number_format('0.0');                           // decimal format
-
-            $this->barchart->set_chart_data($xls);                               // data array
-            $this->barchart->set_filename('TITULACAO-EDUCADORES-SUPERINTENDENCIA.xls');           // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Escolaridade/titulação dos educadores por superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/titulacao_educadores_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function educadores_nivel() {
+    public function educadores_nivel($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->educadores_nivel($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educadores por nível", 2);
+                $titles = array("NÍVEL", "EDUCADORES");
 
-            $xls = array();
-            $xls = $this->create_header("Educadores por nível", 2);
-            $titles = array("NÍVEL", "EDUCADORES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q25');
+
+                // Separador de milhar, com 0 casas decimais.
+                $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
+
+                $this->barchart->set_chart_colors(array('8B5742'));    // array - colors
+                $this->barchart->set_title("EDUCADORES POR NÍVEL");    // string
+
+                $this->barchart->set_chart_data($xls);                 // data array
+                $this->barchart->set_filename('EDUCADORES-NIVEL.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q25');
-
-            // Separador de milhar, com 0 casas decimais.
-            $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
-
-            $this->barchart->set_chart_colors(array('8B5742'));    // array - colors
-            $this->barchart->set_title("EDUCADORES POR NÍVEL");    // string
-
-            $this->barchart->set_chart_data($xls);                 // data array
-            $this->barchart->set_filename('EDUCADORES-NIVEL.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educadores por nível';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/educadores_nivel', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function educadores_curso() {
+    public function educadores_curso($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->educadores_curso($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educadores por curso", 2);
+                $titles = array("CÓDIGO", "CURSO", "EDUCADORES");
 
-            $xls = array();
-            $xls = $this->create_header("Educadores por curso", 2);
-            $titles = array("CÓDIGO", "CURSO", "EDUCADORES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
 
-            foreach ($result as $row) {
+                    $row['id_curso'] = $this->leading_zeros($row['id_superintendencia'], 2) . $this->leading_zeros($row['id_curso'], 3);
 
-                $row['id_curso'] = $this->leading_zeros($row['id_superintendencia'], 2) . $this->leading_zeros($row['id_curso'], 3);
+                    unset($row['id_superintendencia']);
+                    array_push($xls, $row);
+                }
 
-                unset($row['id_superintendencia']);
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('V35');
+
+                $this->barchart->set_legend_col('B');
+                $this->barchart->set_num_legend_columns(2);
+
+                // Separador de milhar, com 0 casas decimais.
+                $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
+
+                $this->barchart->set_chart_colors(array('8B5742'));    // array - colors
+                $this->barchart->set_title("EDUCADORES POR CURSO");    // string
+
+                $this->barchart->set_chart_data($xls);                 // data array
+                $this->barchart->set_filename('EDUCADORES-CURSO.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('V35');
-
-            $this->barchart->set_legend_col('B');
-            $this->barchart->set_num_legend_columns(2);
-
-            // Separador de milhar, com 0 casas decimais.
-            $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
-
-            $this->barchart->set_chart_colors(array('8B5742'));    // array - colors
-            $this->barchart->set_title("EDUCADORES POR CURSO");    // string
-
-            $this->barchart->set_chart_data($xls);                 // data array
-            $this->barchart->set_filename('EDUCADORES-CURSO.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educadores por curso';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/educadores_curso', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function educadores_superintendencia() {
+    public function educadores_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->educadores_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educadores por superintendência", 2);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "EDUCADORES");
 
-            $xls = array();
-            $xls = $this->create_header("Educadores por superintendência", 2);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "EDUCADORES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q50');
+
+                $this->barchart->set_legend_col('B');
+                $this->barchart->set_num_legend_columns(2);
+
+                // Separador de milhar, com 0 casas decimais.
+                $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
+
+                $this->barchart->set_chart_colors(array('006400'));                   // array - colors
+                $this->barchart->set_title("EDUCADORES POR SUPERINTENDÊNCIA");        // string
+
+                $this->barchart->set_chart_data($xls);                                // data array
+                $this->barchart->set_filename('EDUCADORES-SUPERINTENDENCIA.xls');     // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q50');
-
-            $this->barchart->set_legend_col('B');
-            $this->barchart->set_num_legend_columns(2);
-
-            // Separador de milhar, com 0 casas decimais.
-            $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
-
-            $this->barchart->set_chart_colors(array('006400'));                   // array - colors
-            $this->barchart->set_title("EDUCADORES POR SUPERINTENDÊNCIA");        // string
-
-            $this->barchart->set_chart_data($xls);                                // data array
-            $this->barchart->set_filename('EDUCADORES-SUPERINTENDENCIA.xls');     // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educadores por superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/educadores_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function genero_educadores_modalidade() {
+    public function genero_educadores_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->genero_educadores_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Participação de homens e mulheres como educadores dos cursos por modalidade", 2);
+                $titles = array("MODALIDADE", "% MASCULINO", "% FEMININO");
 
-            $xls = array();
-            $xls = $this->create_header("Participação de homens e mulheres como educadores dos cursos por modalidade", 2);
-            $titles = array("MODALIDADE", "% MASCULINO", "% FEMININO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chartType('stacked');                                 // stacked
+                $this->barchart->set_number_format('0.0');                           // decimal format
+
+                $this->barchart->set_chart_colors(array('87CEEB','EE5C42'));         // array - colors
+                $this->barchart->set_title("EDUCADORES POR GÊNERO E MODALIDADE");    // string
+
+                $this->barchart->set_chart_data($xls);                               // data array
+                $this->barchart->set_filename('EDUCADORES-GENERO-MODALIDADE.xls');   // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chartType('stacked');                                 // stacked
-            $this->barchart->set_number_format('0.0');                           // decimal format
-
-            $this->barchart->set_chart_colors(array('87CEEB','EE5C42'));         // array - colors
-            $this->barchart->set_title("EDUCADORES POR GÊNERO E MODALIDADE");    // string
-
-            $this->barchart->set_chart_data($xls);                               // data array
-            $this->barchart->set_filename('EDUCADORES-GENERO-MODALIDADE.xls');   // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Participação de homens e mulheres como educadores dos cursos por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/genero_educadores_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function educandos_superintendencia() {
+    public function educandos_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->educandos_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educandos por superintendência", 2);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "EDUCANDOS");
 
-            $xls = array();
-            $xls = $this->create_header("Educandos por superintendência", 2);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "EDUCANDOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q50');
+
+                $this->barchart->set_legend_col('B');
+                $this->barchart->set_num_legend_columns(2);
+
+                // Separador de milhar, com 0 casas decimais.
+                $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
+
+                $this->barchart->set_chart_colors(array('006400'));                   // array - colors
+                $this->barchart->set_title("EDUCANDOS POR SUPERINTENDÊNCIA");        // string
+
+                $this->barchart->set_chart_data($xls);                                // data array
+                $this->barchart->set_filename('EDUCANDOS-SUPERINTENDENCIA.xls');     // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q50');
-
-            $this->barchart->set_legend_col('B');
-            $this->barchart->set_num_legend_columns(2);
-
-            // Separador de milhar, com 0 casas decimais.
-            $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
-
-            $this->barchart->set_chart_colors(array('006400'));                   // array - colors
-            $this->barchart->set_title("EDUCANDOS POR SUPERINTENDÊNCIA");        // string
-
-            $this->barchart->set_chart_data($xls);                                // data array
-            $this->barchart->set_filename('EDUCANDOS-SUPERINTENDENCIA.xls');     // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educandos por superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/educandos_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function municipio_origem_educandos() {
+    public function municipio_origem_educandos($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->municipio_origem_educandos($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Município de origem dos educandos", 1);
+                $titles = array("ESTADO", "MUNICÍPIO", "CÓD MUNICÍPIO", "EDUCANDOS");
 
-            $xls = array();
-            $xls = $this->create_header("Município de origem dos educandos", 1);
-            $titles = array("ESTADO", "MUNICÍPIO", "CÓD MUNICÍPIO", "EDUCANDOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('MUNICIPIO-ORIGEM-EDUCANDOS.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('MUNICIPIO-ORIGEM-EDUCANDOS.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Município de origem dos educandos';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/municipio_origem_educandos', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function territorio_educandos_modalidade() {
+    public function territorio_educandos_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->territorio_educandos_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Território de origem dos educandos por modalidade", 1);
+                $titles = array("MODALIDADE", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
+                    "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO");
 
-            $xls = array();
-            $xls = $this->create_header("Território de origem dos educandos por modalidade", 1);
-            $titles = array("MODALIDADE", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
-                "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('TERRITORIO-EDUCANDOS-MODALIDADE.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('TERRITORIO-EDUCANDOS-MODALIDADE.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Território de origem dos educandos por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/territorio_educandos_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function territorio_educandos_superintendencia() {
+    public function territorio_educandos_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->territorio_educandos_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Território de origem dos educandos por superintendência", 1);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
+                    "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO");
 
-            $xls = array();
-            $xls = $this->create_header("Território de origem dos educandos por superintendência", 1);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
-                "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('TERRITORIO-EDUCANDOS-SUPERINTENDENCIA.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('TERRITORIO-EDUCANDOS-SUPERINTENDENCIA.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Território de origem dos educandos por superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/territorio_educandos_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function idade_educandos_modalidade() {
+    public function idade_educandos_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->idade_educandos_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Idade média dos educandos por modalidade", 2);
+                $titles = array("MODALIDADE", "MÉDIA DE IDADE (ANOS)");
 
-            $xls = array();
-            $xls = $this->create_header("Idade média dos educandos por modalidade", 2);
-            $titles = array("MODALIDADE", "MÉDIA DE IDADE (ANOS)");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_number_format('0.0');                                    // number format
+
+                $this->barchart->set_chart_colors(array('CDC9C9'));                     // array - colors
+                $this->barchart->set_title("IDADE MÉDIA DOS EDUCANDOS POR MODALIDADE"); // string
+
+                $this->barchart->set_chart_data($xls);                                  // data array
+                $this->barchart->set_filename('IDADE-EDUCANDOS-MODALIDADE.xls');        // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_number_format('0.0');                                    // number format
-
-            $this->barchart->set_chart_colors(array('CDC9C9'));                     // array - colors
-            $this->barchart->set_title("IDADE MÉDIA DOS EDUCANDOS POR MODALIDADE"); // string
-
-            $this->barchart->set_chart_data($xls);                                  // data array
-            $this->barchart->set_filename('IDADE-EDUCANDOS-MODALIDADE.xls');        // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Idade média dos educandos por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/idade_educandos_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function genero_educandos_modalidade() {
+    public function genero_educandos_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->genero_educandos_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Participação de homens e mulheres como educandos nos cursos por modalidade", 2);
+                $titles = array("MODALIDADE", "% MASCULINO", "% FEMININO");
 
-            $xls = array();
-            $xls = $this->create_header("Participação de homens e mulheres como educandos nos cursos por modalidade", 2);
-            $titles = array("MODALIDADE", "% MASCULINO", "% FEMININO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chartType('stacked');                                 // stacked
+                $this->barchart->set_number_format('0.0');                           // decimal format
+
+                $this->barchart->set_chart_colors(array('87CEEB','EE5C42'));         // array - colors
+                $this->barchart->set_title("EDUCANDOS POR GÊNERO E MODALIDADE");     // string
+
+                $this->barchart->set_chart_data($xls);                               // data array
+                $this->barchart->set_filename('EDUCANDOS-GENERO-MODALIDADE.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chartType('stacked');                                 // stacked
-            $this->barchart->set_number_format('0.0');                           // decimal format
-
-            $this->barchart->set_chart_colors(array('87CEEB','EE5C42'));         // array - colors
-            $this->barchart->set_title("EDUCANDOS POR GÊNERO E MODALIDADE");     // string
-
-            $this->barchart->set_chart_data($xls);                               // data array
-            $this->barchart->set_filename('EDUCANDOS-GENERO-MODALIDADE.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Participação de homens e mulheres como educandos nos cursos por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/genero_educandos_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function educandos_assentamento_modalidade() {
+    public function educandos_assentamento_modalidade($tipo) {
 
         // GAMBIARRRA para aumentar a área de memória 
         ini_set('memory_limit', '1024M');
 
         if ($result = $this->relatorio_geral_m_pnera2->educandos_assentamento_modalidade()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educandos por assentamento e modalidade de curso", 1);
+                $titles = array("NOME TERRITÓRIO", "EJA ALFABETIZACAO", "EJA ANOS INICIAIS", "EJA ANOS FINAIS",
+                    "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)", "EJA NIVEL MEDIO (NORMAL)", "NIVEL MEDIO/TECNICO (CONCOMITANTE)",
+                    "NIVEL MEDIO/TECNICO (INTEGRADO)", "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)", "GRADUACAO", "ESPECIALIZACAO",
+                    "RESIDENCIA AGRARIA", "MESTRADO", "DOUTORADO");
 
-            $xls = array();
-            $xls = $this->create_header("Educandos por assentamento e modalidade de curso", 1);
-            $titles = array("NOME TERRITÓRIO", "EJA ALFABETIZACAO", "EJA ANOS INICIAIS", "EJA ANOS FINAIS",
-                "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)", "EJA NIVEL MEDIO (NORMAL)", "NIVEL MEDIO/TECNICO (CONCOMITANTE)",
-                "NIVEL MEDIO/TECNICO (INTEGRADO)", "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)", "GRADUACAO", "ESPECIALIZACAO",
-                "RESIDENCIA AGRARIA", "MESTRADO", "DOUTORADO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
 
-            foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-MODALIDADE.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-MODALIDADE.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educandos por assentamento e modalidade de curso';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/educandos_assentamento_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function educandos_assentamento_nivel() {
+    //sql errado
+    public function educandos_assentamento_nivel($tipo) {
 
         // GAMBIARRRA para aumentar a área de memória 
         ini_set('memory_limit', '2048M');
 
         if ($result = $this->relatorio_geral_m_pnera2->educandos_assentamento_nivel()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educandos por assentamento e nível de curso", 1);
+                $titles = array("NOME TERRITÓRIO", "EJA FUNDAMENTAL", "ENSINO MÉDIO", "ENSINO SUPERIOR");
 
-            $xls = array();
-            $xls = $this->create_header("Educandos por assentamento e nível de curso", 1);
-            $titles = array("NOME TERRITÓRIO", "EJA FUNDAMENTAL", "ENSINO MÉDIO", "ENSINO SUPERIOR");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
 
-            foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-NIVEL.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-NIVEL.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educandos por assentamento e nível de curso';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/educandos_assentamento_nivel', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function lista_educandos_cursos_sr() {
+    //não funcional
+    public function lista_educandos_cursos_sr($tipo) {
 
         // GAMBIARRRA para aumentar a área de memória 
         ini_set('memory_limit', '1024M');
 
         if ($result = $this->relatorio_geral_m_pnera2->lista_educandos_cursos_sr()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Educandos, superintendência e curso", 1);
+                $titles = array("NOME EDUCANDO", "TIPO TERRITÓRIO", "NOME TERRITÓRIO", "CÓD. SR", "CÓD. CURSO", "NOME CURSO", "MODALIDADE CURSO");
 
-            $xls = array();
-            $xls = $this->create_header("Educandos, superintendência e curso", 1);
-            $titles = array("NOME EDUCANDO", "TIPO TERRITÓRIO", "NOME TERRITÓRIO", "CÓD. SR", "CÓD. CURSO", "NOME CURSO", "MODALIDADE CURSO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
 
-            foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('LISTA-EDUCANDOS-CURSOS-SR.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('LISTA-EDUCANDOS-CURSOS-SR.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Educandos, superintendência e curso';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/lista_educandos_cursos_sr', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         } else {
             echo "ERRO";
         }
     }
 
-    public function localizacao_instituicoes_ensino() {
+    public function localizacao_instituicoes_ensino($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->localizacao_instituicoes_ensino($this->session->userdata('access_level'))) {
+            if($tipo == 1){
+                $xls = array();
+                $xls = $this->create_header("Localização das instituições de ensino", 1);
+                $titles = array("ESTADO", "MUNICÍPIO", "CÓD MUNICÍPIO", "INSTITUIÇÃO DE ENSINO");
 
-            $xls = array();
-            $xls = $this->create_header("Localização das instituições de ensino", 1);
-            $titles = array("ESTADO", "MUNICÍPIO", "CÓD MUNICÍPIO", "INSTITUIÇÃO DE ENSINO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('LOCALIZACAO-INSTITUICOES-ENSINO.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('LOCALIZACAO-INSTITUICOES-ENSINO.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Localização das instituições de ensino';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/localizacao_instituicoes_ensino', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function instituicoes_ensino_modalidade() {
+    public function instituicoes_ensino_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_modalidade($this->session->userdata('access_level'))) {
+            if($tipo == 1){
+                $xls = array();
+                $xls = $this->create_header("Instituições de ensino que realizaram cursos por modalidade", 2);
+                $titles = array("MODALIDADE", "INSTITUIÇÕES DE ENSINO");
 
-            $xls = array();
-            $xls = $this->create_header("Instituições de ensino que realizaram cursos por modalidade", 2);
-            $titles = array("MODALIDADE", "INSTITUIÇÕES DE ENSINO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chart_colors(array('4F94CD'));                     // array - colors
+                $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR MODALIDADE");    // string
+
+                $this->barchart->set_chart_data($xls);                                  // data array
+                $this->barchart->set_filename('INSTITUICOES-ENSINO-MODALIDADE.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chart_colors(array('4F94CD'));                     // array - colors
-            $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR MODALIDADE");    // string
-
-            $this->barchart->set_chart_data($xls);                                  // data array
-            $this->barchart->set_filename('INSTITUICOES-ENSINO-MODALIDADE.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/instituicoes_ensino_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function instituicoes_ensino_nivel() {
+    public function instituicoes_ensino_nivel($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_nivel($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Instituições de ensino que realizaram cursos por nível", 2);
+                $titles = array("NÍVEL", "INSTITUIÇÕES DE ENSINO");
 
-            $xls = array();
-            $xls = $this->create_header("Instituições de ensino que realizaram cursos por nível", 2);
-            $titles = array("NÍVEL", "INSTITUIÇÕES DE ENSINO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chart_colors(array('4F94CD'));                     // array - colors
+                $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR NÍVEL");    // string
+
+                $this->barchart->set_chart_data($xls);                                  // data array
+                $this->barchart->set_filename('INSTITUICOES-ENSINO-NIVEL.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chart_colors(array('4F94CD'));                     // array - colors
-            $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR NÍVEL");    // string
-
-            $this->barchart->set_chart_data($xls);                                  // data array
-            $this->barchart->set_filename('INSTITUICOES-ENSINO-NIVEL.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por nível';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/instituicoes_ensino_nivel', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function instituicoes_ensino_superintendencia() {
+    public function instituicoes_ensino_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Instituições de ensino que realizaram cursos por superintendência", 1);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "INSTITUIÇÕES DE ENSINO");
 
-            $xls = array();
-            $xls = $this->create_header("Instituições de ensino que realizaram cursos por superintendência", 1);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "INSTITUIÇÕES DE ENSINO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q35');
+
+                $this->barchart->set_chart_colors(array('CDC9C9'));                           // array - colors
+                $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR SUPERINTENDÊNCIA");    // string
+
+                $this->barchart->set_chart_data($xls);                                        // data array
+                $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-SUPERINTENDENCIA.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q35');
-
-            $this->barchart->set_chart_colors(array('CDC9C9'));                           // array - colors
-            $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR SUPERINTENDÊNCIA");    // string
-
-            $this->barchart->set_chart_data($xls);                                        // data array
-            $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-SUPERINTENDENCIA.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/instituicoes_ensino_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function instituicoes_ensino_municipio() {
+    public function instituicoes_ensino_municipio($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_municipio($this->session->userdata('access_level'))) {
+            if($tipo == 1){
+                $xls = array();
+                $xls = $this->create_header("Instituições de ensino que realizaram cursos por municípios", 2);
+                $titles = array("ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "INSTITUIÇÕES DE ENSINO");
 
-            $xls = array();
-            $xls = $this->create_header("Instituições de ensino que realizaram cursos por municípios", 2);
-            $titles = array("ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "INSTITUIÇÕES DE ENSINO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q35');
+
+                $this->barchart->set_legend_col('C');
+                $this->barchart->set_num_legend_columns(3);
+
+                $this->barchart->set_chart_colors(array('CDC9C9'));                           // array - colors
+                $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR MUNICÌPIO");    // string
+
+                $this->barchart->set_chart_data($xls);                                        // data array
+                $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-MUNICIPIO.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q35');
-
-            $this->barchart->set_legend_col('C');
-            $this->barchart->set_num_legend_columns(3);
-
-            $this->barchart->set_chart_colors(array('CDC9C9'));                           // array - colors
-            $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR MUNICÌPIO");    // string
-
-            $this->barchart->set_chart_data($xls);                                        // data array
-            $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-MUNICIPIO.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por municípios';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/instituicoes_ensino_municipio', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function instituicoes_ensino_estado() {
+    public function instituicoes_ensino_estado($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_estado()) {
+            if($tipo == 1){
+                $xls = array();
+                $xls = $this->create_header("Instituições de ensino que realizaram cursos por estados", 2);
+                $titles = array("ESTADO", "INSTITUIÇÕES DE ENSINO");
 
-            $xls = array();
-            $xls = $this->create_header("Instituições de ensino que realizaram cursos por estados", 2);
-            $titles = array("ESTADO", "INSTITUIÇÕES DE ENSINO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q35');
+
+                $this->barchart->set_chart_colors(array('CDC9C9'));                           // array - colors
+                $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR ESTADO");    // string
+
+                $this->barchart->set_chart_data($xls);                                        // data array
+                $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-ESTADO.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q35');
-
-            $this->barchart->set_chart_colors(array('CDC9C9'));                           // array - colors
-            $this->barchart->set_title("INSTITUIÇÕES DE ENSINO POR ESTADO");    // string
-
-            $this->barchart->set_chart_data($xls);                                        // data array
-            $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-ESTADO.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por estados';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/instituicoes_ensino_estado', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function cursos_natureza_inst_ensino() {
+    public function cursos_natureza_inst_ensino($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->cursos_natureza_inst_ensino($this->session->userdata('access_level'))) {
+            if($tipo == 1){
+                $xls = array();
+                $xls = $this->create_header("Natureza das instituições de ensino e número de cursos realizados", 2);
+                $titles = array("NATUREZA", "CURSOS");
 
-            $xls = array();
-            $xls = $this->create_header("Natureza das instituições de ensino e número de cursos realizados", 2);
-            $titles = array("NATUREZA", "CURSOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chart_colors(array('00CDCD'));                                        // array - colors
+                $this->barchart->set_title("NATUREZA DAS INSTITUIÇÕES DE ENSINO\nE CURSOS REALIZADOS");    // string
+
+                $this->barchart->set_chart_data($xls);                                                     // data array
+                $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-CURSOS-NATUREZA.xls');                  // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chart_colors(array('00CDCD'));                                        // array - colors
-            $this->barchart->set_title("NATUREZA DAS INSTITUIÇÕES DE ENSINO\nE CURSOS REALIZADOS");    // string
-
-            $this->barchart->set_chart_data($xls);                                                     // data array
-            $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-CURSOS-NATUREZA.xls');                  // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Natureza das instituições de ensino e número de cursos realizados';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/cursos_natureza_inst_ensino', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function instituicao_ensino_cursos() {
+    public function instituicao_ensino_cursos($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->instituicao_ensino_cursos($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Lista das instituições de ensino e número de cursos realizados", 1);
+                $titles = array("INSTITUIÇÃO DE ENSINO", "CURSOS");
 
-            $xls = array();
-            $xls = $this->create_header("Lista das instituições de ensino e número de cursos realizados", 1);
-            $titles = array("INSTITUIÇÃO DE ENSINO", "CURSOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('INSTITUICAO-ENSINO-CURSOS.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('INSTITUICAO-ENSINO-CURSOS.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Lista das instituições de ensino e número de cursos realizados';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/instituicao_ensino_cursos', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 

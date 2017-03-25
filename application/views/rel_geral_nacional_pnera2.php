@@ -126,17 +126,41 @@
 		    <li>
 		    	<h4>Professores/Educadores</h4>
 		    	<ul>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/titulacao_educadores'); ?>">Escolaridade/titula&ccedil;&atilde;o dos educadores (%) <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/titulacao_educadores/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/titulacao_educadores/2'); ?>">PDF</a> 
+		    			Escolaridade/titula&ccedil;&atilde;o dos educadores (%) <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/titulacao_educadores_superintendencia'); ?>">Escolaridade/titula&ccedil;&atilde;o dos educadores (%) por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/titulacao_educadores_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/titulacao_educadores_superintendencia/2'); ?>">PDF</a> 
+		    			Escolaridade/titula&ccedil;&atilde;o dos educadores (%) por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/educadores_nivel'); ?>">Educadores por n&iacute;vel <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educadores_nivel/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educadores_nivel/2'); ?>">PDF</a> 
+		    			Educadores por n&iacute;vel <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/educadores_curso'); ?>">Educadores por curso <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educadores_curso/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educadores_curso/2'); ?>">PDF</a> 
+		    			Educadores por curso <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/educadores_superintendencia'); ?>">Educadores por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educadores_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educadores_superintendencia/2'); ?>">PDF</a> 
+		    			Educadores por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/genero_educadores_modalidade'); ?>">Participa&ccedil;&atilde;o (%) de homens e mulheres como educadores dos cursos por modalidade <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/genero_educadores_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/genero_educadores_modalidade/2'); ?>">PDF</a> 
+		    			Participa&ccedil;&atilde;o (%) de homens e mulheres como educadores dos cursos por modalidade <b>(total nacional)</b>
+		    		</li>
 		    	</ul>
 		    </li>
 
@@ -145,23 +169,59 @@
 		    <li>
 		    	<h4>Educandos</h4>
 		    	<ul>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/educandos_superintendencia'); ?>">Educandos por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educandos_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educandos_superintendencia/2'); ?>">PDF</a> 
+		    			Educandos por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/municipio_origem_educandos'); ?>">Munic&iacute;pio de origem dos educandos <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipio_origem_educandos/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/municipio_origem_educandos/2'); ?>">PDF</a> 
+		    			Munic&iacute;pio de origem dos educandos <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/territorio_educandos_modalidade'); ?>">Territ&oacute;rio de origem dos educandos por modalidade <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/territorio_educandos_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/territorio_educandos_modalidade/2'); ?>">PDF</a> 
+		    			Territ&oacute;rio de origem dos educandos por modalidade <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/territorio_educandos_superintendencia'); ?>">Territ&oacute;rio de origem dos educandos por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/territorio_educandos_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/territorio_educandos_superintendencia/2'); ?>">PDF</a> 
+		    			Territ&oacute;rio de origem dos educandos por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/idade_educandos_modalidade'); ?>">Idade m&eacute;dia dos educandos por modalidade <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/idade_educandos_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/idade_educandos_modalidade/2'); ?>">PDF</a> 
+		    			Idade m&eacute;dia dos educandos por modalidade <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/genero_educandos_modalidade'); ?>">Participa&ccedil;&atilde;o (%) de homens e mulheres como educandos nos cursos por modalidade <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/genero_educandos_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/genero_educandos_modalidade/2'); ?>">PDF</a> 
+		    			Participa&ccedil;&atilde;o (%) de homens e mulheres como educandos nos cursos por modalidade <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/educandos_assentamento_modalidade'); ?>">Educandos por assentamento e modalidade de curso <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educandos_assentamento_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educandos_assentamento_modalidade/2'); ?>">PDF</a> 
+		    			Educandos por assentamento e modalidade de curso <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/educandos_assentamento_nivel'); ?>">Educandos por assentamento e n&iacute;vel de curso <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educandos_assentamento_nivel/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/educandos_assentamento_nivel/2'); ?>">PDF</a> 
+		    			Educandos por assentamento e n&iacute;vel de curso <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/lista_educandos_cursos_sr'); ?>">Educandos, superintendência e curso <b>(nominal)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/lista_educandos_cursos_sr/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/lista_educandos_cursos_sr/2'); ?>">PDF</a> 
+		    			Educandos, superintendência e curso <b>(nominal)</b>
+		    		</li>
 		    	</ul>
 		    </li>
 
@@ -170,21 +230,53 @@
 			<li>
 		    	<h4>Institui&ccedil;&otilde;es de Ensino</h4>
 		    	<ul>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/localizacao_instituicoes_ensino'); ?>">Localiza&ccedil;&atilde;o das institui&ccedil;&otilde;es de ensino <b>(por munic&iacute;pios)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/localizacao_instituicoes_ensino/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/localizacao_instituicoes_ensino/2'); ?>">PDF</a> 
+		    			Localiza&ccedil;&atilde;o das institui&ccedil;&otilde;es de ensino <b>(por munic&iacute;pios)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_modalidade'); ?>">Institui&ccedil;&otilde;es de ensino que realizaram cursos por modalidade <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_modalidade/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_modalidade/2'); ?>">PDF</a> 
+		    			Institui&ccedil;&otilde;es de ensino que realizaram cursos por modalidade <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_nivel'); ?>">Institui&ccedil;&otilde;es de ensino que realizaram cursos por n&iacute;vel <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_nivel/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_nivel/2'); ?>">PDF</a> 
+		    			Institui&ccedil;&otilde;es de ensino que realizaram cursos por n&iacute;vel <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_superintendencia'); ?>">Institui&ccedil;&otilde;es de ensino que realizaram cursos por superintend&ecirc;ncia <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_superintendencia/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_superintendencia/2'); ?>">PDF</a> 
+		    			Institui&ccedil;&otilde;es de ensino que realizaram cursos por superintend&ecirc;ncia <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_municipio'); ?>">Institui&ccedil;&otilde;es de ensino que realizaram cursos por munic&iacute;pios <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_municipio/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_municipio/2'); ?>">PDF</a> 
+		    			Institui&ccedil;&otilde;es de ensino que realizaram cursos por munic&iacute;pios <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_estado'); ?>">Institui&ccedil;&otilde;es de ensino que realizaram cursos por estados <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_estado/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicoes_ensino_estado/2'); ?>">PDF</a> 
+		    			Institui&ccedil;&otilde;es de ensino que realizaram cursos por estados <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/cursos_natureza_inst_ensino'); ?>">Natureza das institui&ccedil;&otilde;es de ensino e n&uacute;mero de cursos realizados <b>(total nacional)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_natureza_inst_ensino/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/cursos_natureza_inst_ensino/2'); ?>">PDF</a> 
+		    			Natureza das institui&ccedil;&otilde;es de ensino e n&uacute;mero de cursos realizados <b>(total nacional)</b>
+		    		</li>
 		    		<br>
-		    		<li class="li-rel"><a href="<?php echo site_url('relatorio_geral_pnera2/instituicao_ensino_cursos'); ?>">Lista das institui&ccedil;&otilde;es de ensino e n&uacute;mero de cursos realizados <b>(nominal)</b></a> <a class="btn btn-success" style="color: black;" href="">XLS</a> <a class="btn btn-success" style="color: black;" href="">PDF</a> </li>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicao_ensino_cursos/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" href="<?php echo site_url('relatorio_geral_pnera2/instituicao_ensino_cursos/2'); ?>">PDF</a> 
+		    			Lista das institui&ccedil;&otilde;es de ensino e n&uacute;mero de cursos realizados <b>(nominal)</b>
+		    		</li>
 		    	</ul>
 		    </li>
 

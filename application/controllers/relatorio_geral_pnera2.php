@@ -127,6 +127,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
 
+                for ($i=0; $i < sizeof($result); $i++) { 
+                    $result[$i]['id_curso'] = $this->leading_zeros($result[$i]['id_superintendencia'], 2) . $this->leading_zeros($result[$i]['id_curso'], 3);
+                }
+
                 $dataResult['result'] = $result;
                 $pdf->WriteHTML($this->load->view('relatorio/2pnera/municipios_curso_modalidade', $dataResult, true));
                 $pdf->Output($pdfFilePath, 'I'); 
@@ -782,6 +786,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
                 
+                for ($i=0; $i < sizeof($result); $i++) { 
+                    $result[$i]['id_curso'] = $this->leading_zeros($result[$i]['id_superintendencia'], 2) . $this->leading_zeros($result[$i]['id_curso'], 3);
+                }
+
                 $dataResult['result'] = $result;
                 $pdf->WriteHTML($this->load->view('relatorio/2pnera/lista_cursos_modalidade', $dataResult, true));
                 $pdf->Output($pdfFilePath, 'I'); 
@@ -964,6 +972,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
                 
+                for ($i=0; $i < sizeof($result); $i++) { 
+                    $result[$i]['id_curso'] = $this->leading_zeros($result[$i]['id_superintendencia'], 2) . $this->leading_zeros($result[$i]['id_curso'], 3);
+                }
+
                 $dataResult['result'] = $result;
                 $pdf->WriteHTML($this->load->view('relatorio/2pnera/educadores_curso', $dataResult, true));
                 $pdf->Output($pdfFilePath, 'I'); 
@@ -1777,370 +1789,567 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function organizacoes_demandantes_modalidade() {
+    public function organizacoes_demandantes_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->organizacoes_demandantes_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Organizações demandantes por modalidade", 2);
+                $titles = array("MODALIDADE", "ORGANIZAÇÕES DEMANDANTES");
 
-            $xls = array();
-            $xls = $this->create_header("Organizações demandantes por modalidade", 2);
-            $titles = array("MODALIDADE", "ORGANIZAÇÕES DEMANDANTES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chart_colors(array('CD950C'));                       // array - colors
+                $this->barchart->set_title("ORGANIZAÇÕES DEMANDANTES POR MODALIDADE");    // string
+
+                $this->barchart->set_chart_data($xls);                                    // data array
+                $this->barchart->set_filename('ORGANIZAÇÕES-DEMANDANTES-MODALIDADE.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chart_colors(array('CD950C'));                       // array - colors
-            $this->barchart->set_title("ORGANIZAÇÕES DEMANDANTES POR MODALIDADE");    // string
-
-            $this->barchart->set_chart_data($xls);                                    // data array
-            $this->barchart->set_filename('ORGANIZAÇÕES-DEMANDANTES-MODALIDADE.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Organizações demandantes por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/organizacoes_demandantes_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function membros_org_demandantes_modalidade() {
+    public function membros_org_demandantes_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->membros_org_demandantes_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Porcentagem dos membros das organizações demandantes participantes de cursos do PRONERA por modalidade", 2);
+                $titles = array("MODALIDADE", "% ESTUDARAM NO PRONERA", "% NÃO ESTUDARAM NO PRONERA");
 
-            $xls = array();
-            $xls = $this->create_header("Porcentagem dos membros das organizações demandantes participantes de cursos do PRONERA por modalidade", 2);
-            $titles = array("MODALIDADE", "% ESTUDARAM NO PRONERA", "% NÃO ESTUDARAM NO PRONERA");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('S28');
+
+                $this->barchart->set_chartType('stacked');                                 // stacked
+                $this->barchart->set_number_format('0.0');                           // decimal format
+
+                $this->barchart->set_chart_colors(array('87CEEB','EE5C42'));         // array - colors
+                $this->barchart->set_title("
+                    MEMBROS DAS ORGANIZAÇÕES DEMANDANTES (%)\n
+                    PARTICIPANTES DOS CURSOS DO PRONERA\n
+                    POR MODALIDADE"
+                ); // string
+
+                $this->barchart->set_chart_data($xls);                               // data array
+                $this->barchart->set_filename('MEMBROS-ORG-DEMANDANTES-MODALIDADE.xls');    // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('S28');
-
-            $this->barchart->set_chartType('stacked');                                 // stacked
-            $this->barchart->set_number_format('0.0');                           // decimal format
-
-            $this->barchart->set_chart_colors(array('87CEEB','EE5C42'));         // array - colors
-            $this->barchart->set_title("
-                MEMBROS DAS ORGANIZAÇÕES DEMANDANTES (%)\n
-                PARTICIPANTES DOS CURSOS DO PRONERA\n
-                POR MODALIDADE"
-            ); // string
-
-            $this->barchart->set_chart_data($xls);                               // data array
-            $this->barchart->set_filename('MEMBROS-ORG-DEMANDANTES-MODALIDADE.xls');    // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Porcentagem dos membros das organizações demandantes participantes de cursos do PRONERA por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/membros_org_demandantes_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function organizacao_demandante_cursos() {
+    public function organizacao_demandante_cursos($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->organizacao_demandante_cursos($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Lista das organizações demandantes e número de cursos demandados", 1);
+                $titles = array("ORGANIZAÇÃO DEMANDANTE", "CURSOS");
 
-            $xls = array();
-            $xls = $this->create_header("Lista das organizações demandantes e número de cursos demandados", 1);
-            $titles = array("ORGANIZAÇÃO DEMANDANTE", "CURSOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('ORGANIZACAO-DEMANDANTE-CURSOS.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('ORGANIZACAO-DEMANDANTE-CURSOS.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Lista das organizações demandantes e número de cursos demandados';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/organizacao_demandante_cursos', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function localizacao_parceiros() {
+    public function localizacao_parceiros($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->localizacao_parceiros($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Localização dos parceiros", 1);
+                $titles = array("ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "PARCEIRO");
 
-            $xls = array();
-            $xls = $this->create_header("Localização dos parceiros", 1);
-            $titles = array("ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "PARCEIRO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('LOCALIZACAO-PARCEIROS.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('LOCALIZACAO-PARCEIROS.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Localização dos parceiros';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/localizacao_parceiros', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function parceiros_modalidade() {
+    public function parceiros_modalidade($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->parceiros_modalidade($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Parceiros por modalidade", 2);
+                $titles = array("MODALIDADE", "PARCEIROS");
 
-            $xls = array();
-            $xls = $this->create_header("Parceiros por modalidade", 2);
-            $titles = array("MODALIDADE", "PARCEIROS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('R28');
+
+                $this->barchart->set_chart_colors(array('8B4513'));        // array - colors
+                $this->barchart->set_title("PARCEIROS POR MODALIDADE");    // string
+
+                $this->barchart->set_chart_data($xls);                     // data array
+                $this->barchart->set_filename('PARCEIROS-MODALIDADE.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('R28');
-
-            $this->barchart->set_chart_colors(array('8B4513'));        // array - colors
-            $this->barchart->set_title("PARCEIROS POR MODALIDADE");    // string
-
-            $this->barchart->set_chart_data($xls);                     // data array
-            $this->barchart->set_filename('PARCEIROS-MODALIDADE.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Parceiros por modalidade';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/parceiros_modalidade', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function parceiros_superintendencia() {
+    public function parceiros_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->parceiros_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Parceiros por superintendência", 2);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "PARCEIROS");
 
-            $xls = array();
-            $xls = $this->create_header("Parceiros por superintendência", 1);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "PARCEIROS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q35');
+
+                $this->barchart->set_chart_colors(array('8B4513'));               // array - colors
+                $this->barchart->set_title("PARCEIROS POR SUPERINTENDÊNCIA");     // string
+
+                $this->barchart->set_chart_data($xls);                            // data array
+                $this->barchart->set_filename('PARCEIROS-SUPERINTENDENCIA.xls');  // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q35');
-
-            $this->barchart->set_chart_colors(array('8B4513'));               // array - colors
-            $this->barchart->set_title("PARCEIROS POR SUPERINTENDÊNCIA");     // string
-
-            $this->barchart->set_chart_data($xls);                            // data array
-            $this->barchart->set_filename('PARCEIROS-SUPERINTENDENCIA.xls');  // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Parceiros por superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/parceiros_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function parceiros_natureza() {
+    public function parceiros_natureza($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->parceiros_natureza($this->session->userdata('access_level'))) {
+            if($tipo == 1){
+                $xls = array();
+                $xls = $this->create_header("Parceiros por natureza da parceria", 2);
+                $titles = array("NATUREZA", "PARCEIROS");
 
-            $xls = array();
-            $xls = $this->create_header("Parceiros por natureza da parceria", 2);
-            $titles = array("NATUREZA", "PARCEIROS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('V28');
+
+                $this->barchart->set_chart_colors(array('CD661D'));        // array - colors
+                $this->barchart->set_title("PARCEIROS POR NATUREZA");      // string
+
+                $this->barchart->set_chart_data($xls);                     // data array
+                $this->barchart->set_filename('PARCEIROS-NATUREZA.xls');   // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('V28');
-
-            $this->barchart->set_chart_colors(array('CD661D'));        // array - colors
-            $this->barchart->set_title("PARCEIROS POR NATUREZA");      // string
-
-            $this->barchart->set_chart_data($xls);                     // data array
-            $this->barchart->set_filename('PARCEIROS-NATUREZA.xls');   // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Parceiros por natureza da parceria';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/parceiros_natureza', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function lista_parceiros() {
+    //erro na criacao do xls
+    public function lista_parceiros($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->lista_parceiros($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Lista dos parceiros", 1);
+                $titles = array("PARCEIRO");
 
-            $xls = array();
-            $xls = $this->create_header("Lista dos parceiros", 1);
-            $titles = array("PARCEIRO");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('LISTA-PARCEIROS.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('LISTA-PARCEIROS.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Lista dos parceiros';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/lista_parceiros', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function producoes_estado() {
+    public function producoes_estado($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->producoes_estado()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Produções por tipo de produção", 1);
+                $titles = array("ESTADO", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS");
 
-            $xls = array();
-            $xls = $this->create_header("Produções por tipo de produção", 1);
-            $titles = array("ESTADO", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('PRODUCOES-ESTADO.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('PRODUCOES-ESTADO.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/producoes_estado', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function producoes_superintendencia() {
+    public function producoes_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->producoes_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Produções por tipo de produção", 1);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS");
 
-            $xls = array();
-            $xls = $this->create_header("Produções por tipo de produção", 1);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('PRODUCOES-SUPERINTENDENCIA.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('PRODUCOES-SUPERINTENDENCIA.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/producoes_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function producoes_tipo() {
+    public function producoes_tipo($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->producoes_tipo($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Produções por tipo de produção", 2);
+                $titles = array("TIPO", "PRODUÇÕES");
 
-            $xls = array();
-            $xls = $this->create_header("Produções por tipo de produção", 2);
-            $titles = array("TIPO", "PRODUÇÕES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('V28');
+
+                $this->barchart->set_chart_colors(array('9370DB'));    // array - colors
+                $this->barchart->set_title("PRODUÇÕES POR TIPO");      // string
+
+                $this->barchart->set_chart_data($xls);                 // data array
+                $this->barchart->set_filename('PRODUCOES-TIPO.xls');   // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('V28');
-
-            $this->barchart->set_chart_colors(array('9370DB'));    // array - colors
-            $this->barchart->set_title("PRODUÇÕES POR TIPO");      // string
-
-            $this->barchart->set_chart_data($xls);                 // data array
-            $this->barchart->set_filename('PRODUCOES-TIPO.xls');   // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/producoes_tipo', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function pesquisa_estado() {
+    public function pesquisa_estado($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->pesquisa_estado()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Produções por tipo de produção", 1);
+                $titles = array("ESTADO", "MONOGRAFIAS/DISSERTAÇÕES", "LIVROS/COLETÂNEAS", "CAP. LIVROS", "ARTIGOS", "VÍDEOS/DOCUMENTÁRIOS", "PERIÓDICOS", "EVENTOS");
 
-            $xls = array();
-            $xls = $this->create_header("Produções por tipo de produção", 1);
-            $titles = array("ESTADO", "MONOGRAFIAS/DISSERTAÇÕES", "LIVROS/COLETÂNEAS", "CAP. LIVROS", "ARTIGOS", "VÍDEOS/DOCUMENTÁRIOS", "PERIÓDICOS", "EVENTOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('PRODUCOES-PRONERA-ESTADO.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('PRODUCOES-PRONERA-ESTADO.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/pesquisa_estado', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function pesquisa_superintendencia() {
+    public function pesquisa_superintendencia($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->pesquisa_superintendencia()) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Produções por tipo de produção", 1);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "MONOGRAFIAS/DISSERTAÇÕES", "LIVROS/COLETÂNEAS", "CAP. LIVROS", "ARTIGOS", "VÍDEOS/DOCUMENTÁRIOS", "PERIÓDICOS", "EVENTOS");
 
-            $xls = array();
-            $xls = $this->create_header("Produções por tipo de produção", 1);
-            $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "MONOGRAFIAS/DISSERTAÇÕES", "LIVROS/COLETÂNEAS", "CAP. LIVROS", "ARTIGOS", "VÍDEOS/DOCUMENTÁRIOS", "PERIÓDICOS", "EVENTOS");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                array_push($xls, $row);
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('PRODUCOES-PRONERA-SUPERINTENDENCIA.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-
-            $this->barchart->set_include_charts(false); // hide charts
-
-            $this->barchart->set_chart_data($xls);
-            $this->barchart->set_filename('PRODUCOES-PRONERA-SUPERINTENDENCIA.xls'); // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/pesquisa_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 
-    public function pesquisa_tipo() {
+    public function pesquisa_tipo($tipo) {
 
         if ($result = $this->relatorio_geral_m_pnera2->pesquisa_tipo($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Produções por tipo de produção", 2);
+                $titles = array("TIPO", "PRODUÇÕES");
 
-            $xls = array();
-            $xls = $this->create_header("Produções por tipo de produção", 2);
-            $titles = array("TIPO", "PRODUÇÕES");
+                array_push($xls, $titles);
 
-            array_push($xls, $titles);
+                foreach ($result as $row) {
+                    array_push($xls, $row);
+                }
 
-            foreach ($result as $row) {
-                array_push($xls, $row);
+                // Set the position where the chart should appear in the worksheet
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('Q28');
+
+                $this->barchart->set_chart_colors(array('B03060'));                 // array - colors
+                $this->barchart->set_title("PRODUÇÕES SOBRE O PRONERA POR TIPO");   // string
+
+                $this->barchart->set_chart_data($xls);                              // data array
+                $this->barchart->set_filename('PRODUCOES-PRONERA-TIPO.xls');        // filename
+
+                $this->barchart->create_chart();
             }
-
-            // Set the position where the chart should appear in the worksheet
-            $this->barchart->set_topLeftCell('I1');
-            $this->barchart->set_bottomRightCell('Q28');
-
-            $this->barchart->set_chart_colors(array('B03060'));                 // array - colors
-            $this->barchart->set_title("PRODUÇÕES SOBRE O PRONERA POR TIPO");   // string
-
-            $this->barchart->set_chart_data($xls);                              // data array
-            $this->barchart->set_filename('PRODUCOES-PRONERA-TIPO.xls');        // filename
-
-            $this->barchart->create_chart();
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/pesquisa_tipo', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
         }
     }
 }

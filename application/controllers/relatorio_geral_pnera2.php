@@ -227,7 +227,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             }
         }
     }
-
+    
     public function cursos_nivel($tipo) {
         
         if ($result = $this->relatorio_geral_m_pnera2->cursos_nivel($this->session->userdata('access_level'))) {

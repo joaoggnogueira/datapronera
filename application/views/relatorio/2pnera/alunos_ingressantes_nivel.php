@@ -8,8 +8,8 @@
 			foreach ($result as $row) {
 		?>
 			<tr>
-				<td><?php echo $row['modalidade']; ?></td>
-				<td style="text-align:center"><?php echo $row['alunos_ingressantes']; ?></td>
+				<td><?php echo $row['nivel']; ?></td>
+				<td style="text-align:center"><?php echo $row['alunos']; ?></td>
 			</tr>
 		<?php
 			}

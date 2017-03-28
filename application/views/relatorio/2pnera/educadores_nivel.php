@@ -10,7 +10,7 @@
 		?>
 			<tr>
 				<td><?php echo $row['nivel']; ?></td>
-				<td style="text-align:center"><?php echo $row['COUNT(p.id)']; ?></td>
+				<td style="text-align:center"><?php echo $row['educadores']; ?></td>
 			</tr>
 		<?php
 			}

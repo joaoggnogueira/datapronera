@@ -28,7 +28,7 @@ $retrivial = ($operacao != 'add');
 
             if (super_curso != 0) {
                 var value = $('#superintendencia option[value="' + super_curso + '"]').html();
-                $('#superintendencia option[value="' + super_curso + '"]').html(value+" (SR do CURSO)");
+                $('#superintendencia option[value="' + super_curso + '"]').html(value + " (SR do CURSO)");
                 $('#superintendencia option[value="' + super_curso + '"]').attr("selected", true);
                 $('#superintendencia').change();
             }
@@ -54,11 +54,11 @@ $retrivial = ($operacao != 'add');
                 var cod_pesquisador = $('#fiscalizacao_sel_pessoa_equipe').val();
                 var pesquisador = $('#fiscalizacao_sel_pessoa_equipe option:selected').text();
                 var superintendencia = $('#superintendencia').val();
-                var url = "<?php echo site_url('/request/get_funcao').'/'; ?>"+cod_pesquisador;
-                
+                var url = "<?php echo site_url('/request/get_funcao') . '/'; ?>" + cod_pesquisador;
+
                 $.get(url, function (funcao) {
-                    var node = ['N', cod_pesquisador, "SR - "+superintendencia, pesquisador, funcao];
-                    if (!table.nodeExistsById(node,1)) {
+                    var node = ['N', cod_pesquisador, "SR - " + superintendencia, pesquisador, funcao];
+                    if (!table.nodeExistsById(node, 1)) {
                         table.addData(node);
                         $('#fiscalizacao_sel_pessoa_equipe').val(0);
                     } else {
@@ -73,8 +73,8 @@ $retrivial = ($operacao != 'add');
         // Tipo
         $.get("<?php echo site_url('requisicao/get_tipo_fiscalizacao'); ?>", function (modalidade) {
             $('#tipo').html(modalidade);
-            
-            var fiscalizacao_tipo = "<?php echo ($retrivial?$dados[0]->id_tipo:0); ?>";
+
+            var fiscalizacao_tipo = "<?php echo ($retrivial ? $dados[0]->id_tipo : 0); ?>";
 
             if (fiscalizacao_tipo != 0) {
                 $('#tipo option[value="' + fiscalizacao_tipo + '"]').attr("selected", true);
@@ -91,8 +91,8 @@ $retrivial = ($operacao != 'add');
                 $('#tipo_descricao').hideErrorMessage();
             }
         });
-        
-        
+
+
 
         contador = 0;
         $('#botao_movim_coord').click(function () {
@@ -121,11 +121,11 @@ $retrivial = ($operacao != 'add');
                 var pesquisador = $('#fiscalizacao_sel_pessoa_equipe option:selected').text();
                 var superintendencia = $('#superintendencia').val();
                 $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function (superintendencia) {
-                    
+
                 });
-                var node = ['N', cod_pesquisador, "SR - "+superintendencia, pesquisador, "Carregando"];
-                
-                if (!table.nodeExistsById(node,1)) {
+                var node = ['N', cod_pesquisador, "SR - " + superintendencia, pesquisador, "Carregando"];
+
+                if (!table.nodeExistsById(node, 1)) {
 
                     table.addData(node);
 
@@ -163,27 +163,21 @@ $retrivial = ($operacao != 'add');
                         'extra': null
                     }
             );
+            var fileinput = $("input#file").get(0);
+            if (fileinput.files.length != 0 && !fileinput.validate) {
+                return;
+            }
 
             if (isFormComplete(form)) {
 
-                var formData = {
-                    id: id,
-                    tipo: $('#tipo').val(),
-                    tipo_descricao: $('#tipo_descricao').val().toUpperCase(),
-                    resumo: $("#resumo").val(),
-                    data: $('#data').val(),
-                    membros: table.getAll(),
-                    membros_excluidos: table.getDeletedRows(1)
-                };
-
                 var urlRequest = "<?php
-                    if ($operacao == 'add')
-                        echo site_url('fiscalizacao/add/');
-                    if ($operacao == 'update')
-                        echo site_url('fiscalizacao/update/');
-                ?>";
+if ($operacao == 'add')
+    echo site_url('fiscalizacao/add/');
+if ($operacao == 'update')
+    echo site_url('fiscalizacao/update/');
+?>";
 
-                request(urlRequest, formData);
+                requestMultipart(urlRequest, "form");
             }
         });
 
@@ -202,9 +196,13 @@ $countInput = 0;
 $countBoxMembers = 97;
 ?>
 
-<form id="form"	method="post">
+
+<form id="form"	method="post" enctype="multipart/form-data">
     <fieldset>
         <legend>Caracteriza&ccedil;&atilde;o de Acompanhamento/Fiscalização</legend>
+        <?PHP if ($operacao == "update"): ?>
+            <input type="hidden" name="id" value="<?php echo $fiscalizacao['id']; ?>"/>
+        <?PHP endif; ?>
 
         <div class="form-group controles">
             <?php
@@ -292,22 +290,139 @@ $countBoxMembers = 97;
             </div>
         </div>
         <div class="form-group">
-            <label><?= ++$countInput; ?>. Anexo<br></label>
-            <div class="form-group">
-                <div>
-                    <div class="col-lg-6 col-sm-6 col-12">
-                        <div class="input-group">
-                            <label class="input-group-btn">
-                                <span class="btn btn-success">
-                                    Escolher <input type="file" style="display: none;" multiple>
+            <label><?= ++$countInput; ?>. Anexo
+                <br><small>Arquivo deve ser menor que <?= $maxSizeFile ?>MB</small>
+                <br><small>Somente arquivo do tipo <?= $allowedTypesFile ?></small>
+            </label>
+            <?PHP if ($retrivial): ?>
+                <?PHP if ($dados[0]->arquivo != null): ?>
+                    <div class="form-group">
+                        <label class="input-group-btn" id="file-layout">
+                            <?PHP if (file_exists($dados[0]->arquivo)): ?>
+                                <span class="btn btn-success" onclick="downloadFile('<?= $dados[0]->arquivo ?>', '<?= $dados[0]->nomeArquivo ?>')">
+                                    Baixar arquivo<br><small><?= $dados[0]->nomeArquivo ?></small>
                                 </span>
-                            </label>
-                            <input type="text" class="form-control" readonly>
-                        </div>
+                                <?PHP if ($operacao == "update"): ?>
+                                    <br/>
+                                    <span class="btn btn-danger" id="removeFile">
+                                        Remover arquivo
+                                    </span>
+                                <?PHP endif; ?>
+                            <?PHP else: ?>
+                                <span class="btn btn-warning">
+                                    Arquivo não está presente no momento
+                                </span>
+                                <?PHP if ($operacao == "update"): ?>
+                                    <br/>
+                                    <span class="btn btn-danger" id="removeFile">
+                                        Remover arquivo
+                                    </span>
+                                <?PHP endif; ?>
+                            <?PHP endif; ?>
+                        </label>
                     </div>
-                    <p class="text-danger select"><label for="file"><label></label></label></p>
+                <?PHP endif; ?>
+                <?PHP if ($operacao == "update"): ?>
+                    <?PHP if ($dados[0]->arquivo != null): ?>
+                        <label><?= $countInput; ?>.1 <label id="label-alterar-arquivo">Alterar</label> arquivo</label>
+                    <?PHP else: ?>
+                        <label class="input-group-btn">
+                            <span class="btn btn-default">
+                                Sem Arquivo
+                            </span>
+                        </label>
+                        <label><?= $countInput; ?>.1 Incluir arquivo</label>
+                    <?PHP endif; ?>
+                <?PHP endif; ?>
+            <?PHP endif; ?>
+            <?PHP if ($operacao == "add" || $operacao == "update"): ?>
+                <div class="form-group">
+                    <div>
+                        <div class="col-lg-6 col-sm-6 col-12">
+                            <div class="input-group">
+                                <label class="input-group-btn">
+                                    <span class="btn btn-success">
+                                        Escolher <input id="file" data-allow-file-size="<?= $maxSizeFile * 1024 * 1024 ?>" data-allowed-file-extensions='["pdf","doc","xls","jpg","zip","arj"]' type="file" name="file" style="display: none;">
+                                    </span>
+                                </label>
+                                <input type="text" class="form-control" readonly>
+                                <label class="input-group-btn" id="clearfile" style="display: none">
+                                    <span class="btn btn-default">
+                                        Limpar
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <br/>
+                        <br/>
+                        <p class="text-danger select"><label for="file"><label></label></label></p>
+                    </div>
                 </div>
-            </div>
+            <?PHP else: ?>
+                <label class="input-group-btn">
+                    <span class="btn btn-default">
+                        Sem anexo
+                    </span>
+                </label>
+            <?PHP endif; ?>
         </div>
     </fieldset>
 </form>
+<script>
+    $(function () {
+
+        $("#removeFile").click(function () {
+            var data = {id:<?php echo $fiscalizacao['id']; ?>};
+            requestWithoutRedirect("<?= site_url("fiscalizacao/removeFile") ?>",data);
+            $("#file-layout").html("<label class='input-group-btn'><span class='btn btn-default'>Sem Arquivo</span></label>")
+            $("#label-alterar-arquivo").html("Incluir");
+        });
+
+        // We can attach the `fileselect` event to all file inputs on the page
+        $(document).on('change', ':file', function () {
+            var input = $(this), label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            validateFile("file",<?= $maxSizeFile ?> * 1024 * 1024, [
+                "application/msword",
+                "application/pdf",
+                "application/zip",
+                "application/x-zip-compressed",
+                "application/vnd.oasis.opendocument.text",
+                "text/csv",
+                "text/plain",
+                "image/jpeg",
+                "image/png",
+                "application/vnd.ms-excel",
+                "application/arj"]);
+
+            input.trigger('fileselect', [label]);
+            $("#clearfile").fadeIn(400);
+        });
+
+        // We can watch for our custom `fileselect` event like this
+        $(document).ready(function () {
+            $("#clearfile").click(function () {
+                var input = $("input#file");
+                input.val("");
+                $("#clearfile").fadeOut(400);
+                input.trigger('fileselect', [""]);
+                input.hideErrorMessage();
+            });
+
+            $(':file').on('fileselect', function (event, label) {
+
+                var input = $(this).parents('.input-group').find(':text'),
+                        log = label;
+
+                if (input.length) {
+                    input.val(log);
+                } else {
+                    if (log)
+                        alert(log);
+                }
+
+            });
+        });
+
+    });
+
+</script>

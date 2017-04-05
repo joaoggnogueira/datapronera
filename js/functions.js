@@ -236,6 +236,166 @@ function request(_url, _data, _fn) {
     });
 }
 
+function requestMultipart(_url, _idform, _fn) {
+
+    _fn = _fn || 'show';
+
+    var _data = new FormData($("#" + _idform)[0]);
+
+    // Exibe mensagem de processamento
+    processMessage('status');
+
+    // Faz requisição de login ao servidor (retorna um objeto JSON)
+    $.ajax({
+        url: _url,
+        type: 'POST',
+        dataType: 'json',
+        data: _data,
+        timeout: 20000,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+
+            // Login autorizado
+            if (data.success) {
+
+                _fn == 'show' ? showMessage('status', data) : hideMessage('status');
+
+                // Carrega conteúdo da nova view
+                $('#content').fadeOut().queue(function (next) {
+                    $(this)
+                            .html(data.html.content)
+                            .delay(500)
+                            .fadeIn("slow");
+                    next();
+                });
+
+                if (data.html.top_menu !== undefined) {
+
+                    // Carrega conteúdo do menu
+                    $('#top_menu').fadeOut().queue(function (next) {
+                        $(this)
+                                .html(data.html.top_menu)
+                                .delay(500)
+                                .fadeIn("slow");
+                        next();
+                    });
+                }
+
+                if (data.html.course_info !== undefined) {
+
+                    // Carrega informção sobre o curso seleconado
+                    $('#course_info').fadeOut().queue(function (next) {
+                        $(this)
+                                .html(data.html.course_info)
+                                .delay(500)
+                                .fadeIn("slow");
+                        next();
+                    });
+                }
+
+                // Login não autorizado
+            } else {
+                showMessage('status', data); // Exibe mensagem de erro
+            }
+        },
+        error: function (data) {
+
+            console.log(data);
+
+            // Falha na requisição
+            var error = {
+                'success': false,
+                'message': 'Falha na requisição. Tente novamente em instantes.'
+            };
+
+            showMessage('status', error); // Exibe mensagem de erro
+        }
+
+    });
+}
+
+function requestWithoutRedirect(_url, _data, _fn) {
+
+    _fn = _fn || 'show';
+    // Exibe mensagem de processamento
+    processMessage('status');
+
+    // Faz requisição de login ao servidor (retorna um objeto JSON)
+    $.ajax({
+        url: _url,
+        type: 'POST',
+        dataType: 'json',
+        data: _data,
+        timeout: 20000,
+        success: function (data) {
+
+            // Login autorizado
+            if (data.success) {
+                showMessage('status', data); // Exibe mensagem de erro
+                if(_fn.callback){
+                    _fn.callback();
+                }
+                // Login não autorizado
+            } else {
+                showMessage('status', data); // Exibe mensagem de erro
+            }
+        },
+        error: function (data) {
+
+            console.log(data);
+
+            // Falha na requisiçãoz\
+            var error = {
+                'success': false,
+                'message': 'Falha na requisição. Tente novamente em instantes.'
+            };
+
+            showMessage('status', error); // Exibe mensagem de erro
+        }
+
+    });
+}
+
+function validateFile(_fileid, maxsize, allowedTypes) {
+    if ($("#" + _fileid).get(0).files.length != 0) {
+        $elem = $("#" + _fileid);
+        var file = $elem.get(0).files[0];
+        var key = false;
+        for (var i = 0; i < allowedTypes.length; i++) {
+            if (allowedTypes[i] == file.type) {
+                key = true;
+                break;
+            }
+        }
+        if (key) {
+            if(parseInt(file.size)<maxsize){
+                $elem.hideErrorMessage();
+                $elem.get(0).validate = true;
+                return true;
+            } else {
+                $elem.showErrorMessage("Arquivo excedeu o tamanho limite de "+((maxsize/1024)/1024)+" MB");
+            }
+        } else {
+            $elem.showErrorMessage("Formato inválido");
+        }
+    } else {
+        $elem.showErrorMessage("Selecione o arquivo");
+    }
+    $elem.get(0).validate = false;
+    return false;
+}
+
+function downloadFile(_url, _nome) {
+    var form = $("<form method='POST' action='./index.php/request/download/'>")
+            .append($("<input name='url'>").val(_url))
+            .append($("<input name='nome'>").val(_nome));
+    $(document.body).append(form);
+    form.submit();
+    form.remove();
+}
+;
+
 /**
  *	Exibe uma mensagem de erro refente ao campo do formulário.
  *
@@ -804,7 +964,7 @@ $.fn.listCities = function (_url, _elem_city_id) {
         });
 
     }).change();
-    
+
 };
 
 $.fn.listCourses = function (_url, _elem_course_id) {

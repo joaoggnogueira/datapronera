@@ -419,7 +419,11 @@ class Fiscalizacao extends CI_Controller {
     }
 
     function remove() {
-
+        $dados = $this->fiscalizacao_m->get_record($this->input->post('id_fiscalizacao'));
+        if ($dados[0]->arquivo != null && file_exists($dados[0]->arquivo)) {
+            unlink($dados[0]->arquivo);
+        }
+        
         if ($this->fiscalizacao_m->delete_record($this->input->post('id_fiscalizacao'))) {
 
             $this->log->save("FISCALIZAÇÃO REMOVIDA: ID '" . $this->input->post('id_fiscalizacao') . "'");

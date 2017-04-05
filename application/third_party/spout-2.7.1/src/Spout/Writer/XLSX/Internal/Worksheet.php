@@ -169,7 +169,7 @@ EOD;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
 
-        $rowXML = '<row customHeight="1" ht="10" r="' . $rowIndex . '" spans="1:' . $numCells . '">';
+        $rowXML = '<row customHeight="1" ht="14" r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
         foreach($dataRow as $cellValue) {
             $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());

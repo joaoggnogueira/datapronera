@@ -10,32 +10,55 @@
 
     $(document).ready(function() {
 
+        $('#reset').click(function(){
+            $('#superintendencias-select').prop('selectedIndex',0);
+            $('#cursos-select').prop('selectedIndex',0);
+            $('#modalidades-select').prop('selectedIndex',0);
+            $('#municipios-select').prop('selectedIndex',0);
+            $('#estados-select').prop('selectedIndex',0);
+            $('#genero_educando').prop('selectedIndex',0);
+            $('#genero_professor').prop('selectedIndex',0);
+            $('#nascimento').val('');
+            $('#modalidades').css('display', 'block');
+            $('#municipios').css('display', 'block');
+        });
+
         var url = "<?php echo site_url('relatorio_dinamico').'/'; ?>";
 
         // Carrega os selects para filtro
-        $.get("<?php echo site_url('requisicao/get_superintendencias_cursos'); ?>", function(data) {
+        $.get("<?php echo site_url('requisicao/get_superintendencias_cursos_rel'); ?>", function(data) {
             $('#superintendencias-select').html(data);
         });
 
         $('#superintendencias-select').change(function(){
-            var url = "<?php echo site_url('requisicao/get_cursos_by_super').'/'; ?>" + $('#superintendencias-select option:selected').val();
+            var url = "<?php echo site_url('requisicao/get_cursos_by_super_rel').'/'; ?>" + $('#superintendencias-select option:selected').val();
             $.get(url, function(cursos) {
                 $('#cursos-select').html(cursos);
             });
         });
 
-        $.get("<?php echo site_url('requisicao/get_modalidades'); ?>", function(modalidades) {
+        $('#cursos-select').change(function(){
+            if($('#cursos-select option:selected').val() == 0){
+                $('#modalidades').css('display', 'block');
+                $('#municipios').css('display', 'block');
+            }else{
+                $('#modalidades').css('display', 'none');
+                $('#municipios').css('display', 'none');
+            }
+        });
+
+        $.get("<?php echo site_url('requisicao/get_modalidades_rel'); ?>", function(modalidades) {
             $('#modalidades-select').html(modalidades);
         });
 
         /* MUNICIPIOS */
 
-        $.get("<?php echo site_url('requisicao/get_estados'); ?>", function(data) {
+        $.get("<?php echo site_url('requisicao/get_estados_rel'); ?>", function(data) {
             $('#estados-select').html(data);
         });
 
         $('#estados-select').change(function(){
-            var url = "<?php echo site_url('requisicao/get_municipios').'/'; ?>" + $('#estados-select option:selected').val();
+            var url = "<?php echo site_url('requisicao/get_municipios_rel').'/'; ?>" + $('#estados-select option:selected').val();
             $.get(url, function(data) {
                 $('#municipios-select').html(data);
             });
@@ -82,7 +105,7 @@
             var where_tipos_parceiros = '';
 
             /* WHERE CAMPO CURSO */
-            if(curso != null){
+            if(curso != null && curso != 0){
                 where_curso                 += ' AND c.id =' + curso;
                 where_cidade_cursos         += ' AND cr.id_curso ='+curso;
                 where_educandos             += ' AND e.id_curso ='+curso;
@@ -99,7 +122,7 @@
             }
 
             /* WHERE CAMPO MODALIDADE */
-            if(modalidade != null){
+            if(modalidade != null && modalidade != 0){
                 where_curso += ' AND cm.id =' + modalidade;
                 where_cidade_cursos += ' AND cr.id_curso IN (select a.id FROM curso a, curso_modalidade b where a.id_modalidade = b.id AND b.id = '+modalidade+')';
                 where_educandos             += ' AND e.id_curso IN (select a.id FROM curso a, curso_modalidade b where a.id_modalidade = b.id AND b.id = '+modalidade+')';
@@ -116,7 +139,7 @@
             }
 
             /* WHERE CAMPO MUNICIPIO */
-            if(municipio != null){
+            if(municipio != null && municipio != 0){
                 where_curso += ' AND c.id IN (SELECT a.id_curso FROM `caracterizacao_cidade` b, `caracterizacao` a, `cidade` ci, `estado` x, `curso` c WHERE a.id_curso = c.id AND b.id_caracterizacao = a.id AND b.id_cidade = ci.id AND ci.id_estado = x.id AND ci.id = '+municipio+')';
                 where_cidade_cursos += ' AND ci.id = '+municipio;
                 where_educandos             += ' AND e.id_curso IN (SELECT a.id_curso FROM `caracterizacao_cidade` b, `caracterizacao` a, `cidade` ci, `estado` x, `curso` c WHERE a.id_curso = c.id AND b.id_caracterizacao = a.id AND b.id_cidade = ci.id AND ci.id_estado = x.id AND ci.id = '+municipio+')';
@@ -133,12 +156,12 @@
             }
 
             /* WHERE CAMPO GENERO_EDUCANDO */
-            if(genero_educando != null){
+            if(genero_educando != null && genero_educando != 0){
                 where_educandos += ' AND e.genero = "'+genero_educando+'"';
             }
 
             /* WHERE CAMPO GENERO_PROFESSOR */
-            if(genero_professor != null){
+            if(genero_professor != null && genero_professor != 0){
                 where_professores += ' AND p.genero = "'+genero_professor+'"';
             }
 
@@ -197,34 +220,38 @@
         <p>Possíveis filtros dos cursos:</p>
         <h3>Curso</h3>
         <p><b>Superintendência:</b> <select id="superintendencias-select"></select></p>
-        <p><b>Cursos:</b> <select id="cursos-select"><option value="0" disabled selected>Todos os cursos</option></select></p>
+        <p><b>Cursos:</b> <select id="cursos-select"><option value="0" selected>Todos os cursos</option></select></p>
 
-        <h3>Modalidade</h3>
-        <p><b>Modalidades:</b> <select id="modalidades-select"><option value="0" disabled selected>Todas as modalidades</option></select></p>
+        <div id="modalidades">
+            <h3>Modalidade</h3>
+            <p><b>Modalidades:</b> <select id="modalidades-select"><option value="0" selected>Todas as modalidades</option></select></p>
+        </div>
 
-        <h3>Município</h3>
-        <p><b>Estados:</b> <select id="estados-select"><option>Selecione um Estado</option></select></p>
-        <p><b>Municípios:</b> <select id="municipios-select"><option value="0" disabled selected>Todos os municípios</option></select></p>
+        <div id="municipios">
+            <h3>Município</h3>
+            <p><b>Estados:</b> <select id="estados-select"><option>Selecione um Estado</option></select></p>
+            <p><b>Municípios:</b> <select id="municipios-select"><option value="0" selected>Todos os municípios</option></select></p>
+        </div>
     </div>
    <div role="tabpanel" class="tab-pane fade" id="educandos">
        <div class="alert alert-warning" role="alert"><b>Cuidado!</b> Essa operação pode demorar para gerar o relatório. Portanto ao clicar em gerar, aguarde o tempo que for necessário.</div>
        <p>Possíveis filtros dos educandos:</p>
        <h3>Gênero</h3>
        <select id="genero_educando">
-           <option value="0" disabled selected>Todos os gêneros</option>
+           <option value="0" selected>Todos os gêneros</option>
            <option value="M">Masculino</option>
            <option value="F">Feminino</option>
            <option value="N">Não Informado</option>
        </select>
-       <h3>Nascimento</h3>
-       <b>Nascimento:</b> <input type="text" name="nascimento" id="nascimento" placeholder="Ex: 1990">
+       <h3>Ano de nascimento</h3>
+       <input type="text" name="nascimento" id="nascimento" placeholder="Ex: 1990" class="form-control">
    </div>
    <div role="tabpanel" class="tab-pane fade" id="professores">
        <div class="alert alert-warning" role="alert"><b>Cuidado!</b> Essa operação pode demorar para gerar o relatório. Portanto ao clicar em gerar, aguarde o tempo que for necessário.</div>
        <p>Possíveis filtros dos professores:</p>
        <h3>Gênero</h3>
        <select id="genero_professor">
-           <option value="0" disabled selected>Todos os gêneros</option>
+           <option value="0" selected>Todos os gêneros</option>
            <option value="M">Masculino</option>
            <option value="F">Feminino</option>
            <option value="N">Não Informado</option>
@@ -256,4 +283,5 @@
 
 <br>
 
-<input type="button" id="gerar" class="btn btn-success" value="Gerar Relatório">
+<input type="button" id="gerar" class="btn btn-success" value="Gerar Planilha">
+<input type="button" id="reset" class="btn btn-warning" value="Resetar filtros">

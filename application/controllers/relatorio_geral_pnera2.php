@@ -270,52 +270,44 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //sql errado
     public function cursos_nivel_superintendencia($tipo) {
-        
-        $titles = array();
-        $levels = array();
+        if ($result = $this->relatorio_geral_m_pnera2->cursos_nivel_superintendencia()) {
+            if($tipo==1){
+                $titles = array();
+                $titles[0] = "CÓDIGO";
+                $titles[1] = "SUPERINTENDÊNCIA";
+                $titles[2] = "EJA FUNDAMENTAL";
+                $titles[3] = "ENSINO MÉDIO";
+                $titles[4] = "ENSINO SUPERIOR";
+                $titles[5] = "TOTAL";
+                $xls = array();
+                $xls = $this->create_header("Cursos por nível e superintendência", 1);
+                array_push($xls, $titles);
 
-        if ($result = $this->relatorio_geral_m_pnera2->get_niveis_modalidade()) {
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-            $titles[0] = "CÓDIGO";
-            $titles[1] = "SUPERINTENDÊNCIA";
+                $this->barchart->set_include_charts(false); // hide charts
 
-            foreach ($result as $row) {
-                array_push($titles, $row->nivel);
-                array_push($levels, $row->nivel);
+                $this->barchart->set_chart_data($xls);                              // data array
+                $this->barchart->set_filename('CURSOS-NIVEL-SUPERINTENDENCIA.xls'); // filename
+
+                $this->barchart->create_chart();
             }
-            if ($result = $this->relatorio_geral_m_pnera2->cursos_nivel_superintendencia($levels)) {
-                if($tipo==1){
-                    $xls = array();
-                    $xls = $this->create_header("Cursos por nível e superintendência", 1);
-                    array_push($xls, $titles);
-
-                    foreach ($result as $row) {
-                        $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                        array_push($xls, $row);
-                    }
-
-                    $this->barchart->set_include_charts(false); // hide charts
-
-                    $this->barchart->set_chart_data($xls);                              // data array
-                    $this->barchart->set_filename('CURSOS-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
-                    $this->barchart->create_chart();
-                }
-                else if($tipo == 2){
-                    error_reporting(E_ALL ^ E_DEPRECATED);
-                    $this->load->library('pdf');            
-                    $pdf = $this->pdf->load();
-                    $data['titulo_relatorio'] = 'Cursos por nivel';
-                    $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
-                    $pdf->SetHTMLHeader($header);
-                    $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
-                    
-                    $dataResult['result'] = $result;
-                    $pdf->WriteHTML($this->load->view('relatorio/2pnera/cursos_nivel_superintendencia', $dataResult, true));
-                    $pdf->Output($pdfFilePath, 'I'); 
-                }
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Cursos por nivel e superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/cursos_nivel_superintendencia', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
             }
         }
     }
@@ -505,56 +497,44 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //sql errado
     public function alunos_ingressantes_nivel_sr($tipo) {
+        if ($result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel_sr()) {
+            if($tipo==1){
+                $titles = array();
+                $titles[0] = "CÓDIGO";
+                $titles[1] = "SUPERINTENDÊNCIA";
+                $titles[2] = "EJA FUNDAMENTAL";
+                $titles[3] = "ENSINO MÉDIO";
+                $titles[4] = "ENSINO SUPERIOR";
+                $titles[5] = "TOTAL";
+                $xls = array();
+                $xls = $this->create_header("Alunos ingressantes por nível e superintendência", 1);
+                array_push($xls, $titles);
 
-        $titles = array();
-        $levels = array();
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-        if ($result = $this->relatorio_geral_m_pnera2->get_niveis_modalidade()) {
+                $this->barchart->set_include_charts(false); // hide charts
 
-            $titles[0] = "CÓDIGO";
-            $titles[1] = "SUPERINTENDÊNCIA";
+                $this->barchart->set_chart_data($xls);                              // data array
+                $this->barchart->set_filename('INGRESSANTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
 
-            foreach ($result as $row) {
-                array_push($titles, $row->nivel);
-                array_push($levels, $row->nivel);
+                $this->barchart->create_chart();
             }
-
-            if ($result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel_sr($levels)) {
-                if($tipo==1){
-                    $xls = array();
-                    $xls = $this->create_header("Alunos ingressantes por nível e superintendência", 1);
-                    array_push($xls, $titles);
-
-                    foreach ($result as $row) {
-                        $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                        array_push($xls, $row);
-                    }
-
-                    $this->barchart->set_include_charts(false); // hide charts
-
-                    // Separador de milhar, com 0 casas decimais.
-                    $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
-
-                    $this->barchart->set_chart_data($xls);                                           // data array
-                    $this->barchart->set_filename('ALUNOS-INGRESSANTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
-                    $this->barchart->create_chart();
-                }
-                else if($tipo == 2){
-                    error_reporting(E_ALL ^ E_DEPRECATED);
-                    $this->load->library('pdf');            
-                    $pdf = $this->pdf->load();
-                    $data['titulo_relatorio'] = 'Alunos ingressantes por nível e superintendência';
-                    $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
-                    $pdf->SetHTMLHeader($header);
-                    $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
-                    
-                    $dataResult['result'] = $result;
-                    $pdf->WriteHTML($this->load->view('relatorio/2pnera/alunos_ingressantes_nivel_sr', $dataResult, true));
-                    $pdf->Output($pdfFilePath, 'I'); 
-                }
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Alunos ingressantes por nível e superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/alunos_ingressantes_nivel_sr', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
             }
         }
     }
@@ -698,56 +678,44 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //sql errado
     public function alunos_concluintes_nivel_sr($tipo) {
+        if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel_sr()) {
+            if($tipo==1){
+                $titles = array();
+                $titles[0] = "CÓDIGO";
+                $titles[1] = "SUPERINTENDÊNCIA";
+                $titles[2] = "EJA FUNDAMENTAL";
+                $titles[3] = "ENSINO MÉDIO";
+                $titles[4] = "ENSINO SUPERIOR";
+                $titles[5] = "TOTAL";
+                $xls = array();
+                $xls = $this->create_header("Alunos concluintes por nível e superintendência", 1);
+                array_push($xls, $titles);
 
-        $titles = array();
-        $levels = array();
+                foreach ($result as $row) {
+                    $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
+                    array_push($xls, $row);
+                }
 
-        if ($result = $this->relatorio_geral_m_pnera2->get_niveis_modalidade()) {
+                $this->barchart->set_include_charts(false); // hide charts
 
-            $titles[0] = "CÓDIGO";
-            $titles[1] = "SUPERINTENDÊNCIA";
+                $this->barchart->set_chart_data($xls);                              // data array
+                $this->barchart->set_filename('CONCLUINTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
 
-            foreach ($result as $row) {
-                array_push($titles, $row->nivel);
-                array_push($levels, $row->nivel);
+                $this->barchart->create_chart();
             }
-
-            if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel_sr($levels)) {
-                if($tipo==1){
-                    $xls = array();
-                    $xls = $this->create_header("Alunos concluintes por nível e superintendência", 1);
-                    array_push($xls, $titles);
-
-                    foreach ($result as $row) {
-                        $row['id'] = "SR - " . $this->leading_zeros($row['id'], 2);
-                        array_push($xls, $row);
-                    }
-
-                    $this->barchart->set_include_charts(false); // hide charts
-
-                    // Separador de milhar, com 0 casas decimais.
-                    $this->barchart->set_number_format('_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
-
-                    $this->barchart->set_chart_data($xls);                                           // data array
-                    $this->barchart->set_filename('ALUNOS-CONCLUINTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
-                    $this->barchart->create_chart();
-                }
-                else if($tipo == 2){
-                    error_reporting(E_ALL ^ E_DEPRECATED);
-                    $this->load->library('pdf');            
-                    $pdf = $this->pdf->load();
-                    $data['titulo_relatorio'] = 'Alunos concluintes por nível e superintendência';
-                    $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
-                    $pdf->SetHTMLHeader($header);
-                    $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
-                    
-                    $dataResult['result'] = $result;
-                    $pdf->WriteHTML($this->load->view('relatorio/2pnera/alunos_concluintes_nivel_sr', $dataResult, true));
-                    $pdf->Output($pdfFilePath, 'I'); 
-                }
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Alunos concluintes por nível e superintendência';
+                $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/alunos_concluintes_nivel_sr', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
             }
         }
     }
@@ -1373,7 +1341,6 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    //sql errado
     public function educandos_assentamento_nivel($tipo) {
 
         // GAMBIARRRA para aumentar a área de memória 
@@ -2083,7 +2050,6 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     //erro na criacao do xls
     public function lista_parceiros($tipo) {
-
         if ($result = $this->relatorio_geral_m_pnera2->lista_parceiros($this->session->userdata('access_level'))) {
             if($tipo==1){
                 $xls = array();

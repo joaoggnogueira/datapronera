@@ -342,6 +342,104 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
+    /* RELATORIO DINAMICO */
+
+    function get_estados_rel() {
+        $this->db->order_by('sigla');
+        $query = $this->db->get('estado');
+        $resultado = "<option value=\"0\" selected> Todos os Estados </option>";
+
+        foreach ($query->result() as $row) {
+            $resultado .= "<option value=" . $row->id . ">" . $row->sigla . "</option>";
+        }
+
+        echo $resultado;
+    }
+
+    function get_municipios_rel($id_estado) {
+        $this->db->where('id_estado', $id_estado);
+        $this->db->order_by('nome');
+        $query = $this->db->get('cidade');
+        $resultado = "<option value=\"0\" selected> Todos os municípios </option>";
+
+        foreach ($query->result() as $row) {
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+        }
+
+        echo $resultado;
+    }
+
+    function get_superintendencias_cursos_rel() {
+        $this->db->not_like('id', '31');
+        $this->db->order_by('nome');
+        $query = $this->db->get('superintendencia');
+        $resultado = "<option value=\"0\" selected> Todas as Superintendências </option>";
+
+        foreach ($query->result() as $row) {
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+        }
+
+        echo $resultado;
+    }
+
+    function get_cursos_by_super_rel($super) {
+        $this->db->select('c.id, c.nome, c.id_superintendencia super');
+        $this->db->from('curso c');
+        $this->db->where('c.ativo_inativo', 'A');
+        $this->db->where('c.id_superintendencia', $super);
+        $query = $this->db->get();
+        $resultado = "<option value=\"0\" selected>Todos os cursos </option>";
+
+
+        $super_formatado = "";
+
+        if ($super < 10) {
+            $super_formatado = "0";
+        }
+
+        $super_formatado .= $super;
+
+        foreach ($query->result() as $row) {
+            $id_formatado = "";
+
+            if ($row->id < 100) {
+                $id_formatado = "0";
+            }
+            if ($row->id < 10) {
+                $id_formatado .= "0";
+            }
+
+            $id_formatado .= $row->id;
+
+            $resultado .= "<option value=" . $row->id . ">" . $super_formatado . '.' . $id_formatado . ' - ' . $row->nome . "</option>";
+        }
+
+        echo $resultado;
+    }
+
+    function get_modalidades_rel() {
+        $this->db->where(
+                array(
+                    'nome <>' => '',
+                    'id <>' => '27',
+                    'nome <>' => 'OUTROS'
+                )
+        );
+        $this->db->order_by('nome');
+        $query = $this->db->get('curso_modalidade');
+
+        $resultado = "<option value=\"0\" selected> Todas as Modalidade </option>";
+
+        foreach ($query->result() as $row) {
+
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+        }
+
+        $resultado .= "<option value=\"OUTRA\"> OUTRA </option>";
+
+        echo $resultado;
+    }
+
 }
 
 ?>

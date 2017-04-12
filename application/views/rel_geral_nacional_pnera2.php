@@ -282,10 +282,10 @@
 		    	<h4>Organiza&ccedil;&otilde;es Demandantes</h4>
 		    	<ul>
 		    		<li class="li-rel">
-		    		<a disabled class="btn btn-success" style="color: black;" target="_blank" href="<?php //echo site_url('relatorio_geral_pnera2/principais_organizacoes'); ?>">XLS</a> 
-		    		<a disabled class="btn btn-success" style="color: black;" target="_blank" href="<?php //echo site_url('relatorio_geral_pnera2/principais_organizacoes'); ?>">PDF</a> 
-		    		Seis principais organiza&ccedil;&otilde;es demandantes e respectivos cursos <b>(nacional - por munic&iacute;pios)</b>
-		    	</li>
+			    		<a disabled class="btn btn-success" style="color: black;" target="_blank" href="<?php //echo site_url('relatorio_geral_pnera2/principais_organizacoes'); ?>">XLS</a> 
+			    		<a disabled class="btn btn-success" style="color: black;" target="_blank" href="<?php //echo site_url('relatorio_geral_pnera2/principais_organizacoes'); ?>">PDF</a> 
+			    		Seis principais organiza&ccedil;&otilde;es demandantes e respectivos cursos <b>(nacional - por munic&iacute;pios)</b>
+		    		</li>
 		    		<br>
 		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/organizacoes_demandantes_modalidade/1'); ?>">XLS</a> 

@@ -76,6 +76,27 @@ class Requisicao extends CI_Controller {
         return $this->requisicao_m->get_modalidade_by_super($this->uri->segment(3));
     }
 
+    /* Requisições relatório dinâmico */
+    function get_superintendencias_cursos_rel() {
+        return $this->requisicao_m->get_superintendencias_cursos_rel();
+    }
+
+    function get_cursos_by_super_rel() {
+        return $this->requisicao_m->get_cursos_by_super_rel($this->uri->segment(3));
+    }
+
+    function get_estados_rel() {
+        return $this->requisicao_m->get_estados_rel();
+    }
+
+    function get_municipios_rel() {
+        return $this->requisicao_m->get_municipios_rel($this->uri->segment(3));
+    }
+
+    function get_modalidades_rel() {
+        return $this->requisicao_m->get_modalidades_rel();
+    }
+
 }
 
 ?>

@@ -295,45 +295,28 @@ $countBoxMembers = 97;
                 <br><small>Somente arquivo do tipo <?= $allowedTypesFile ?></small>
             </label>
             <?PHP if ($retrivial): ?>
-                <?PHP if ($dados[0]->arquivo != null): ?>
+                <?PHP if (!empty($arquivos)): ?>
                     <div class="form-group">
                         <label class="input-group-btn" id="file-layout">
-                            <?PHP if (file_exists($dados[0]->arquivo)): ?>
-                                <span class="btn btn-success" onclick="downloadFile('<?= $dados[0]->arquivo ?>', '<?= $dados[0]->nomeArquivo ?>')">
-                                    Baixar arquivo<br><small><?= $dados[0]->nomeArquivo ?></small>
+                            <span class="btn btn-success" id="download">
+                                Baixar arquivo<br><small><?= $arquivos[0]->name ?></small>
+                            </span>
+                            <?PHP if ($operacao == "update"): ?>
+                                <br/>
+                                <span class="btn btn-danger" id="removeFile">
+                                    Remover arquivo
                                 </span>
-                                <?PHP if ($operacao == "update"): ?>
-                                    <br/>
-                                    <span class="btn btn-danger" id="removeFile">
-                                        Remover arquivo
-                                    </span>
-                                <?PHP endif; ?>
-                            <?PHP else: ?>
-                                <span class="btn btn-warning">
-                                    Arquivo não está presente no momento
-                                </span>
-                                <?PHP if ($operacao == "update"): ?>
-                                    <br/>
-                                    <span class="btn btn-danger" id="removeFile">
-                                        Remover arquivo
-                                    </span>
-                                <?PHP endif; ?>
                             <?PHP endif; ?>
                         </label>
                     </div>
+                <?PHP else: ?>
+                    <label class="input-group-btn">
+                        <span class="btn btn-default">
+                            Sem Arquivo
+                        </span>
+                    </label>
                 <?PHP endif; ?>
-                <?PHP if ($operacao == "update"): ?>
-                    <?PHP if ($dados[0]->arquivo != null): ?>
-                        <label><?= $countInput; ?>.1 <label id="label-alterar-arquivo">Alterar</label> arquivo</label>
-                    <?PHP else: ?>
-                        <label class="input-group-btn">
-                            <span class="btn btn-default">
-                                Sem Arquivo
-                            </span>
-                        </label>
-                        <label><?= $countInput; ?>.1 Incluir arquivo</label>
-                    <?PHP endif; ?>
-                <?PHP endif; ?>
+                <label><?= $countInput; ?>.1 <label id="label-alterar-arquivo"><?= (empty($arquivos)?"Incluir":"Alterar") ?></label> arquivo</label>
             <?PHP endif; ?>
             <?PHP if ($operacao == "add" || $operacao == "update"): ?>
                 <div class="form-group">
@@ -370,10 +353,19 @@ $countBoxMembers = 97;
 </form>
 <script>
     $(function () {
+        $("#download").click(function () {
+            var form = $("<form method='POST' action='./index.php/fiscalizacao/download'>")
+                    .append($("<input name='id'>").val(<?= $fiscalizacao['id'] ?>))
+                    .append($("<input name='index'>").val(0));
+            $(document.body).append(form);
+            form.submit();
+            form.remove();
+        });
+
 
         $("#removeFile").click(function () {
             var data = {id:<?php echo $fiscalizacao['id']; ?>};
-            requestWithoutRedirect("<?= site_url("fiscalizacao/removeFile") ?>",data);
+            requestWithoutRedirect("<?= site_url("fiscalizacao/removeFile") ?>", data);
             $("#file-layout").html("<label class='input-group-btn'><span class='btn btn-default'>Sem Arquivo</span></label>")
             $("#label-alterar-arquivo").html("Incluir");
         });

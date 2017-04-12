@@ -386,15 +386,6 @@ function validateFile(_fileid, maxsize, allowedTypes) {
     return false;
 }
 
-function downloadFile(_url, _nome) {
-    var form = $("<form method='POST' action='./index.php/request/download/'>")
-            .append($("<input name='url'>").val(_url))
-            .append($("<input name='nome'>").val(_nome));
-    $(document.body).append(form);
-    form.submit();
-    form.remove();
-}
-;
 
 /**
  *	Exibe uma mensagem de erro refente ao campo do formulário.

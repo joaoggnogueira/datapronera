@@ -4,7 +4,6 @@ class Fiscalizacao extends CI_Controller {
 
     private $maxsizeFile = 2; //2mb
     private $allowedTypesFile = 'pdf|doc|odt|csv|xls|jpg|png|zip|arj|txt';
-    private $rootFile = "uploads";
 
     public function __construct() {
         parent::__construct();
@@ -37,7 +36,7 @@ class Fiscalizacao extends CI_Controller {
     function index_add() {
 
         $fiscalizacao['id'] = 0;
-        if ($superintendencia = $this->fiscalizacao_m->get_id_superintendencia($this->session->userdata('id_curso'))) {
+        if (($superintendencia = $this->fiscalizacao_m->get_id_superintendencia($this->session->userdata('id_curso')))) {
             $this->session->set_userdata('curr_content', 'formulario_fiscalizacao');
             $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
@@ -45,7 +44,7 @@ class Fiscalizacao extends CI_Controller {
 
             $valores['allowedTypesFile'] = $this->allowedTypesFile;
             $valores['maxSizeFile'] = $this->maxsizeFile;
-            $valores['superintendencia'] = $superintendencia[0]->id_superintendencia;
+            $valores['arquivo'] = $valores['superintendencia'] = $superintendencia[0]->id_superintendencia;
             $valores['dados'] = null;
             $valores['fiscalizacao'] = $fiscalizacao;
             $valores['operacao'] = $this->input->post('operacao');
@@ -76,19 +75,20 @@ class Fiscalizacao extends CI_Controller {
 
         $fiscalizacao['id'] = $this->input->post('id_fiscalizacao');
 
-        if ($dados = $this->fiscalizacao_m->get_record($fiscalizacao['id'])) {
-
-            if ($superintendencia = $this->fiscalizacao_m->get_id_superintendencia($this->session->userdata('id_curso'))) {
+        if (($dados = $this->fiscalizacao_m->get_record($fiscalizacao['id']))) {
+            if (($superintendencia = $this->fiscalizacao_m->get_id_superintendencia($this->session->userdata('id_curso')))) {
 
                 $dados[0]->data = implode("/", array_reverse(explode("-", $dados[0]->data), true));
                 $this->session->set_userdata('curr_content', 'formulario_fiscalizacao');
                 $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+                $arquivos = $this->fiscalizacao_m->get_records_file($fiscalizacao['id']);
 
                 $data['content'] = $this->session->userdata('curr_content');
                 $valores['allowedTypesFile'] = $this->allowedTypesFile;
                 $valores['maxSizeFile'] = $this->maxsizeFile;
                 $valores['superintendencia'] = $superintendencia[0]->id_superintendencia;
                 $valores['dados'] = $dados;
+                $valores['arquivos'] = $arquivos;
                 $valores['fiscalizacao'] = $fiscalizacao;
                 $valores['operacao'] = $this->input->post('operacao');
 
@@ -141,41 +141,17 @@ class Fiscalizacao extends CI_Controller {
         $data["id_tipo"] = $id_tipo;
 
         if (($inserted_id = $this->fiscalizacao_m->add_record($data))) {
-            $withFile = false;
-            if (!empty($_FILES['file']['name'])) {
-                $withFile = true;
-                $curso_folder = $data['id_curso'];
-                $config['upload_path'] = './' . $this->rootFile . '/' . $curso_folder;
-                $config['allowed_types'] = $this->allowedTypesFile;
-                $config['max_size'] = $this->maxsizeFile * 1024;
-                $config['file_name'] = $inserted_id . "_" . $_FILES['file']['name'];
-                $this->load->library('upload', $config);
-                if (!is_dir($this->rootFile)) {
-                    mkdir('./' . $this->rootFile, 0777, true);
-                }
+            $withFile = !empty($_FILES['file']['name']);
+            if ($withFile) {
 
-                if (!is_dir($this->rootFile . '/' . $curso_folder)) {
-                    mkdir('./' . $this->rootFile . '/' . $curso_folder, 0777, true);
-                }
-                if ($this->upload->do_upload('file')) {
-                    $dataUpdateFile = array(
-                        "arquivo" => $this->rootFile . "/" . $curso_folder . "/" . $config['file_name'],
-                        "nomeArquivo" => $_FILES['file']['name']
-                    );
-                    if (!$this->fiscalizacao_m->update_record($dataUpdateFile, $inserted_id)) {
-                        $this->db->trans_rollback();
-                        $response = array(
-                            'success' => false,
-                            'message' => 'Falha ao registrar arquivo.'
-                        );
-                        echo json_encode($response);
-                        return;
-                    }
+                if ($this->fiscalizacao_m->add_record_file($inserted_id, $_FILES['file'])) {
+                    $this->log->save("ARQUIVO " . $_FILES['file']['name'] . " ADICIONADO: FISCALIZAÇÃO ID '" . $inserted_id . "'");
                 } else {
                     $this->db->trans_rollback();
+
                     $response = array(
                         'success' => false,
-                        'message' => 'Falha ao fazer upload do arquivo.'
+                        'message' => 'Falha ao registrar arquivo'
                     );
                     echo json_encode($response);
                     return;
@@ -255,42 +231,36 @@ class Fiscalizacao extends CI_Controller {
             'id_curso' => $this->session->userdata('id_curso')
         );
 
-        $withFile = false;
-        if (!empty($_FILES['file']['name'])) {
-            $dados = $this->fiscalizacao_m->get_record($this->input->post('id'));
-            if ($dados[0]->arquivo != null && file_exists($dados[0]->arquivo)) {
-                unlink($dados[0]->arquivo);
-            }
-            $withFile = true;
-            $curso_folder = $data['id_curso'];
-            $config['upload_path'] = './' . $this->rootFile . '/' . $curso_folder;
-            $config['allowed_types'] = $this->allowedTypesFile;
-            $config['max_size'] = $this->maxsizeFile * 1024;
-            $config['file_name'] = $this->input->post('id') . "_" . $_FILES['file']['name'];
-            $this->load->library('upload', $config);
-            if (!is_dir($this->rootFile)) {
-                mkdir('./' . $this->rootFile, 0777, true);
-            }
+        // Starts transaction
+        $this->db->trans_begin();
+        $withFile = !empty($_FILES['file']['name']);
+        $id_fiscalizacao = $this->input->post('id');
+        if ($withFile) {
+            if ($this->fiscalizacao_m->remove_all_records_file($id_fiscalizacao)) {
+                $this->log->save("ARQUIVO REMOVIDO PARA SER SUBSTITUIDO: FISCALIZAÇÃO ID '" . $id_fiscalizacao . "'");
 
-            if (!is_dir($this->rootFile . '/' . $curso_folder)) {
-                mkdir('./' . $this->rootFile . '/' . $curso_folder, 0777, true);
-            }
-            if ($this->upload->do_upload('file')) {
-                $data["arquivo"] = $this->rootFile . "/" . $curso_folder . "/" . $config['file_name'];
-                $data["nomeArquivo"] = $_FILES['file']['name'];
+                if ($this->fiscalizacao_m->add_record_file($id_fiscalizacao, $_FILES['file'])) {
+                    $this->log->save("ARQUIVO " . $_FILES['file']['name'] . " ADICIONADO: FISCALIZAÇÃO ID '" . $id_fiscalizacao . "'");
+                } else {
+                    $this->db->trans_rollback();
+
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Falha ao registrar novo arquivo'
+                    );
+                    echo json_encode($response);
+                    return;
+                }
             } else {
-                $this->db->trans_rollback();
                 $response = array(
                     'success' => false,
-                    'message' => 'Falha ao fazer upload do arquivo.'
+                    'message' => 'Falha ao substituir arquivo'
                 );
                 echo json_encode($response);
                 return;
             }
         }
 
-        // Starts transaction
-        $this->db->trans_begin();
 
         if ($this->input->post('tipo') == 'OUTRO') {
 
@@ -391,61 +361,76 @@ class Fiscalizacao extends CI_Controller {
     }
 
     function removeFile() {
-
-        $dados = $this->fiscalizacao_m->get_record($this->input->post('id'));
-        if ($dados[0]->arquivo != null && file_exists($dados[0]->arquivo)) {
-            unlink($dados[0]->arquivo);
-        }
-        $data = array();
-        $data["arquivo"] = null;
-        $data["nomeArquivo"] = null;
-
         // Starts transaction
         $this->db->trans_begin();
-        if ($this->fiscalizacao_m->update_record($data, $this->input->post('id'))) {
-            $this->db->trans_commit();
+        if ($this->fiscalizacao_m->remove_all_records_file($this->input->post('id'))) {
             $response = array(
                 'success' => true,
                 'message' => 'Arquivo removido'
             );
+            $this->db->trans_commit();
         } else {
-            $this->db->trans_rollback();
             $response = array(
                 'success' => false,
                 'message' => 'Falha ao registrar remoção do arquivo'
             );
+            $this->db->trans_rollback();
         }
         echo json_encode($response);
     }
 
+    function download() {
+        $arquivos = $this->fiscalizacao_m->get_records_file($this->input->post('id'));
+        $arquivo = $arquivos[$this->input->post('index')];
+
+        $size = $arquivo->size;
+        $name = str_replace("$size", "", $arquivo->name);
+        $type = $arquivo->type;
+        $content = $arquivo->content;
+
+        header("Content-length: $size");
+        header("Content-type: $type");
+        header("Content-Disposition: attachment; filename=\"$name\"");
+        echo $content;
+    }
+
     function remove() {
-        $dados = $this->fiscalizacao_m->get_record($this->input->post('id_fiscalizacao'));
-        if ($dados[0]->arquivo != null && file_exists($dados[0]->arquivo)) {
-            unlink($dados[0]->arquivo);
-        }
-        
-        if ($this->fiscalizacao_m->delete_record($this->input->post('id_fiscalizacao'))) {
+        // Starts transaction
+        $this->db->trans_begin();
+        if ($this->fiscalizacao_m->remove_all_records_file($this->input->post('id_fiscalizacao'))) {
 
-            $this->log->save("FISCALIZAÇÃO REMOVIDA: ID '" . $this->input->post('id_fiscalizacao') . "'");
+            if ($this->fiscalizacao_m->delete_record($this->input->post('id_fiscalizacao'))) {
 
-            $this->session->set_userdata('curr_content', 'fiscalizacao');
-            $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+                $this->log->save("FISCALIZAÇÃO REMOVIDA: ID '" . $this->input->post('id_fiscalizacao') . "'");
 
-            $data['content'] = $this->session->userdata('curr_content');
-            $data['top_menu'] = $this->session->userdata('curr_top_menu');
+                $this->session->set_userdata('curr_content', 'fiscalizacao');
+                $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-            $html = array(
-                'content' => $this->load->view($data['content'], '', true),
-                'top_menu' => $this->load->view($data['top_menu'], '', true)
-            );
+                $data['content'] = $this->session->userdata('curr_content');
+                $data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-            $response = array(
-                'success' => true,
-                'html' => $html,
-                'message' => 'Cadastro removido'
-            );
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true),
+                    'top_menu' => $this->load->view($data['top_menu'], '', true)
+                );
+                $this->db->trans_commit();
+                
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro removido'
+                );
+                
+            } else {
+                $this->db->trans_rollback();
+                $response = array(
+                    'success' => false,
+                    'html' => $html,
+                    'message' => 'Falha ao remover cadastro'
+                );
+            }
         } else {
-
+            $this->db->trans_rollback();
             $response = array(
                 'success' => false,
                 'html' => $html,

@@ -351,7 +351,7 @@ if ($operacao == 'add') {
             <label>7. Data de criação do curso<br><small>dd/mm/aaaa</small></label>
             <div class="form-group">
                 <div>
-                    <input type="date" name="data" id="data" class="form-control" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>
+                    <input type="date" name="data" id="data" class="form-control tamanho-sm2" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>
                     <p class="text-danger select"><label for="data"><label></label></label></p>
                 </div>
             </div>

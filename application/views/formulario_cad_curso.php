@@ -43,15 +43,31 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
         });
         var id = "<?php echo $curso['id']; ?>";
         $('#data').mask('99/99/9999');
+        setPlaceholderNInstrumento = function (value) {
+            switch (value) {
+                case "1": //CONVÊNIO
+                    $("#ninstrumento").attr("placeholder", "XXXXXX/AAAA");
+                    $("#ninstrumento").attr("pattern", "[0-9]{6}\/[0-9]{4}");
+                    break;
+//                case "2": //TED
+//                    $("#ninstrumento").attr("placeholder", "XX-MM/AAAA");
+//                    $("#ninstrumento").attr("pattern", "[0-9]{2}-[0-9]{2}\/[0-9]{4}");
+//                    break;
+                default: //OUTROS
+                    $("#ninstrumento").removeAttr("pattern", "");
+                    $("#ninstrumento").removeAttr("placeholder", "");
+            }
+        };
         //Antigo Campos:
         //Responsável pela pesquisa
-<?PHP if ($operacao != 'add'): ?>
-    <?PHP if ($dados[0]->id_pesquisador): ?>
+        <?PHP if ($operacao != 'add'): ?>
+            <?PHP if ($dados[0]->id_pesquisador): ?>
                 $.get("<?php echo site_url('requisicao/get_pesquisador_nome') . '/' . $dados[0]->id_pesquisador; ?>", function (nome) {
                     $("#pesquisador").val(nome);
                 });
-    <?PHP endif; ?>
-<?PHP endif; ?>
+            <?PHP endif; ?>
+                setPlaceholderNInstrumento("<?= $dados[0]->id_instrumento ?>");
+        <?PHP endif; ?>
 
         /* Opções Complementares */
 
@@ -73,7 +89,9 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                 $('#instrumento_descricao').hide();
                 $('#instrumento_descricao').hideErrorMessage();
             }
+            setPlaceholderNInstrumento(e.target.value);
         });
+
         var table = new Table({
             url: "<?php echo site_url('request/get_curso_pesquisadores') . (($operacao != 'add') ? '/' . $dados[0]->id : '/-1'); ?>",
             table: $('#equipe_superintendencia_table'),
@@ -146,12 +164,12 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                     {
                         'id': 'nprocesso',
                         'message': 'Informe o numero do processo',
-                        'extra': null
+                        'extra': {operation:"pattern",message:"Padrão não corresponde com um número de processo"}
                     },
                     {
                         'id': 'ninstrumento',
                         'message': 'Informe o numero do instrumento',
-                        'extra': null
+                        'extra': {operation:"pattern",message:"Padrão não corresponde com um número de instrumento do tipo selecionado"}
                     },
                     {
                         'id': 'instrumento',
@@ -247,35 +265,35 @@ if ($operacao == 'add') {
 
 
         <!--<div class="radio form-group">
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_01" value="EJA ALFABETIZACAO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA ALFABETIZACAO") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_01" value="EJA ALFABETIZACAO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA ALFABETIZACAO") echo "checked";                                               ?>>
                     Eja alfabetiza&ccedil;&atilde;o </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_02" value="EJA ANOS INICIAIS" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA ANOS INICIAIS") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_02" value="EJA ANOS INICIAIS" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA ANOS INICIAIS") echo "checked";                                               ?>>
                     Eja anos iniciais </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_03" value="EJA ANOS FINAIS" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA ANOS FINAIS") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_03" value="EJA ANOS FINAIS" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA ANOS FINAIS") echo "checked";                                               ?>>
                     Eja anos finais </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_04" value="EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_04" value="EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)") echo "checked";                                               ?>>
                     Eja n&iacute;vel m&eacute;dio (magist&eacute;rio/formal) </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_05" value="EJA NIVEL MEDIO (NORMAL)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA NIVEL MEDIO (NORMAL)") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_05" value="EJA NIVEL MEDIO (NORMAL)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "EJA NIVEL MEDIO (NORMAL)") echo "checked";                                               ?>>
                     Eja n&iacute;vel m&eacute;dio </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_06" value="NIVEL MEDIO/TECNICO (CONCOMITANTE)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "NIVEL MEDIO/TECNICO (CONCOMITANTE)") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_06" value="NIVEL MEDIO/TECNICO (CONCOMITANTE)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "NIVEL MEDIO/TECNICO (CONCOMITANTE)") echo "checked";                                               ?>>
                     N&iacute;vel m&eacute;dio/t&eacute;cnico (concomitante) </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_07" value="NIVEL MEDIO/TECNICO (INTEGRADO)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "NIVEL MEDIO/TECNICO (INTEGRADO)") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_07" value="NIVEL MEDIO/TECNICO (INTEGRADO)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "NIVEL MEDIO/TECNICO (INTEGRADO)") echo "checked";                                               ?>>
                     N&iacute;vel m&eacute;dio/t&eacute;cnico (integrado) </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_08" value="NIVEL MEDIO PROFISSIONAL (POS-MEDIO)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_08" value="NIVEL MEDIO PROFISSIONAL (POS-MEDIO)" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)") echo "checked";                                               ?>>
                     N&iacute;vel m&eacute;dio profissional (p&oacute;s-m&eacute;dio) </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_09" value="GRADUACAO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "GRADUACAO") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_09" value="GRADUACAO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "GRADUACAO") echo "checked";                                               ?>>
                     Gradua&ccedil;&atilde;o </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_10" value="ESPECIALIZACAO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "ESPECIALIZACAO") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_10" value="ESPECIALIZACAO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "ESPECIALIZACAO") echo "checked";                                               ?>>
                     Especializa&ccedil;&atilde;o </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_11" value="RESIDENCIA AGRARIA" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "RESIDENCIA AGRARIA") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_11" value="RESIDENCIA AGRARIA" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "RESIDENCIA AGRARIA") echo "checked";                                               ?>>
                     Residencia agr&aacute;ria </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_12" value="MESTRADO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "MESTRADO") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_12" value="MESTRADO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "MESTRADO") echo "checked";                                               ?>>
                     Mestrado </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_13" value="DOUTORADO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "DOUTORADO") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_13" value="DOUTORADO" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "DOUTORADO") echo "checked";                                               ?>>
                     Doutorado </label> </div>
-            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_14" value="OUTROS" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "OUTROS") echo "checked";                                          ?>>
+            <div class="radio"> <label> <input type="radio" name="rmodalidade" id="rmodalidade_14" value="OUTROS" <?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "OUTROS") echo "checked";                                               ?>>
                     Outros </label> </div>
-                            <input type="text" class="form-control" id="modalidade_outros" name="modalidade_outros" value="<?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "OUTROS") echo $modalidade[0]->modalidade_curso_descr;                                         ?>" />
+                            <input type="text" class="form-control" id="modalidade_outros" name="modalidade_outros" value="<?php //if ($operacao != 'add' && $modalidade[0]->modalidade_curso == "OUTROS") echo $modalidade[0]->modalidade_curso_descr;                                              ?>" />
         </div>
 </div>-->
         <div class="form-group">
@@ -321,19 +339,12 @@ if ($operacao == 'add') {
         <div class="form-group">
             <label>4. Numero do Processo</label>
             <div>
-                <input maxlength="9" style="width:100px" class="form-control tamanho-exlg" id="nprocesso" name="nprocesso" value="<?php if ($operacao != 'add') echo $dados[0]->nprocesso; ?>"/>
+                <input placeholder="XXXXX.XXXXXX/AAAA-XX" pattern="[0-9]{5}.[0-9]{6}\/[0-9]{4}-[0-9]{2}" maxlength="20" class="form-control tamanho-sm" id="nprocesso" name="nprocesso" value="<?php if ($operacao != 'add') echo $dados[0]->nprocesso; ?>"/>
                 <label class="control-label form bold" for="nprocesso"></label>
             </div>
         </div>
         <div class="form-group">
-            <label>5. Numero do Instrumento</label>
-            <div>
-                <input maxlength="9" style="width:100px" class="form-control tamanho-exlg" id="ninstrumento" name="ninstrumento" value="<?php if ($operacao != 'add') echo $dados[0]->ninstrumento; ?>"/>
-                <label class="control-label form bold" for="ninstrumento"></label>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>6. Instrumento do curso</label>
+            <label>5. Instrumento do curso</label>
             <div class="form-group">
                 <div>
                     <select class="form-control" id="instrumento" name="instumento"></select>
@@ -348,6 +359,13 @@ if ($operacao == 'add') {
             </div>
         </div>
         <div class="form-group">
+            <label>6. Numero do Instrumento</label>
+            <div>
+                <input maxlength="20" class="form-control tamanho-sm" id="ninstrumento" name="ninstrumento" value="<?php if ($operacao != 'add') echo $dados[0]->ninstrumento; ?>"/>
+                <label class="control-label form bold" for="ninstrumento"></label>
+            </div>
+        </div>
+        <div class="form-group">
             <label>7. Data de criação do curso<br><small>dd/mm/aaaa</small></label>
             <div class="form-group">
                 <div>
@@ -356,6 +374,7 @@ if ($operacao == 'add') {
                 </div>
             </div>
         </div>
+
         </div>
         <?PHP if ($operacao != 'add'): ?>
             <?PHP if ($dados[0]->id_pesquisador): ?>

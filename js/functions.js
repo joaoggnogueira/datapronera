@@ -333,7 +333,7 @@ function requestWithoutRedirect(_url, _data, _fn) {
             // Login autorizado
             if (data.success) {
                 showMessage('status', data); // Exibe mensagem de erro
-                if(_fn.callback){
+                if (_fn.callback) {
                     _fn.callback();
                 }
                 // Login não autorizado
@@ -369,12 +369,12 @@ function validateFile(_fileid, maxsize, allowedTypes) {
             }
         }
         if (key) {
-            if(parseInt(file.size)<maxsize){
+            if (parseInt(file.size) < maxsize) {
                 $elem.hideErrorMessage();
                 $elem.get(0).validate = true;
                 return true;
             } else {
-                $elem.showErrorMessage("Arquivo excedeu o tamanho limite de "+((maxsize/1024)/1024)+" MB");
+                $elem.showErrorMessage("Arquivo excedeu o tamanho limite de " + ((maxsize / 1024) / 1024) + " MB");
             }
         } else {
             $elem.showErrorMessage("Formato inválido");
@@ -667,6 +667,22 @@ function isFormComplete(_form) {
                         $elem.hideErrorMessage();
                     }
 
+                    break;
+                case 'pattern':
+                    console.log($elem);
+                    if ($elem[0].validity.patternMismatch) {
+                        $elem.showErrorMessage(_form[i].extra.message);
+                        flag = false;
+
+                        // Rola página até onde está o primeiro erro
+                        if (!top) {
+                            scrollPage($elem);
+                            top = true;
+                        }
+
+                    } else {
+                        $elem.hideErrorMessage();
+                    }
                     break;
             }
 

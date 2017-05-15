@@ -142,14 +142,6 @@ class Barchart extends CI_Model {
 	
 	public function create_header(){
 
-		$sizeOfFirstRow = count($this->_chart_data[0]); // count the first row to apply the header style
-		$this->_objPHPExcel->getActiveSheet()->mergeCells('A1:'.chr(64+$sizeOfFirstRow).'1');
-		$this->_objPHPExcel->getActiveSheet()->mergeCells('A2:'.chr(64+$sizeOfFirstRow).'2');
-		$this->_objPHPExcel->getActiveSheet()->mergeCells('A3:'.chr(64+$sizeOfFirstRow).'3');
-		$this->_objPHPExcel->getActiveSheet()->mergeCells('A4:'.chr(64+$sizeOfFirstRow).'4');
-		$this->_objPHPExcel->getActiveSheet()->mergeCells('A5:'.chr(64+$sizeOfFirstRow).'5');
-		$this->_objPHPExcel->getActiveSheet()->mergeCells('A6:'.chr(64+$sizeOfFirstRow).'6');
-
 		$style_line = array(
 		    'font'  => array(
 		        'bold'  => true
@@ -163,7 +155,7 @@ class Barchart extends CI_Model {
 	        )
 	    );
 
-	    $style_pnera = array(
+	    $style = array(
 		    'font'  => array(
 		        'bold'  => true
 		    ),
@@ -176,29 +168,28 @@ class Barchart extends CI_Model {
 	        )
 	    );
 
-	    $style = array(
-		    'fill' => array(
-	            'type' => PHPExcel_Style_Fill::FILL_SOLID,
-	            'color' => array('rgb' => 'E6E6E6')
-        	),
-        	'alignment' => array(
-	            'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-	        )
-	    );
-
-	    $this->_objPHPExcel->getActiveSheet()->getStyle('A1:'.chr(64+$sizeOfFirstRow).'1')->applyFromArray($style_line);
-	    $this->_objPHPExcel->getActiveSheet()->getStyle('A6:'.chr(64+$sizeOfFirstRow).'6')->applyFromArray($style_line);
-	    $this->_objPHPExcel->getActiveSheet()->getStyle('A2:'.chr(64+$sizeOfFirstRow).'2')->applyFromArray($style_pnera);
-	    $this->_objPHPExcel->getActiveSheet()->getStyle('A3:'.chr(64+$sizeOfFirstRow).'3')->applyFromArray($style_pnera);
-	    $this->_objPHPExcel->getActiveSheet()->getStyle('A4:'.chr(64+$sizeOfFirstRow).'4')->applyFromArray($style);
-	    $this->_objPHPExcel->getActiveSheet()->getStyle('A5:'.chr(64+$sizeOfFirstRow).'5')->applyFromArray($style);
-
+	    $sizeOfFirstRow = count($this->_chart_data[0]); // count the first row to apply the header style
+	    
+	    for ($i=0; $i>-1; $i++) {
+    		if($i == 0){
+    			$this->_objPHPExcel->getActiveSheet()->mergeCells('A'.($i+1).':'.chr(64+$sizeOfFirstRow).''.($i+1));
+    			$this->_objPHPExcel->getActiveSheet()->getStyle('A'.($i+1).':'.chr(64+$sizeOfFirstRow).''.($i+1))->applyFromArray($style_line);
+    		}
+    		else if($this->_chart_data[$i+1][0] == ""){
+    			$this->_objPHPExcel->getActiveSheet()->mergeCells('A'.($i+1).':'.chr(64+$sizeOfFirstRow).''.($i+1));
+    			$this->_objPHPExcel->getActiveSheet()->getStyle('A'.($i+1).':'.chr(64+$sizeOfFirstRow).''.($i+1))->applyFromArray($style_line);
+    			break;
+    		}
+    		else{
+	    		$this->_objPHPExcel->getActiveSheet()->mergeCells('A'.($i+1).':'.chr(64+$sizeOfFirstRow).''.($i+1));
+	    		$this->_objPHPExcel->getActiveSheet()->getStyle('A'.($i+1).':'.chr(64+$sizeOfFirstRow).''.($i+1))->applyFromArray($style);
+			}
+    	}
 	}
 
 	public function create_chart() {
 
-		//A manipulação dos dados do chart_data aumentou/diminuiu em 7, pois o novo cabeçalho de cada relatorio tem 7 linhas a mais no
-		//documento
+		//A manipulação dos dados do chart_data aumentou pelo fato da inclusão de linhas de cabeçalho
 
 		if ($this->_chart_data == null) {
 			return;

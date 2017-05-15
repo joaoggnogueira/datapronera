@@ -834,7 +834,6 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
 	function municipios_curso_modalidade($access_level) {
 
-
 		$this->db->select('
 			cm.nome AS modalidade,
 			e.sigla AS estado,

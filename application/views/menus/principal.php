@@ -102,14 +102,15 @@
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_estatistico/index'); ?>', null, 'hide');
 		">Estat&iacute;sticos</a></li>
-		<!--
+		
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_andamento/index'); ?>', null, 'hide');
 		">Relatórios Gerais - Cadastro em Andamento</a></li>
+		
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_concluido/index'); ?>', null, 'hide');
 		">Relatórios Gerais - Cadastro Concluídos</a></li>
-		-->
+		
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_pnera2/index'); ?>', null, 'hide');
 		">Relatórios Gerais - II PNERA</a></li>

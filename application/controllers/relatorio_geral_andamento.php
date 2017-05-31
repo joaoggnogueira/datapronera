@@ -764,6 +764,51 @@ class Relatorio_geral_andamento extends CI_Controller {
         }
     }
 
+    public function lista_cursos_modalidade_sr($tipo) {
+
+        if ($result = $this->relatorio_geral_m_andamento->lista_cursos_modalidade_sr($this->session->userdata('access_level'))) {
+            if($tipo==1){
+                $xls = array();
+                $xls = $this->create_header("Lista de cursos por modalidade", 1);
+                $titles = array("CÓDIGO", "SUPERINTENDÊNCIA", "MODALIDADE","CÓDIGO", "CURSO");
+
+                array_push($xls, $titles);
+
+                foreach ($result as $row) {
+
+                    
+                    $row['id_curso'] = $this->leading_zeros($row['id_superintendencia'], 2) . $this->leading_zeros($row['id_curso'], 3);
+                    $row['id_superintendencia'] = "SR - " . $this->leading_zeros($row['id_superintendencia'], 2);
+                    array_push($xls, $row);
+                }
+
+                $this->barchart->set_include_charts(false); // hide charts
+
+                $this->barchart->set_chart_data($xls);
+                $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE-SR.xls'); // filename
+
+                $this->barchart->create_chart();
+            }
+            else if($tipo == 2){
+                error_reporting(E_ALL ^ E_DEPRECATED);
+                $this->load->library('pdf');            
+                $pdf = $this->pdf->load();
+                $data['titulo_relatorio'] = 'Lista de cursos por modalidade e superintendência';
+                $header = $this->load->view('relatorio/andamento/header_pdf', $data, true); 
+                $pdf->SetHTMLHeader($header);
+                $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
+                
+                for ($i=0; $i < sizeof($result); $i++) { 
+                    $result[$i]['id_curso'] = $this->leading_zeros($result[$i]['id_superintendencia'], 2) . $this->leading_zeros($result[$i]['id_curso'], 3);
+                }
+
+                $dataResult['result'] = $result;
+                $pdf->WriteHTML($this->load->view('relatorio/2pnera/lista_cursos_modalidade_sr', $dataResult, true));
+                $pdf->Output($pdfFilePath, 'I'); 
+            }
+        }
+    }
+
     public function titulacao_educadores($tipo) {
 
         if ($result = $this->relatorio_geral_m_andamento->titulacao_educadores($this->session->userdata('access_level'))) {

@@ -918,6 +918,29 @@ class Relatorio_geral_m_andamento extends CI_Model {
 		}
 	}
 
+	function lista_cursos_modalidade_sr($access_level) {
+
+		$this->db->select('s.id AS id_superintendencia, s.nome AS superintendencia, cm.nome AS modalidade, c.id AS id_curso, c.nome AS curso');
+		$this->db->from('curso c');
+		$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+		$this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+		$this->db->where('c.ativo_inativo', 'A');
+		$this->db->where('c.status', 'AN');
+
+		if ($access_level <= 3) {
+			$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
+		}
+
+		$this->db->order_by('s.id, cm.nome, c.id');
+
+		if (($query = $this->db->get()) != null) {
+			return $query->result_array();
+
+		} else {
+			return false;
+		}
+	}
+
 	function titulacao_educadores($access_level) {
 
 		$titulacoes = array(

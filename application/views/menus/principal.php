@@ -117,6 +117,9 @@
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_dinamico/index'); ?>', null, 'hide');
 		">Relatório Dinâmico</a></li>
+		<li><a href="#" onclick="
+			request('<?php echo site_url('relatorio_mapas/index'); ?>', null, 'hide');
+		">Mapas</a></li>
 	</ul>
 </li>
 <li class="dropdown

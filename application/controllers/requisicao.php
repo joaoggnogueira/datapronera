@@ -97,6 +97,16 @@ class Requisicao extends CI_Controller {
         return $this->requisicao_m->get_modalidades_rel();
     }
 
+
+    // retorna todos os municipios dos cursos
+    function get_municipios_cursos(){
+        echo json_encode($this->requisicao_m->get_municipios_cursos());
+    }
+
+    function get_municipios_educandos(){
+        echo json_encode($this->requisicao_m->get_municipios_educandos());
+    }
+
 }
 
 ?>

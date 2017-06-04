@@ -123,7 +123,13 @@
 		    		<li class="li-rel">
 		    			<a class="btn btn-success" style="color: black;" target="_blank" href="<?php echo site_url('relatorio_geral_concluido/lista_cursos_modalidade_sr/1'); ?>">XLS</a> 
 		    			<a class="btn btn-success" style="color: black;" target="_blank" href="<?php echo site_url('relatorio_geral_concluido/lista_cursos_modalidade_sr/2'); ?>">PDF</a> 
-		    			Lista de cursos por modalidade e superintendência<b>(nominal)</b>
+		    			Lista de cursos por modalidade e superintendência <b>(nominal)</b>
+		    		</li>
+		    		<br>
+		    		<li class="li-rel">
+		    			<a class="btn btn-success" style="color: black;" target="_blank" href="<?php echo site_url('relatorio_geral_concluido/alunos_curso/1'); ?>">XLS</a> 
+		    			<a class="btn btn-success" style="color: black;" target="_blank" href="<?php echo site_url('relatorio_geral_concluido/alunos_curso/2'); ?>" disabled>PDF</a> 
+		    			Lista de alunos por curso <b>(nominal)</b>
 		    		</li>
 		    	</ul>
 		    </li>

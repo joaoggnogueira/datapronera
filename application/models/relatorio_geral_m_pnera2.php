@@ -941,6 +941,24 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 		}
 	}
 
+	function alunos_curso() {
+
+		$this->db->select('c.id as id_curso, c.nome as curso, e.nome as educando, s.id AS id_superintendencia');
+		$this->db->from('educando e');
+		$this->db->join('curso c', 'e.id_curso = c.id', 'left');
+		$this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+		$this->db->where('c.ativo_inativo', 'A');
+		$this->db->where('c.status', '2P');
+		$this->db->order_by('c.id');
+
+		if (($query = $this->db->get()) != null) {
+			return $query->result_array();
+
+		} else {
+			return false;
+		}
+	}
+
 	function titulacao_educadores($access_level) {
 
 		$titulacoes = array(

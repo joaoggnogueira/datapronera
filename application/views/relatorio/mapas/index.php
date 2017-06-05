@@ -8,7 +8,6 @@
 
 
 <h1>Relatório de Mapas</h1>
-<p>Abaixo se encontram-se os filtros que podem ser realizados no relatório geral do pronera.</p>
 
 <h3>Cidades dos Cursos Ativos</h3>
 <div id="map"></div>

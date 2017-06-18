@@ -49,6 +49,10 @@ function Table(obj) {
     });
 }
 
+Table.prototype.destroy = function(){
+    this.oTable.fnDestroy();
+};
+
 Table.prototype.enableControls = function () {
 
     if (this.controls) {

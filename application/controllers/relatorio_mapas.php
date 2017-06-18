@@ -11,6 +11,8 @@ class Relatorio_mapas extends CI_Controller {
         $this->load->database();            // Loading Database
         $this->load->library('session');    // Loading Session
         $this->load->helper('url');         // Loading Helper
+        
+        $this->load->model('mapas_m');
     }
 
     /*
@@ -36,8 +38,39 @@ class Relatorio_mapas extends CI_Controller {
 
         echo json_encode($response);
     }
+    
+    //MAPAS
+    function get_municipios_cursos(){
+        echo json_encode($this->mapas_m->get_municipios_cursos());
+    }
 
+    function get_municipios_educandos(){
+        echo json_encode($this->mapas_m->get_municipios_educandos());
+    }
+
+    function get_municipios_instituicoes(){
+        echo json_encode($this->mapas_m->get_municipios_instituicoes());
+    }
+    
+    //TABELAS
+
+    function get_instituicoes(){
+        echo json_encode($this->mapas_m->get_instituicoes($this->uri->segment(3)));
+    }
+    
+    function get_cursos(){
+        echo json_encode($this->mapas_m->get_cursos($this->uri->segment(3)));
+    }
+
+    function get_educandos(){
+        echo json_encode($this->mapas_m->get_educandos($this->uri->segment(3)));
+    }
+    
+    function get_cursos_educandos(){
+        echo json_encode($this->mapas_m->get_cursos_educandos($this->uri->segment(3)));
+    }
+    
 }
 
-/* End of file relatorio_dinamico.php */
-/* Location: ./application/controllers/relatorio_dinamico.php */
+/* End of file relatorio_mapas.php */
+/* Location: ./application/controllers/relatorio_mapas.php */

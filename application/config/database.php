@@ -50,9 +50,9 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
-$db['default']['password'] = 'root';
-$db['default']['database'] = 'pnera_2016';
-$db['default']['dbdriver'] = 'mysql';
+$db['default']['password'] = '';
+$db['default']['database'] = 'new_pnera';
+$db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = FALSE;

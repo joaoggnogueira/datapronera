@@ -440,28 +440,6 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_municipios_cursos(){
-
-        $query = $this->db->query("
-            SELECT DISTINCT lg.latitude as lat, lg.longitude as lng FROM `curso` c
-            INNER JOIN caracterizacao cr ON c.id = cr.id_curso
-            INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
-            INNER JOIN cidade m ON m.id = ccr.id_cidade
-            INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
-            WHERE c.ativo_inativo = 'A' ");
-        return $query->result();
-    }
-
-    function get_municipios_educandos(){
-
-        $query = $this->db->query("
-            SELECT DISTINCT lg.latitude as lat, lg.longitude as lng FROM `educando` e
-            INNER JOIN educando_cidade ec ON ec.id_educando = e.id
-            INNER JOIN cidade m ON m.id = ec.id_cidade
-            INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
-        ");
-        return $query->result();
-    }
 
 }
 

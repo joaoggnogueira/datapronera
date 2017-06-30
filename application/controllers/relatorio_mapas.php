@@ -51,7 +51,7 @@ class Relatorio_mapas extends CI_Controller {
     function get_municipios_instituicoes(){
         echo json_encode($this->mapas_m->get_municipios_instituicoes());
     }
-    
+
     //TABELAS
 
     function get_instituicoes(){

@@ -2,8 +2,8 @@ function Table(obj) {
 
     this.deletedRows = Array();
     this.controls = obj.controls || null;
-
     var $this = this;
+    this.element = obj.table;
 
     this.oTable = obj.table.dataTable({
         "bProcessing": true,
@@ -49,6 +49,15 @@ function Table(obj) {
     });
 }
 
+Table.prototype.appendEvent = function(event){
+    var oThis = this;
+    this.element.get(0).onclick = function(){
+        var anSelected = oThis.fnGetSelected();
+        var data = oThis.oTable.fnGetData(anSelected[0]);
+        event(data);
+    };
+};
+
 Table.prototype.destroy = function(){
     this.oTable.fnDestroy();
 };
@@ -88,15 +97,7 @@ Table.prototype.addData = function (_node) {
 }
 
 Table.prototype.clear = function () {
-    var aReturn = new Array();
-    var aTrs = this.oTable.fnGetNodes();
-
-    for (var i = 0; i < aTrs.length; i++) {
-        var data = this.oTable.fnGetData(aTrs[i]);
-        this.oTable.fnDeleteRow(data);
-    }
-
-    return aReturn;
+    this.oTable.fnClearTable();
 }
 
 Table.prototype.deleteSelectedRow = function () {

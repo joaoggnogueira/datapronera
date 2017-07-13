@@ -15,14 +15,13 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         margin-top: 10px;
     }
-    
+
     #pac-input {
         position: absolute;
         background-color: #fff;
         font-family: Roboto;
         font-size: 15px;
         font-weight: 300;
-        margin-left: 12px;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
         width: 300px;
@@ -64,16 +63,30 @@
     #content{
         width: 100% !important;
     }
+
     #middle{
         width: calc(100vw - 50px) !important;
         margin-top: 100px;
     }
 
+    .option button{
+        margin-right: 5px;
+    }
 
+    .labels{
+        line-height: 100px;
+    }
+
+    #searchbutton{
+        height: 32px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        margin-top: 10px;
+    }
+    table.table{
+        width: 100% !important;
+    }
+    
 </style>
-<script>
-
-</script>
 
 <h1>Relatório de Mapas</h1>
 <div id="map-wrapper">
@@ -82,7 +95,8 @@
         <option value="curso">Cidades das Caracterizações de Cursos ativos</option>
         <option value="instituicao">Cidades das Caracterizações de Instituições</option>
     </select>
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <button id="searchbutton" class="btn btn-primary glyphicon glyphicon-search"></button>
+    <input id="pac-input" class="controls" type="text" placeholder="Pesquise a cidade aqui">
     <div id="map"></div>
 </div>
 
@@ -114,11 +128,26 @@
         map = new google.maps.Map(document.getElementById('map'), initialpos);
 
         var input = document.getElementById('pac-input');
+        $(input).hide();
         var searchBox = new google.maps.places.SearchBox(input);
         var selectbox = document.getElementById("mapa-select");
-        
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        var searchbutton = document.getElementById("searchbutton");
+
+        $(searchbutton).click(function () {
+            map.controls[google.maps.ControlPosition.TOP_LEFT].removeAt(1);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            $(input).show();
+            $(input).focus();
+        });
+        $(input).blur(function(){
+            map.controls[google.maps.ControlPosition.TOP_LEFT].removeAt(1);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchbutton);            
+        });
+
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(selectbox);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchbutton);
+
+        //        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
         map.addListener('bounds_changed', function () {
             searchBox.setBounds(map.getBounds());
         });
@@ -169,7 +198,13 @@
 
         $("#mapa-select").val("educando");
     }
-
+    
+    function init(){
+        setTimeout(function(){
+            updateMap();
+        },1000);
+    }
+    
     function updateMap() {
         if (typeof (google) !== "undefined") {
             if (map === null) {
@@ -195,35 +230,97 @@
         }
     }
 
-    function openWindow(text, marker) {
+    function openWindow(buttons, marker, node) {
+
+        var id = node.id;
+
+        var createButton = function (buttonspec) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "btn btn-success";
+            button.innerHTML = buttonspec.title;
+            button.addEventListener("click", function () {
+                buttonspec.action(id, button);
+            });
+            return button;
+        };
+
+        var pai = document.createElement("div");
+
+        pai.innerHTML = "<table style='width:100%'>\
+            <tr>\
+                <td><h4>" + node.municipio + "<b> (" + node.estado + ")</b></h4></td>\
+                <td><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></td>\
+            </tr>\
+        </table>";
+
+        var option = document.createElement("div");
+        option.className = "option";
+
+        var buttonsr = [];
+
+        for (var i = 0; i < buttons.length; i++) {
+            buttonsr[i] = createButton(buttons[i]);
+            option.appendChild(buttonsr[i]);
+        }
+        option.appendChild(document.createElement("p"));
+        var table = document.createElement("table");
+        table.style.width = "100%";
+        table.className = "table table-striped table-bordered";
+        option.appendChild(table);
+        pai.appendChild(option);
         var div = $("<div/>").
-            css("width","600px").
-            css("box-shadow","2px 2px 5px rgba(0,0,0,0.3)").
-            css("background","white").
-            css("position","absolute").
-            css("padding","10px").
-            css("margin","5px").
-            css("max-height","calc(100% - 10px)").
-            css("overflow-x","hidden").
-            css("overflow-y","auto").
-            css("right","0px").
-            html(text);
-    
-        marker.setIcon('<?= base_url('css/images/markerselected.png') ?>');
+                css("width", "600px").
+                css("box-shadow", "2px 2px 5px rgba(0,0,0,0.3)").
+                css("background", "white").
+                css("position", "absolute").
+                css("padding", "10px").
+                css("margin", "5px").
+                css("max-height", "calc(100% - 10px)").
+                css("overflow-x", "hidden").
+                css("overflow-y", "auto").
+                css("right", "0px")
+                .append(pai);
+
         closeWindow();
+        marker.setIcon('<?= base_url('css/images/markerselected.png') ?>');
+        div.hide();
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(div.get(0));
         markerwindow = marker;
         infowindow = div;
         map_recenter(markerwindow.getPosition(), 0, 0);
+        
+        if(buttons.length>=1){
+            $(buttonsr[0]).click();
+            if(buttons.length===1){
+                $(buttonsr[0]).remove();
+            }
+        }
+            
+        div.slideDown(300);
+    }
 
+    function createMarker(node) {
+        return new google.maps.Marker({
+            position: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
+            icon: "<?= base_url('css/images/marker.png') ?>",
+            label: {
+                text: node.total,
+                color: 'white',
+                fontSize: '12px',
+                x: '20',
+                y: '70'
+            },
+            labelClass: "labels"
+        });
     }
 
     function closeWindow() {
         if (infowindow) {
-            markerwindow.setIcon('<?= base_url('css/images/marker.png') ?>');
             map.controls[google.maps.ControlPosition.TOP_RIGHT].removeAt(0);
             infowindow.remove();
             infowindow = false;
+            markerwindow.setIcon('<?= base_url('css/images/marker.png') ?>');
         }
     }
 
@@ -232,7 +329,7 @@
             hashMarkers = [];
             var markers = instituicoes.map(function (instituicao) {
                 if (typeof (google) !== "undefined") {
-                    
+
                     var marker = new google.maps.Marker({
                         position: {lng: parseFloat(instituicao.lng), lat: parseFloat(instituicao.lat)},
                         icon: "<?= base_url('css/images/marker.png') ?>",
@@ -246,25 +343,7 @@
                     });
                     hashMarkers[instituicao.id] = marker;
                     marker.addListener('click', function () {
-                        openWindow("<div>\
-                                <table style='width:100%'>\
-                                   <tr>\
-                                       <td><h4>Município</h4></td>\
-                                       <td><h4 style='text-align:right'>Total de Caracterizações</h4></td>\
-                                       <td><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></td>\
-                                   </tr>\
-                                   <tr>\
-                                       <td><h5>" + instituicao.municipio + "<b> (" + instituicao.estado + ")</b></h5></td>\
-                                       <td><h5 style='text-align:right'>" + instituicao.total + "</h5></td>\
-                                       <td></td>\
-                                   </tr>\
-                                 </table>\
-                                 <div class='option'>\
-                                        <button type='button' onclick='getInstituicoes(" + instituicao.id + ",this)' class='btn btn-success'>Listar instituições</button>\
-                                        <p></p>\
-                                       <table style='width:100%;margin-top:10px' class='table table-striped table-bordered'></table>\
-                                 </div>\
-                              </div>", marker);
+                        openWindow([{title: "<i class='glyphicon glyphicon-education'></i> Listar instituições", action: getInstituicoes}], marker, instituicao);
                     });
                 }
                 return marker;
@@ -296,26 +375,7 @@
                     });
                     hashMarkers[curso.id] = marker;
                     marker.addListener('click', function () {
-                        openWindow("<div>\
-                                    <table style='width:100%'>\
-                                       <tr>\
-                                           <td><h4>Município</h4></td>\
-                                           <td><h4 style='text-align:right'>Total de Educandos</h4></td>\
-                                           <td><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></td>\
-                                       </tr>\
-                                       <tr>\
-                                           <td><h5>" + curso.municipio + "<b> (" + curso.estado + ")</b></h5></td>\
-                                           <td><h5 style='text-align:right'>" + curso.total + "</h5></td>\
-                                            <td></td>\
-                                       </tr>\
-                                     </table>\
-                                     <div class='option'>\
-                                           <button type='button' onclick='getCursos(" + curso.id + ",this)' class='btn btn-success'>Listar cursos</button>\
-                                           <p></p>\
-                                           <table style='width:100%;margin-top:10px' class='table table-striped table-bordered'></table>\
-                                     </div>\
-                                  </div>"
-                                , marker);
+                        openWindow([{title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}], marker, curso);
                     });
                 }
                 return marker;
@@ -334,40 +394,14 @@
             var markers = educandos.map(function (educando) {
 
                 if (typeof (google) !== "undefined") {
-                    var marker = new google.maps.Marker({
-                        position: {lng: parseFloat(educando.lng), lat: parseFloat(educando.lat)},
-                        icon: "<?= base_url('css/images/marker.png') ?>",
-                        label: {
-                            text: educando.total,
-                            color: 'white',
-                            fontSize: '12px',
-                            x: '20',
-                            y: '70'
-                        }
-                    });
+                    var marker = createMarker(educando);
+
                     hashMarkers[educando.id] = marker;
                     marker.addListener('click', function () {
-                        openWindow("<div>\
-                                    <table style='width:100%'>\
-                                       <tr>\
-                                           <td><h4>Município</h4></td>\
-                                           <td><h4 style='text-align:right'>Total de Educandos</h4></td>\
-                                           <td><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></td>\
-                                       </tr>\
-                                       <tr>\
-                                           <td><h5>" + educando.municipio + "<b> (" + educando.estado + ")</b></h5></td>\
-                                           <td><h5 style='text-align:right'>" + educando.total + "</h5></td>\
-                                            <td></td>\
-                                       </tr>\
-                                     </table>\
-                                     <div class='option'>\
-                                           <button type='button' onclick='getEducandos(" + educando.id + ",this)' class='btn btn-success'>Listar educandos</button>\
-                                           <button type='button' onclick='getCursosEducandos(" + educando.id + ",this)' class='btn btn-success'> Para estes <b>EDUCANDOS</b> listar cursos oferecidos</button>\
-                                           <p></p>\
-                                           <table style='width:100%;margin-top:10px' class='table table-striped table-bordered'></table>\
-                                     </div>\
-                                  </div>"
-                                , marker);
+                        openWindow([
+                            {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
+                            {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
+                        ], marker, educando);
                     });
 
                 }
@@ -382,7 +416,7 @@
 
     var tableopened = null;
 
-    function appendTable(url, titles, btn) {
+    function appendTable(url, titles, btn, onselect) {
 
         var parent = $($(btn).parents(".option")[0]);
         var table = $(parent.find("table")[0]);
@@ -395,7 +429,7 @@
         }
 
         innerHTML += "</tr></thead><tbody></tbody>";
-        if (tableopened) {
+        if (tableopened !== null) {
             tableopened.destroy();
         }
         table.html(innerHTML);
@@ -404,14 +438,19 @@
             table: table,
             controls: null
         });
+        tableopened.appendEvent(onselect);
     }
 
     function getCursos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade'], btn);
+        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade','instituição'], btn, 
+            function(data){
+                console.log(data);
+            }
+        );
     }
 
     function getInstituicoes(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_instituicoes/") ?>/" + id_municipio, ['id', 'nome', 'sigla', 'unidade', 'natureza'], btn);
+        appendTable("<?= site_url("relatorio_mapas/get_instituicoes/") ?>/" + id_municipio, ['id', 'nome', 'sigla', 'unidade', 'curso'], btn);
     }
 
     function getEducandos(id_municipio, btn) {
@@ -439,4 +478,4 @@
 </script>
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6A2l8RrNfmBdbVI-kMjRHBoZmBa1e4IU&libraries=places&callback=updateMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6A2l8RrNfmBdbVI-kMjRHBoZmBa1e4IU&libraries=places&callback=init"></script>

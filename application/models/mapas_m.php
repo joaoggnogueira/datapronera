@@ -81,8 +81,9 @@ class Mapas_m extends CI_Model {
     }
     
     function get_instituicoes($id_municipio){
-        $this->db->select('id,nome,sigla,unidade,natureza_instituicao');
+        $this->db->select('ie.id,ie.nome,ie.sigla,ie.unidade,c.nome as curso');
         $this->db->from('instituicao_ensino ie');
+        $this->db->join('curso c','c.id = ie.id_curso');
         $this->db->where('ie.id_cidade', $id_municipio);
         return $this->get_table($this->db->get());
     }
@@ -90,7 +91,7 @@ class Mapas_m extends CI_Model {
     function get_cursos($id_municipio){
         $id = (int)$id_municipio;
         $query = $this->db->query("
-            SELECT DISTINCT CONCAT(LPAD(c.id_superintendencia, 2, 0 ),'.', LPAD(c.id, 3, 0 )), `c`.`nome` , `modal`.`nome` as mdldd
+            SELECT DISTINCT CONCAT(LPAD(c.id_superintendencia, 2, 0 ),'.', LPAD(c.id, 3, 0 )), `c`.`nome` , `modal`.`nome` as mdldd, ie.nome as inst
             FROM `curso` c 
             INNER JOIN caracterizacao cr ON c.id = cr.id_curso
             INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
@@ -98,6 +99,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN estado est ON est.id = m.id_estado 
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
             INNER JOIN `curso_modalidade` modal ON `modal`.`id` = `c`.`id_modalidade` 
+            INNER JOIN instituicao_ensino ie ON ie.id_curso = c.id 
             WHERE c.ativo_inativo = 'A' AND m.id = ".$id);
         return $this->get_table($query);
     }

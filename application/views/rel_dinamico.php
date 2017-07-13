@@ -27,7 +27,7 @@
 
         // Carrega os selects para filtro
         $.get("<?php echo site_url('requisicao/get_superintendencias_cursos_rel'); ?>", function(data) {
-            $('#superintendencias-select').html(data);
+            $('#superintendencias-select').html(data).css("width","300px").select2();
         });
 
         $('#superintendencias-select').change(function(){
@@ -50,7 +50,8 @@
         $.get("<?php echo site_url('requisicao/get_modalidades_rel'); ?>", function(modalidades) {
             $('#modalidades-select').html(modalidades);
         });
-
+        
+        $('#modalidades-select').css("width","300px").select2();
         /* MUNICIPIOS */
 
         $.get("<?php echo site_url('requisicao/get_estados_rel'); ?>", function(data) {
@@ -60,7 +61,7 @@
         $('#estados-select').change(function(){
             var url = "<?php echo site_url('requisicao/get_municipios_rel').'/'; ?>" + $('#estados-select option:selected').val();
             $.get(url, function(data) {
-                $('#municipios-select').html(data);
+                $('#municipios-select').html(data).select2();
             });
         });
 
@@ -199,8 +200,13 @@
             "<textarea id='where_tipos_parceiros' name='where_tipos_parceiros'>" + where_tipos_parceiros + "</textarea>" +
             '</form>').appendTo('body').submit().remove();
         });
-
+        $("#estados-select").css("width","300px").select2();
+        $("#municipios-select").css("width","300px").select2();
+        $("#genero_educando").css("width","200px").select2();
+        $("#genero_professor").css("width","200px").select2();
     });   
+    
+   
 </script>
 
 <h1>Relatório Dinâmico</h1>

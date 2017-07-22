@@ -12,6 +12,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         $this->load->helper('url');         // Loading Helper
 
         $this->load->model('relatorio_geral_m_pnera2');     // Loading Model
+        $this->load->model('requisicao_m');     // Loading Model
         $this->load->model('barchart');              // Loading Model
     }
 
@@ -115,7 +116,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('MUNICIPIOS-CURSO-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
+                
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -167,7 +169,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('MUNICIPIOS-CURSO.xls');                // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -209,7 +211,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                          // data array
                 $this->barchart->set_filename('CURSOS-MODALIDADE.xls');         // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -251,7 +253,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                          // data array
                 $this->barchart->set_filename('CURSOS-NIVEL.xls');              // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -293,7 +295,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('CURSOS-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -339,7 +341,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('CURSOS-SUPERINTENDENCIA.xls');         // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -384,7 +386,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-INGRESSANTES-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -429,7 +431,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-INGRESSANTES-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -478,7 +480,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                     // data array
                 $this->barchart->set_filename('ALUNOS-INGRESSANTES-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -520,7 +522,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('INGRESSANTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -565,7 +567,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-CONCLUINTES-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -610,7 +612,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-CONCLUINTES-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -659,7 +661,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                     // data array
                 $this->barchart->set_filename('ALUNOS-CONCLUINTES-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -701,7 +703,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('CONCLUINTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -742,7 +744,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -787,7 +789,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE-SR.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -810,12 +812,13 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_curso($tipo){
+    public function alunos_curso($tipo,$idsr){
 
-        if ($result = $this->relatorio_geral_m_pnera2->alunos_curso()) {
+        if ($result = $this->relatorio_geral_m_pnera2->alunos_curso($idsr)) {
+            $nomesr = $this->requisicao_m->get_superintendencias_nome(1,$idsr);
             if($tipo==1){
                 $xls = array();
-                $xls = $this->create_header("Lista de alunos por curso", 1);
+                $xls = $this->create_header("Lista de alunos por curso da superintendência - ".$nomesr, 1);
                 $titles = array("CÓDIGO", "CURSO", "EDUCANDO");
 
                 array_push($xls, $titles);
@@ -829,15 +832,15 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $this->barchart->set_include_charts(false); // hide charts
 
                 $this->barchart->set_chart_data($xls);
-                $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE-SR.xls'); // filename
-
+                $this->barchart->set_filename("LISTA-CURSOS-ALUNO-SR-$idsr.xls"); // filename
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
                 error_reporting(E_ALL ^ E_DEPRECATED);
                 $this->load->library('pdf');            
                 $pdf = $this->pdf->load();
-                $data['titulo_relatorio'] = 'Lista de alunos por curso';
+                $data['titulo_relatorio'] = "Lista de alunos por curso da superintendência - ".$nomesr;
                 $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
@@ -878,7 +881,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('TITULACAO-EDUCADORES.xls');           // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -919,7 +922,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('TITULACAO-EDUCADORES-SUPERINTENDENCIA.xls');           // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -964,7 +967,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                 // data array
                 $this->barchart->set_filename('EDUCADORES-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1016,7 +1019,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                 // data array
                 $this->barchart->set_filename('EDUCADORES-CURSO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1069,7 +1072,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('EDUCADORES-SUPERINTENDENCIA.xls');     // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1114,7 +1117,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('EDUCADORES-GENERO-MODALIDADE.xls');   // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1163,7 +1166,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('EDUCANDOS-SUPERINTENDENCIA.xls');     // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1200,7 +1203,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('MUNICIPIO-ORIGEM-EDUCANDOS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1238,7 +1241,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('TERRITORIO-EDUCANDOS-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1277,7 +1280,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('TERRITORIO-EDUCANDOS-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1321,7 +1324,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                  // data array
                 $this->barchart->set_filename('IDADE-EDUCANDOS-MODALIDADE.xls');        // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1366,7 +1369,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('EDUCANDOS-GENERO-MODALIDADE.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1410,7 +1413,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1451,7 +1454,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1471,15 +1474,18 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     }
 
     //não funcional
-    public function lista_educandos_cursos_sr($tipo) {
+    public function lista_educandos_cursos_sr($tipo,$sr) {
 
-        // GAMBIARRRA para aumentar a área de memória 
+        // GAMBIARRRA para aumentar a área de memória
+        // kkkk^
+        // Agora limitei por superintendencia
         ini_set('memory_limit', '1024M');
 
-        if ($result = $this->relatorio_geral_m_pnera2->lista_educandos_cursos_sr()) {
+        if ($result = $this->relatorio_geral_m_pnera2->lista_educandos_cursos_sr($sr)) {
+            $nomesr = $this->requisicao_m->get_superintendencias_nome(1,$sr);
             if($tipo==1){
                 $xls = array();
-                $xls = $this->create_header("Educandos, superintendência e curso", 1);
+                $xls = $this->create_header("Educandos, superintendência e curso - $nomesr", 1);
                 $titles = array("NOME EDUCANDO", "TIPO TERRITÓRIO", "NOME TERRITÓRIO", "CÓD. SR", "CÓD. CURSO", "NOME CURSO", "MODALIDADE CURSO");
 
                 array_push($xls, $titles);
@@ -1492,15 +1498,15 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $this->barchart->set_include_charts(false); // hide charts
 
                 $this->barchart->set_chart_data($xls);
-                $this->barchart->set_filename('LISTA-EDUCANDOS-CURSOS-SR.xls'); // filename
-
+                $this->barchart->set_filename("LISTA-EDUCANDOS-CURSOS-SR-$sr.xls"); // filename
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
                 error_reporting(E_ALL ^ E_DEPRECATED);
                 $this->load->library('pdf');            
                 $pdf = $this->pdf->load();
-                $data['titulo_relatorio'] = 'Educandos, superintendência e curso';
+                $data['titulo_relatorio'] = "Educandos, superintendência e curso - $nomesr";
                 $header = $this->load->view('relatorio/2pnera/header_pdf', $data, true); 
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera'.'|Página {PAGENO}|'.date("d.m.Y").'   ');
@@ -1532,7 +1538,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LOCALIZACAO-INSTITUICOES-ENSINO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1574,7 +1580,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                  // data array
                 $this->barchart->set_filename('INSTITUICOES-ENSINO-MODALIDADE.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1616,7 +1622,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                  // data array
                 $this->barchart->set_filename('INSTITUICOES-ENSINO-NIVEL.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1659,7 +1665,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                        // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-SUPERINTENDENCIA.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1704,7 +1710,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                        // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-MUNICIPIO.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1746,7 +1752,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                        // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-ESTADO.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1788,7 +1794,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                                     // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-CURSOS-NATUREZA.xls');                  // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1825,7 +1831,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('INSTITUICAO-ENSINO-CURSOS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1867,7 +1873,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                    // data array
                 $this->barchart->set_filename('ORGANIZAÇÕES-DEMANDANTES-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1916,7 +1922,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('MEMBROS-ORG-DEMANDANTES-MODALIDADE.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1953,7 +1959,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('ORGANIZACAO-DEMANDANTE-CURSOS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1990,7 +1996,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LOCALIZACAO-PARCEIROS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2032,7 +2038,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                     // data array
                 $this->barchart->set_filename('PARCEIROS-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2075,7 +2081,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                            // data array
                 $this->barchart->set_filename('PARCEIROS-SUPERINTENDENCIA.xls');  // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2117,7 +2123,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                     // data array
                 $this->barchart->set_filename('PARCEIROS-NATUREZA.xls');   // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2143,18 +2149,20 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $xls = array();
                 $xls = $this->create_header("Lista dos parceiros", 1);
                 $titles = array("PARCEIRO");
-
                 array_push($xls, $titles);
 
                 foreach ($result as $row) {
                     array_push($xls, $row);
                 }
+                $this->barchart->set_topLeftCell('I1');
+                $this->barchart->set_bottomRightCell('V28');
 
+                $this->barchart->set_chart_colors(array('CD661D'));        // array - colors
                 $this->barchart->set_include_charts(false); // hide charts
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-PARCEIROS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2191,7 +2199,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-ESTADO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2229,7 +2237,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2271,7 +2279,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                 // data array
                 $this->barchart->set_filename('PRODUCOES-TIPO.xls');   // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2308,7 +2316,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-PRONERA-ESTADO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2346,7 +2354,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-PRONERA-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2388,7 +2396,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('PRODUCOES-PRONERA-TIPO.xls');        // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){

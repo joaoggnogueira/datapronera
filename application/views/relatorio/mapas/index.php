@@ -14,6 +14,8 @@
     #mapa-select{
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         margin-top: 10px;
+        margin-left: 5px;
+        width: 270px;
     }
 
     #pac-input {
@@ -35,8 +37,8 @@
 
     .pac-container {
         font-family: Roboto;
+        z-index: 10000 !important;
     }
-
     #type-selector {
         color: #fff;
         background-color: #4d90fe;
@@ -51,7 +53,11 @@
     #target {
         width: 345px;
     }
-
+    .dataTables_wrapper{
+        max-height: calc(100vh - 250px);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
     #map{
         height: calc(100vh - 100px);
         width: 100%;
@@ -65,8 +71,12 @@
     }
 
     #middle{
-        width: calc(100vw - 50px) !important;
+        width: calc(100vw - 100px) !important;
         margin-top: 100px;
+    }
+
+    #content{
+        padding: 0px !important;
     }
 
     .option button{
@@ -85,19 +95,59 @@
     table.table{
         width: 100% !important;
     }
-    
-</style>
 
-<h1>Relatório de Mapas</h1>
-<div id="map-wrapper">
-    <select class="form-control" onchange="updateMap()" name="mapa" id="mapa-select">
-        <option selected value="educando">Cidades dos Educandos</option>
-        <option value="curso">Cidades das Caracterizações de Cursos ativos</option>
-        <option value="instituicao">Cidades das Caracterizações de Instituições</option>
-    </select>
-    <button id="searchbutton" class="btn btn-primary glyphicon glyphicon-search"></button>
-    <input id="pac-input" class="controls" type="text" placeholder="Pesquise a cidade aqui">
-    <div id="map"></div>
+    #helpModal{
+        z-index: 10001;
+    }
+
+    .modal-backdrop.fade.in{
+        z-index: 10000;
+    }
+    .desc .input-group-addon{
+        border-radius: 4px !important;
+        border: 1px solid rgb(204, 204, 204);
+        background: white;
+        padding: 0px !important;
+    }
+    .desc label{
+        padding-bottom: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 6px;
+        height: 25px;
+        line-height: 25px;
+    }
+
+</style>
+<div class="panel panel-default" style="margin-bottom: 0px">
+    <div class="panel-heading">
+        <div class="col-md-10">    
+            <h5><b>Relatório de Mapas</b></h5>
+        </div>
+        <div style="text-align: right">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#helpModal">
+                Ajuda <i class="glyphicon glyphicon-question-sign"></i>
+            </button>
+        </div>
+    </div>
+    <div class="panel-body" style="padding: 0px">
+        <div id="map-wrapper">
+            <select style="display: none" class="form-control" onchange="updateMap()" name="mapa" id="mapa-select">
+                <option selected value="educando">Educandos por município de origem</option>
+                <option value="curso">Cursos por município de realização</option>
+            </select>
+            <input style="display: none" id="pac-input" class="controls" type="text" placeholder="Pesquise a cidade aqui">
+            <div id="map">
+                <p id="loading" style="color:white;padding-top: 90px;text-align: center">
+                    <i class="glyphicon glyphicon-map-marker"></i> 
+                    Carregando<br/><br/>
+                    <i style="text-decoration: none;font-size: 30px">Google Maps</i><br/><br/>
+                    Aguarde ...
+                    <b class="problem"></b>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -125,86 +175,69 @@
             scaleControl: true,
             fullscreenControl: true
         };
+        $("#loading").remove();
+
         map = new google.maps.Map(document.getElementById('map'), initialpos);
 
         var input = document.getElementById('pac-input');
-        $(input).hide();
-        var searchBox = new google.maps.places.SearchBox(input);
         var selectbox = document.getElementById("mapa-select");
-        var searchbutton = document.getElementById("searchbutton");
 
-        $(searchbutton).click(function () {
-            map.controls[google.maps.ControlPosition.TOP_LEFT].removeAt(1);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-            $(input).show();
-            $(input).focus();
-        });
-        $(input).blur(function(){
-            map.controls[google.maps.ControlPosition.TOP_LEFT].removeAt(1);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchbutton);            
-        });
-
+        $(input).fadeIn(1000);
+        $(selectbox).fadeIn(1000);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(selectbox);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchbutton);
 
-        //        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        map.addListener('bounds_changed', function () {
-            searchBox.setBounds(map.getBounds());
-        });
-        var markers = [];
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        var options = {
+            types: ['(cities)'],
+            componentRestrictions: {country: 'br'}
+        };
+        var autocomplete = new google.maps.places.Autocomplete(input, options);
 
+        autocomplete.bindTo('bounds', map);
 
-        searchBox.addListener('places_changed', function () {
-            var places = searchBox.getPlaces();
-
-            if (places.length === 0) {
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                $.ajax({
+                    url: "http://maps.google.com/maps/api/geocode/json?address=" + input.value + "&types=(cities)&components=country:BR",
+                    type: 'POST',
+                    dataType: 'json',
+                    timeout: 20000,
+                    success: function (data) {
+                        if (data.results.length !== 0) {
+                            place = data.results[0];
+                            input.value = place.formatted_address;
+                            map.setCenter(place.geometry.location);
+                            map.setZoom(10);
+                        } else {
+                            window.alert("Nenhum município encontrado com" + input.value);
+                        }
+                    },
+                    error: function (data) {
+                        window.alert("Falha na busca");
+                        console.log(data);
+                    }
+                });
                 return;
             }
 
-            markers.forEach(function (marker) {
-                marker.setMap(null);
-            });
-            markers = [];
-
-            var bounds = new google.maps.LatLngBounds();
-            places.forEach(function (place) {
-                if (!place.geometry) {
-                    console.log("Returned place contains no geometry");
-                    return;
-                }
-                var icon = {
-                    url: place.icon,
-                    size: new google.maps.Size(71, 71),
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(17, 34),
-                    scaledSize: new google.maps.Size(25, 25)
-                };
-
-                markers.push(new google.maps.Marker({
-                    map: map,
-                    icon: icon,
-                    title: place.name,
-                    position: place.geometry.location
-                }));
-
-                if (place.geometry.viewport) {
-                    bounds.union(place.geometry.viewport);
-                } else {
-                    bounds.extend(place.geometry.location);
-                }
-            });
-            map.fitBounds(bounds);
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(10);
+            }
         });
 
         $("#mapa-select").val("educando");
     }
-    
-    function init(){
-        setTimeout(function(){
+
+    function init() {
+        setTimeout(function () {
             updateMap();
-        },1000);
+        }, 1000);
     }
-    
+
     function updateMap() {
         if (typeof (google) !== "undefined") {
             if (map === null) {
@@ -235,34 +268,32 @@
         var id = node.id;
 
         var createButton = function (buttonspec) {
-            var button = document.createElement("button");
-            button.type = "button";
-            button.className = "btn btn-success";
-            button.innerHTML = buttonspec.title;
-            button.addEventListener("click", function () {
-                buttonspec.action(id, button);
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            a.style.cursor = "pointer";
+            a.innerHTML = buttonspec.title;
+            li.addEventListener("click", function () {
+                buttonspec.action(id, li);
             });
-            return button;
+            li.appendChild(a);
+
+            return li;
         };
 
         var pai = document.createElement("div");
-
-        pai.innerHTML = "<table style='width:100%'>\
-            <tr>\
-                <td><h4>" + node.municipio + "<b> (" + node.estado + ")</b></h4></td>\
-                <td><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></td>\
-            </tr>\
-        </table>";
-
+        pai.className = "panel-body";
+        var ul = document.createElement("ul");
         var option = document.createElement("div");
         option.className = "option";
-
+        option.appendChild(ul);
+        ul.className = "nav nav-tabs";
         var buttonsr = [];
 
         for (var i = 0; i < buttons.length; i++) {
             buttonsr[i] = createButton(buttons[i]);
-            option.appendChild(buttonsr[i]);
+            ul.appendChild(buttonsr[i]);
         }
+        
         option.appendChild(document.createElement("p"));
         var table = document.createElement("table");
         table.style.width = "100%";
@@ -274,12 +305,15 @@
                 css("box-shadow", "2px 2px 5px rgba(0,0,0,0.3)").
                 css("background", "white").
                 css("position", "absolute").
-                css("padding", "10px").
                 css("margin", "5px").
-                css("max-height", "calc(100% - 10px)").
-                css("overflow-x", "hidden").
-                css("overflow-y", "auto").
-                css("right", "0px")
+                css("right", "0px").
+                addClass("panel").addClass("panel-default")
+                .append(
+                        $("<div/>").
+                        addClass("panel-heading").css("margin-left","auto").css("margin-right","auto").css("width","100%").addClass("row").
+                        html("<h5 class='col-md-11' style='margin-top:0px;margin-bottom:0px'><i class='glyphicon glyphicon-map-marker'></i> " + node.municipio + "<b> (" + node.estado + ")</b></h5>\
+                         <div class='col-md-1'><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></div>")
+                        )
                 .append(pai);
 
         closeWindow();
@@ -289,14 +323,12 @@
         markerwindow = marker;
         infowindow = div;
         map_recenter(markerwindow.getPosition(), 0, 0);
-        
-        if(buttons.length>=1){
-            $(buttonsr[0]).click();
-            if(buttons.length===1){
-                $(buttonsr[0]).remove();
-            }
+        console.log(buttonsr[0]);
+        $(buttonsr[0]).click();
+        if (buttons.length === 1) {
+            $(ul).remove();
         }
-            
+
         div.slideDown(300);
     }
 
@@ -416,12 +448,12 @@
 
     var tableopened = null;
 
-    function appendTable(url, titles, btn, onselect) {
+    function appendTable(url, titles, btn, onselect, search) {
 
         var parent = $($(btn).parents(".option")[0]);
         var table = $(parent.find("table")[0]);
-        parent.find("button").removeAttr("disabled");
-        $(btn).attr("disabled", "disabled");
+        $(".option li").removeClass("active");
+        $(btn).addClass("active");
         var innerHTML = "<thead><tr>";
 
         for (var i = 0; i < titles.length; i++) {
@@ -439,26 +471,28 @@
             controls: null
         });
         tableopened.appendEvent(onselect);
+        if (search) {
+            $(".dataTables_wrapper input").val(search).keyup();
+        }
     }
 
     function getCursos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade','instituição'], btn, 
-            function(data){
-                console.log(data);
-            }
-        );
+        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'instituição'], btn);
     }
 
     function getInstituicoes(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_instituicoes/") ?>/" + id_municipio, ['id', 'nome', 'sigla', 'unidade', 'curso'], btn);
     }
 
-    function getEducandos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'tipo', 'código sipra'], btn);
+    function getEducandos(id_municipio, btn, search) {
+        appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'código sipra', 'código curso'], btn, false, search);
     }
 
     function getCursosEducandos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade'], btn);
+        appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'educandos no município'], btn,
+                function (data) {
+                    getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
+                });
     }
 
     function map_recenter(latlng, offsetx, offsety) {
@@ -479,3 +513,111 @@
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
 </script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6A2l8RrNfmBdbVI-kMjRHBoZmBa1e4IU&libraries=places&callback=init"></script>
+<div class="modal fade" id="helpModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content panel panel-info">
+            <div class="modal-header panel-heading">
+                Ajuda <i class="glyphicon glyphicon-question-sign"></i>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <ul class="nav nav-tabs" id="tabHelp">
+                <li class="active"><a data-toggle="tab" href="#marcadores">Marcadores</a></li>
+                <li><a data-toggle="tab" href="#agrupamentos">Agrupamentos</a></li>
+                <li><a data-toggle="tab" href="#outros">Outros</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="marcadores" class="modal-body tab-pane fade in active">
+                    <label>Vamos começar com algumas informações básicas</label>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon"><img src="<?= base_url('css/images/marker.png') ?>" width="37" height="37"/></span>
+                        <label>Esse marcador representa um múnicipio</label>
+                    </div>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon"><img src="<?= base_url('css/images/markerexample.png') ?>" width="40" height="37"/></span>
+                        <label>O número representa a quantidade caracterizações de <u>cursos</u> ou <u>educandos</u> <i>(dependendo do mapa selecionado)</i></label>
+                    </div>
+                    <hr/>
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador para visualizar informações sobre as caracterizações !</div>
+                    <hr/>
+                    <div style="text-align: right">
+                        <a class="btn btn-primary" onclick="$('#tabHelp > li:nth-child(2) > a').click();">Continuar <i class="glyphicon glyphicon-chevron-right"></i></a>
+                    </div>
+                </div>
+                <div id="agrupamentos" class="modal-body tab-pane fade">
+                    <label>Os seguintes símbolos representam agrupamento de marcadores e a cor indica a granularidade em relação aos demais</label>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group desc">
+                                <span class="input-group-addon"><img src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png" width="37" height="37"/></span>
+                                <label>Baixa</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group desc">
+                                <span class="input-group-addon"><img src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m2.png" width="37" height="37"/></span>
+                                <label>Média</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group desc">
+                                <span class="input-group-addon"><img src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m3.png"  width="37" height="37"/></span>
+                                <label>Alta</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon"><img src="<?= base_url('css/images/clusterexample.png') ?>"  width="42" height="37"/></span>
+                        <label>O número no interior representa a quantidade de marcadores acumulados nele</label>
+                    </div>
+                    <hr/>
+                    <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador de agrupamento para ampliar o mapa, e visualizar os marcadores agrupados !</div>
+                    <div style="text-align: right">
+                        <a class="btn btn-primary" onclick="$('#tabHelp > li:nth-child(3) > a').click();">Continuar <i class="glyphicon glyphicon-chevron-right"></i></a>
+                    </div>
+                </div>
+                <div id="outros" class="modal-body tab-pane fade">
+                    <label>Por fim, algumas fucionalidades que podem ajduar na visualização</label>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon"><img src="<?= base_url('css/images/mapaselectExample.png') ?>" width="150" height="37"/></span>
+                        <label>Selecione o Mapa no canto superior a esquerda</label>
+                    </div>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon"><a class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></a></span>
+                        <label>Use este ícone para pesquisar um município </label>
+                    </div>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon"><img src="<?= base_url('css/images/fullscreen.png') ?>" width="37" height="37"></span>
+                        <label>Use este ícone abrir o mapa em modo tela cheia</label>
+                    </div>
+                    <hr/>
+                    <div style="text-align: right">
+                        <a class="btn btn-primary" data-dismiss="modal">Fechar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(document.body).append($("#helpModal"));
+        setTimeout(function () {
+            if ($("#loading").length !== 0) {
+                $("#loading .problem").html("<br/>Esta demorando muito!");
+                setTimeout(function () {
+                    $("#loading .problem").html("<br/>Esta demorando muito!<br/>Verifique se está conectado com a internet!");
+                }, 1000);
+            }
+        }, 10000);
+    });
+</script>

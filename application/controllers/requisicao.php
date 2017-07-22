@@ -16,6 +16,10 @@ class Requisicao extends CI_Controller {
         
     }
 
+    function get_totaleducandos($idsr){
+        echo $this->requisicao_m->get_totaleducandos($idsr);
+    }
+    
     function get_modalidades() {
         return $this->requisicao_m->get_modalidades();
     }

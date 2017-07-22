@@ -10,7 +10,7 @@ class Requisicao_m extends CI_Model {
         $this->load->helper('url');  // Loading Helper
     }
 
-    function get_tipo_fiscalizacao(){
+    function get_tipo_fiscalizacao() {
         $this->db->where(array(
             'nome <>' => ''
         ));
@@ -29,7 +29,7 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-    
+
     function get_tipo_instrumento_curso() {
         $this->db->where(array(
             'nome <>' => ''
@@ -78,7 +78,7 @@ class Requisicao_m extends CI_Model {
         $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
         $this->db->join('estado e', 'e.id = s.id_estado', 'left');
         $this->db->where('e.sigla', $estado);
-        
+
         $query = $this->db->get();
 
         foreach ($query->result() as $row) {
@@ -155,7 +155,7 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-    
+
     function get_superintendencias() {
         $query = $this->db->get('superintendencia');
         $this->db->order_by('nome');
@@ -166,6 +166,20 @@ class Requisicao_m extends CI_Model {
         }
 
         echo $resultado;
+    }
+
+    function get_totaleducandos($id) {
+        $sr = (int) $id;
+        $this->db->select('c.id as id_curso, c.nome as curso, e.nome as educando, c.id_superintendencia AS id_superintendencia');
+        $this->db->from('educando e');
+        $this->db->join('curso c', 'e.id_curso = c.id', 'left');
+        $this->db->where('c.ativo_inativo', 'A');
+        $this->db->where('c.status', '2P');
+        $this->db->where('c.id_superintendencia', $sr);
+        
+        $query = $this->db->get();
+        
+        return $query->num_rows();
     }
 
     function get_superintendencias_nome($id, $super) {
@@ -322,7 +336,7 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-    
+
     function get_funcoes() {
 
         $where = array(
@@ -439,7 +453,6 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-
 
 }
 

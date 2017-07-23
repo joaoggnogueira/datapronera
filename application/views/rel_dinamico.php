@@ -105,6 +105,23 @@
             var where_cidades_parceiros = '';
             var where_tipos_parceiros = '';
 
+            /* WHERE SUPERINTENDENCIA */
+            if(superintendencia != null && superintendencia != 0){
+                where_superintendencias += 'AND s.id ='+superintendencia;
+                where_curso += ' AND c.id_superintendencia ='+superintendencia;
+                where_cidade_cursos += ' AND c.id_superintendencia ='+superintendencia;
+                where_cidade_educandos += ' AND cs.id_superintendencia ='+superintendencia;
+                where_professores += ' AND c.id_superintendencia ='+superintendencia;
+                where_disciplinas += ' AND c.id_superintendencia ='+superintendencia;
+                where_ie += ' AND c.id_superintendencia ='+superintendencia;
+                where_cidades_ie += ' AND cs.id_superintendencia ='+superintendencia;
+                where_org_demandantes += ' AND c.id_superintendencia ='+superintendencia;
+                where_coord_org_demandantes += ' AND cs.id_superintendencia ='+superintendencia;
+                where_parceiros += ' AND c.id_superintendencia ='+superintendencia;
+                where_cidades_parceiros += ' AND cp.id_superintendencia ='+superintendencia;
+                where_tipos_parceiros += ' AND c.id_superintendencia ='+superintendencia;
+            }
+
             /* WHERE CAMPO CURSO */
             if(curso != null && curso != 0){
                 where_curso                 += ' AND c.id =' + curso;

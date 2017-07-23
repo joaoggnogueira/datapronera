@@ -118,8 +118,8 @@ class Relatorio_dinamico_m extends CI_Model {
 
         $query = $this->db->query("
             SELECT ed.id_curso as CURSO_VINCULADO, ec.id_educando as ID_EDUCANDO, c.nome as NOME_CIDADE, e.sigla as ESTADO 
-            FROM `educando`ed, `educando_cidade` ec, `cidade` c, `estado` e 
-            WHERE ed.id = ec.id_educando AND ec.id_cidade = c.id AND c.id_estado = e.id
+            FROM `educando`ed, `educando_cidade` ec, `cidade` c, `estado` e, `curso` cs
+            WHERE ed.id = ec.id_educando AND ec.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ed.id_curso
             $where
         ");
         return $query->result_array();
@@ -177,8 +177,8 @@ class Relatorio_dinamico_m extends CI_Model {
 
         $query = $this->db->query("
             SELECT DISTINCT ie.id_curso as CURSO_VINCULADO, ie.id as ID_INSTITUIÇÃO_ENSINO, c.nome as CIDADE, e.sigla as ESTADO 
-            FROM `instituicao_ensino` ie, `cidade`c, `estado`e 
-            WHERE ie.id_cidade IS NOT NULL AND ie.id_cidade = c.id AND c.id_estado = e.id
+            FROM `instituicao_ensino` ie, `cidade`c, `estado`e, `curso` cs
+            WHERE ie.id_cidade IS NOT NULL AND ie.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ie.id_curso
             $where
         ");
         return $query->result_array();
@@ -213,8 +213,8 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 'S' THEN 'SIM'
             WHEN 'N' THEN 'NÃO'
             END as ESTUDOU_CURSO_PRONERA
-            FROM `organizacao_demandante_coordenador` od, `organizacao_demandante` o 
-            WHERE o.id = od.id_organizacao_demandante
+            FROM `organizacao_demandante_coordenador` od, `organizacao_demandante` o, `curso` cs 
+            WHERE o.id = od.id_organizacao_demandante AND cs.id = o.id_curso
             $where
         ");
         return $query->result_array();

@@ -166,7 +166,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('MUNICIPIOS-CURSO.xls');                // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -208,7 +208,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                          // data array
                 $this->barchart->set_filename('CURSOS-MODALIDADE.xls');         // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -250,7 +250,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                          // data array
                 $this->barchart->set_filename('CURSOS-NIVEL.xls');              // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -292,7 +292,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('CURSOS-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -338,7 +338,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('CURSOS-SUPERINTENDENCIA.xls');         // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -383,7 +383,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-INGRESSANTES-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -428,7 +428,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-INGRESSANTES-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -477,7 +477,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                     // data array
                 $this->barchart->set_filename('ALUNOS-INGRESSANTES-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -519,7 +519,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('INGRESSANTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -564,7 +564,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-CONCLUINTES-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -609,7 +609,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('ALUNOS-CONCLUINTES-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -658,7 +658,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                     // data array
                 $this->barchart->set_filename('ALUNOS-CONCLUINTES-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -700,7 +700,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('CONCLUINTES-NIVEL-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -741,7 +741,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -786,7 +786,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE-SR.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -829,7 +829,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-CURSOS-MODALIDADE-SR.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -877,7 +877,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('TITULACAO-EDUCADORES.xls');           // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -918,7 +918,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('TITULACAO-EDUCADORES-SUPERINTENDENCIA.xls');           // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -963,7 +963,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                 // data array
                 $this->barchart->set_filename('EDUCADORES-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1015,7 +1015,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                 // data array
                 $this->barchart->set_filename('EDUCADORES-CURSO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1068,7 +1068,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('EDUCADORES-SUPERINTENDENCIA.xls');     // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1113,7 +1113,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('EDUCADORES-GENERO-MODALIDADE.xls');   // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1162,7 +1162,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                // data array
                 $this->barchart->set_filename('EDUCANDOS-SUPERINTENDENCIA.xls');     // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1199,7 +1199,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('MUNICIPIO-ORIGEM-EDUCANDOS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1237,7 +1237,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('TERRITORIO-EDUCANDOS-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1276,7 +1276,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('TERRITORIO-EDUCANDOS-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1320,7 +1320,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                  // data array
                 $this->barchart->set_filename('IDADE-EDUCANDOS-MODALIDADE.xls');        // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1365,7 +1365,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('EDUCANDOS-GENERO-MODALIDADE.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1409,7 +1409,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1450,7 +1450,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('EDUCANDOS-ASSENTAMENTO-NIVEL.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1492,7 +1492,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-EDUCANDOS-CURSOS-SR.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1531,7 +1531,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LOCALIZACAO-INSTITUICOES-ENSINO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1573,7 +1573,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                  // data array
                 $this->barchart->set_filename('INSTITUICOES-ENSINO-MODALIDADE.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1615,7 +1615,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                  // data array
                 $this->barchart->set_filename('INSTITUICOES-ENSINO-NIVEL.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1658,7 +1658,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                        // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-SUPERINTENDENCIA.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1703,7 +1703,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                        // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-MUNICIPIO.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1745,7 +1745,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                        // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-ESTADO.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1787,7 +1787,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                                     // data array
                 $this->barchart->set_filename('INSTITUIÇÕES-ENSINO-CURSOS-NATUREZA.xls');                  // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1824,7 +1824,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('INSTITUICAO-ENSINO-CURSOS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1866,7 +1866,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                                    // data array
                 $this->barchart->set_filename('ORGANIZAÇÕES-DEMANDANTES-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1915,7 +1915,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                               // data array
                 $this->barchart->set_filename('MEMBROS-ORG-DEMANDANTES-MODALIDADE.xls');    // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1952,7 +1952,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('ORGANIZACAO-DEMANDANTE-CURSOS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -1989,7 +1989,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LOCALIZACAO-PARCEIROS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2031,7 +2031,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                     // data array
                 $this->barchart->set_filename('PARCEIROS-MODALIDADE.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2074,7 +2074,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                            // data array
                 $this->barchart->set_filename('PARCEIROS-SUPERINTENDENCIA.xls');  // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2116,7 +2116,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                     // data array
                 $this->barchart->set_filename('PARCEIROS-NATUREZA.xls');   // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2153,7 +2153,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('LISTA-PARCEIROS.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2190,7 +2190,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-ESTADO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2228,7 +2228,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2270,7 +2270,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                 // data array
                 $this->barchart->set_filename('PRODUCOES-TIPO.xls');   // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2307,7 +2307,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-PRONERA-ESTADO.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2345,7 +2345,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);
                 $this->barchart->set_filename('PRODUCOES-PRONERA-SUPERINTENDENCIA.xls'); // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){
@@ -2387,7 +2387,7 @@ class Relatorio_geral_concluido extends CI_Controller {
 
                 $this->barchart->set_chart_data($xls);                              // data array
                 $this->barchart->set_filename('PRODUCOES-PRONERA-TIPO.xls');        // filename
-
+                $this->barchart->set_excelFile();
                 $this->barchart->create_chart();
             }
             else if($tipo == 2){

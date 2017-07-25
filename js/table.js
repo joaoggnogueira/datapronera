@@ -53,8 +53,10 @@ Table.prototype.appendEvent = function(event){
     var oThis = this;
     this.element.get(0).onclick = function(){
         var anSelected = oThis.fnGetSelected();
-        var data = oThis.oTable.fnGetData(anSelected[0]);
-        event(data);
+        if(anSelected.length !== 0){
+            var data = oThis.oTable.fnGetData(anSelected[0]);
+            event(data);
+        }
     };
 };
 

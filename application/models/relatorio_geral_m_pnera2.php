@@ -44,22 +44,13 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $stms = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '" . $key . "' AS nivel,
-				IF(
-					(SELECT COUNT(c.id) FROM curso c
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					) IS NULL, 0, 
-					(SELECT COUNT(c.id) AS qtde FROM curso c
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P')
-				) AS cursos";
+            $stm = "SELECT '$key' as nivel,COUNT(c.id) as total FROM curso c
+                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                    WHERE cm.nome IN $value
+                    AND c.ativo_inativo = 'A'
+                    AND c.status = '2P'";
             if ($access_level <= 3) {
-                $stm = $stm . " WHERE c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
+                $stm .= " AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
             }
             array_push($stms, $stm);
         }

@@ -60,6 +60,10 @@ class Requisicao extends CI_Controller {
         return $this->requisicao_m->get_superintendencias();
     }
 
+    function echo_get_superintendencias_nome(){
+        echo $this->get_superintendencias_nome();
+    }
+    
     function get_superintendencias_nome() {
         return $this->requisicao_m->get_superintendencias_nome($this->uri->segment(3), $this->uri->segment(4));
     }

@@ -17,11 +17,16 @@
         margin-left: 5px;
         width: 270px;
     }
-
+    #input-group-search .input-group-addon{
+        position: absolute;
+        width: 40px;
+        z-index: 11;
+    }
     #pac-input {
         position: absolute;
         background-color: #fff;
         font-family: Roboto;
+        margin-left: 40px;
         font-size: 15px;
         font-weight: 300;
         padding: 0 11px 0 13px;
@@ -65,7 +70,22 @@
         background-color: black;
         z-index: 9;
     }
-
+    
+    .BADGE{
+        display: inline-block;
+        min-width: 10px;
+        padding: 3px 7px;
+        font-size: 12px;
+        font-weight: bold;
+        line-height: 1;
+        color: #ffffff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        background-color: #999999;
+        border-radius: 10px;
+    }
+    
     #content{
         width: 100% !important;
     }
@@ -136,7 +156,11 @@
                 <option selected value="educando">Educandos por município de origem</option>
                 <option value="curso">Cursos por município de realização</option>
             </select>
-            <input style="display: none" id="pac-input" class="controls" type="text" placeholder="Pesquise a cidade aqui">
+            <div id="input-group-search" style="display: none" class="input-group">
+                <span class="input-group-addon controls"><i class="glyphicon glyphicon-search"></i></span>
+                <input id="pac-input" class="controls" type="text" placeholder="Pesquise a cidade aqui">
+            </div>
+
             <div id="map">
                 <p id="loading" style="color:white;padding-top: 90px;text-align: center">
                     <i class="glyphicon glyphicon-map-marker"></i> 
@@ -181,12 +205,13 @@
 
         var input = document.getElementById('pac-input');
         var selectbox = document.getElementById("mapa-select");
+        var inputgroup = document.getElementById("input-group-search");
 
-        $(input).fadeIn(1000);
+        $(inputgroup).fadeIn(1000);
         $(selectbox).fadeIn(1000);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(selectbox);
 
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputgroup);
         var options = {
             types: ['(cities)'],
             componentRestrictions: {country: 'br'}
@@ -293,7 +318,7 @@
             buttonsr[i] = createButton(buttons[i]);
             ul.appendChild(buttonsr[i]);
         }
-        
+
         option.appendChild(document.createElement("p"));
         var table = document.createElement("table");
         table.style.width = "100%";
@@ -310,7 +335,7 @@
                 addClass("panel").addClass("panel-default")
                 .append(
                         $("<div/>").
-                        addClass("panel-heading").css("margin-left","auto").css("margin-right","auto").css("width","100%").addClass("row").
+                        addClass("panel-heading").css("margin-left", "auto").css("margin-right", "auto").css("width", "100%").addClass("row").
                         html("<h5 class='col-md-11' style='margin-top:0px;margin-bottom:0px'><i class='glyphicon glyphicon-map-marker'></i> " + node.municipio + "<b> (" + node.estado + ")</b></h5>\
                          <div class='col-md-1'><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></div>")
                         )
@@ -407,7 +432,10 @@
                     });
                     hashMarkers[curso.id] = marker;
                     marker.addListener('click', function () {
-                        openWindow([{title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}], marker, curso);
+                        openWindow([
+                            {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos},
+                            {title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos}
+                        ], marker, curso);
                     });
                 }
                 return marker;
@@ -477,7 +505,10 @@
     }
 
     function getCursos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'instituição'], btn);
+        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'instituição','total educandos <span class="badge">nacional</span>'], btn,
+            function (data) {
+                getEducandosCursos(id_municipio, $(".option li:nth-child(2)").get(0), data[0]);
+            });
     }
 
     function getInstituicoes(id_municipio, btn) {
@@ -487,9 +518,15 @@
     function getEducandos(id_municipio, btn, search) {
         appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'código sipra', 'código curso'], btn, false, search);
     }
-
+    
+    //Lista Educandos do mapa Curso
+    function getEducandosCursos(id_municipio, btn, search) {
+        appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio, ["educando","Cidade","nome do território","tipo do território","código curso"], btn, false, search);
+    }
+    
+    //Lista Cursos do mapa Educando
     function getCursosEducandos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'educandos no município'], btn,
+        appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'total educandos <span class="badge">no município</span>'], btn,
                 function (data) {
                     getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
                 });

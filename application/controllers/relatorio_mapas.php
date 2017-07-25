@@ -70,6 +70,10 @@ class Relatorio_mapas extends CI_Controller {
         echo json_encode($this->mapas_m->get_cursos_educandos($this->uri->segment(3)));
     }
     
+    function get_educandos_cursos(){
+        echo json_encode($this->mapas_m->get_educandos_cursos($this->uri->segment(3)));
+    }
+    
 }
 
 /* End of file relatorio_mapas.php */

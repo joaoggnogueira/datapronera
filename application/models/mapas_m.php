@@ -22,6 +22,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
             WHERE c.ativo_inativo = 'A' 
             GROUP BY m.id");
+
         return $query->result();
     }
 
@@ -76,15 +77,37 @@ class Mapas_m extends CI_Model {
             $this->db->where('ec.id_cidade', $id_municipio);
             $this->db->where('c.ativo_inativo', 'A');
             $this->db->distinct();
-            
+
             $query1 = $this->db->get();
-            
+
             $fetch = $query1->result();
 
             $result['aaData'][$key][3] = $fetch[0]->total;
         }
 
         return $result;
+    }
+
+    function get_educandos_cursos($id_municipio) {
+        $id = (int) $id_municipio;
+        $query = $this->db->query("
+            SELECT 
+                e.nome as educando,
+                CONCAT(m.nome,' (',est.sigla,')'),
+                e.nome_territorio,
+                e.tipo_territorio,
+                CONCAT(LPAD(c.id_superintendencia, (2), (0) ),('.'), LPAD(c.id, (3), (0) )) as codcurso
+            FROM `curso` c
+            INNER JOIN caracterizacao cr ON c.id = cr.id_curso
+            INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
+            INNER JOIN educando e ON e.id_curso = c.id
+            LEFT JOIN educando_cidade ec ON ec.id_educando = e.id 
+            LEFT JOIN cidade m ON m.id = ec.id_cidade 
+            LEFT JOIN estado est ON est.id = m.id_estado 
+            WHERE c.ativo_inativo = 'A' AND ccr.id_cidade = $id 
+            ORDER BY c.id");
+
+        return $this->get_table($query);
     }
 
     function get_educandos($id_municipio) {
@@ -108,7 +131,12 @@ class Mapas_m extends CI_Model {
     function get_cursos($id_municipio) {
         $id = (int) $id_municipio;
         $query = $this->db->query("
-            SELECT DISTINCT CONCAT(LPAD(c.id_superintendencia, 2, 0 ),'.', LPAD(c.id, 3, 0 )), `c`.`nome` , `modal`.`nome` as mdldd, ie.nome as inst
+            SELECT DISTINCT 
+                CONCAT(LPAD(c.id_superintendencia, 2, 0 ),'.', LPAD(c.id, 3, 0 )), 
+                `c`.`nome` , 
+                `modal`.`nome` as mdldd, 
+                ie.nome as inst, 
+                c.id
             FROM `curso` c 
             INNER JOIN caracterizacao cr ON c.id = cr.id_curso
             INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
@@ -118,7 +146,24 @@ class Mapas_m extends CI_Model {
             INNER JOIN `curso_modalidade` modal ON `modal`.`id` = `c`.`id_modalidade` 
             INNER JOIN instituicao_ensino ie ON ie.id_curso = c.id 
             WHERE c.ativo_inativo = 'A' AND m.id = " . $id);
-        return $this->get_table($query);
+        
+        $result = $this->get_table($query);
+        $table = $result['aaData'];
+
+        foreach ($table as $key => $row) {
+            $idc = $row[4];
+            $query1 = $this->db->query("
+            SELECT COUNT(e.id) as total
+            FROM educando e 
+            INNER JOIN `curso` c ON c.id =e.id_curso 
+            WHERE c.id = $idc");
+
+            $fetch = $query1->result();
+
+            $result['aaData'][$key][4] = $fetch[0]->total;
+        }
+
+        return $result;
     }
 
     function get_table($query) {

@@ -60,14 +60,14 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
         };
         //Antigo Campos:
         //Responsável pela pesquisa
-        <?PHP if ($operacao != 'add'): ?>
-            <?PHP if ($dados[0]->id_pesquisador): ?>
+<?PHP if ($operacao != 'add'): ?>
+    <?PHP if ($dados[0]->id_pesquisador): ?>
                 $.get("<?php echo site_url('requisicao/get_pesquisador_nome') . '/' . $dados[0]->id_pesquisador; ?>", function (nome) {
                     $("#pesquisador").val(nome);
                 });
-            <?PHP endif; ?>
-                setPlaceholderNInstrumento("<?= $dados[0]->id_instrumento ?>");
-        <?PHP endif; ?>
+    <?PHP endif; ?>
+            setPlaceholderNInstrumento("<?= $dados[0]->id_instrumento ?>");
+<?PHP endif; ?>
 
         /* Opções Complementares */
 
@@ -159,17 +159,7 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                     {
                         'id': 'data',
                         'message': 'Informe a data no qual o curso foi criado',
-                        'extra': null
-                    },
-                    {
-                        'id': 'nprocesso',
-                        'message': 'Informe o numero do processo',
-                        'extra': {operation:"pattern",message:"Padrão não corresponde com um número de processo"}
-                    },
-                    {
-                        'id': 'ninstrumento',
-                        'message': 'Informe o numero do instrumento',
-                        'extra': {operation:"pattern",message:"Padrão não corresponde com um número de instrumento do tipo selecionado"}
+                        'extra': {operation: "pattern", message: "Padrão não corresponde com uma data"}
                     },
                     {
                         'id': 'instrumento',
@@ -184,6 +174,26 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
              'extra'   : null
              }*/
             );
+
+            if (document.getElementById("nprocesso").value !== "") {
+                form.push({
+                    'id': 'nprocesso',
+                    'message': 'Informe o numero do processo',
+                    'extra': {operation: "pattern", message: "Padrão não corresponde com um número de processo"}
+                });
+            } else {
+                $("#nprocesso").hideErrorMessage();
+                
+            }
+            if (document.getElementById("ninstrumento").value !== "") {
+                form.push({
+                    'id': 'ninstrumento',
+                    'message': 'Informe o numero do instrumento',
+                    'extra': {operation: "pattern", message: "Padrão não corresponde com um número de instrumento do tipo selecionado"}
+                });
+            } else {
+                $("#ninstrumento").hideErrorMessage();
+            }
 
             if (isFormComplete(form)) {
 
@@ -211,7 +221,6 @@ if ($operacao == 'add') {
     echo site_url('curso/update/');
 }
 ?>";
-
                 request(urlRequest, formData);
             }
         });
@@ -303,7 +312,7 @@ if ($operacao == 'add') {
             </div> 
         </div>
         <div class="form-group">
-            <label>4. Numero do Processo</label>
+            <label>4. Numero do Processo <span class="badge">Opcional</span></label>
             <div>
                 <input placeholder="XXXXX.XXXXXX/AAAA-XX" pattern="[0-9]{5}.[0-9]{6}\/[0-9]{4}-[0-9]{2}" maxlength="20" class="form-control tamanho-sm" id="nprocesso" name="nprocesso" value="<?php if ($operacao != 'add') echo $dados[0]->nprocesso; ?>"/>
                 <label class="control-label form bold" for="nprocesso"></label>
@@ -325,7 +334,7 @@ if ($operacao == 'add') {
             </div>
         </div>
         <div class="form-group">
-            <label>6. Numero do Instrumento</label>
+            <label>6. Numero do Instrumento <span class="badge">Opcional</span></label>
             <div>
                 <input maxlength="20" class="form-control tamanho-sm" id="ninstrumento" name="ninstrumento" value="<?php if ($operacao != 'add') echo $dados[0]->ninstrumento; ?>"/>
                 <label class="control-label form bold" for="ninstrumento"></label>
@@ -335,7 +344,7 @@ if ($operacao == 'add') {
             <label>7. Data de criação do curso<br><small>dd/mm/aaaa</small></label>
             <div class="form-group">
                 <div>
-                    <input type="date" name="data" id="data" class="form-control tamanho-sm2" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>
+                    <input pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="DD/MM/AAAA" name="data" id="data" class="form-control tamanho-sm2" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>
                     <p class="text-danger select"><label for="data"><label></label></label></p>
                 </div>
             </div>

@@ -17,7 +17,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     }
 
     public function index() {
-
+        $valores = array();
         // Administradores e Pesquisadores Nacionais
         if ($this->session->userdata('access_level') > 3) {
             $this->session->set_userdata('curr_content', 'rel_geral_nacional_pnera2');
@@ -269,6 +269,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                 $pdf->WriteHTML($this->load->view('relatorio/2pnera/cursos_nivel', $dataResult, true));
                 $pdf->Output($pdfFilePath, 'I'); 
             }
+        } else {
+            echo "falha ao buscar na base de dados";
         }
     }
 

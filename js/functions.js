@@ -669,7 +669,6 @@ function isFormComplete(_form) {
 
                     break;
                 case 'pattern':
-                    console.log($elem);
                     if ($elem[0].validity.patternMismatch) {
                         $elem.showErrorMessage(_form[i].extra.message);
                         flag = false;

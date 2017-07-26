@@ -176,29 +176,19 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $stms = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '" . $key . "' AS nivel,
-				IF(
-					(SELECT SUM(cr.numero_ingressantes) FROM caracterizacao cr
-						LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					) > 0, 
-					(SELECT SUM(cr.numero_ingressantes) FROM caracterizacao cr
-						LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					), 0
-				) AS alunos";
+            $stm = "SELECT '$key' AS nivel,SUM(cr.numero_ingressantes) as alunos
+                    FROM caracterizacao cr
+                    LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
+                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                    WHERE cm.nome IN $value
+                    AND c.ativo_inativo = 'A'
+                    AND c.status = '2P'
+                    ";
             if ($access_level <= 3) {
-                $stm = $stm . " WHERE c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
+                $stm .= " AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
             }
             array_push($stms, $stm);
         }
-
         $sql = implode(" UNION ALL ", $stms);
 
         //$this->db->select('cm.nivel AS modalidade,IF (SUM(cr.numero_ingressantes) > 0, SUM(cr.numero_ingressantes), 0) AS alunos_ingressantes', false);
@@ -345,25 +335,15 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $stms = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '" . $key . "' AS nivel,
-				IF(
-					(SELECT SUM(cr.numero_concluintes) FROM caracterizacao cr
-						LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					) > 0, 
-					(SELECT SUM(cr.numero_concluintes) FROM caracterizacao cr
-						LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					), 0
-				) AS alunos";
+            $stm = "SELECT '$key' AS nivel,SUM(cr.numero_concluintes) as alunos
+                FROM caracterizacao cr
+                LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
+                LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                WHERE cm.nome IN $value
+                AND c.ativo_inativo = 'A'
+                AND c.status = '2P'";
             if ($access_level <= 3) {
-                $stm = $stm . " WHERE c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
+                $stm .= " AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
             }
             array_push($stms, $stm);
         }
@@ -762,7 +742,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
     }
 
     function lista_educandos_cursos_sr($id) {
-        $sr = (int)$id;
+        $sr = (int) $id;
         $this->db->select('
                     e.nome,
                     e.tipo_territorio,
@@ -912,13 +892,13 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
     }
 
     function alunos_curso($idSr) {
-        $sr = (int)$idSr;
+        $sr = (int) $idSr;
         $this->db->select('c.id as id_curso, c.nome as curso, e.nome as educando, c.id_superintendencia AS id_superintendencia');
         $this->db->from('educando e');
         $this->db->join('curso c', 'e.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
         $this->db->where('c.status', '2P');
-        $this->db->where('c.id_superintendencia',$sr);
+        $this->db->where('c.id_superintendencia', $sr);
         $this->db->order_by('c.id');
 
         if (($query = $this->db->get()) != null) {
@@ -1051,25 +1031,45 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $stms = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '" . $key . "' AS nivel,
-				IF(
-					(SELECT COUNT(p.id) FROM professor p
-						LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					) > 0, 
-					(SELECT COUNT(p.id) FROM professor p
-						LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					), 0
-				) AS educadores";
+
             if ($access_level <= 3) {
-                $stm = $stm . " WHERE c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
+                $stm = "SELECT '" . $key . "' AS nivel,
+                        IF(
+                            (SELECT COUNT(p.id) FROM professor p
+                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
+                            ) > 0, 
+                            (SELECT COUNT(p.id) FROM professor p
+                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
+                            ), 0
+                        ) AS educadores";
+            } else {
+                $stm = "SELECT '" . $key . "' AS nivel,
+                    IF(
+                            (SELECT COUNT(p.id) FROM professor p
+                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                            ) > 0, 
+                            (SELECT COUNT(p.id) FROM professor p
+                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                            ), 0
+                    ) AS educadores";
             }
             array_push($stms, $stm);
         }
@@ -1517,25 +1517,44 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $stms = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '" . $key . "' AS nivel,
-				IF(
-					(SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
-						LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					) > 0, 
-					(SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
-						LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-						LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-						WHERE cm.nome IN " . $value . "
-						AND c.ativo_inativo = 'A'
-						AND c.status = '2P'
-					), 0
-				) AS instituicoes";
             if ($access_level <= 3) {
-                $stm = $stm . " WHERE c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
+                $stm = "SELECT '" . $key . "' AS nivel,
+                    IF(
+                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
+                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
+                            ) > 0, 
+                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
+                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
+                            ), 0
+                    ) AS instituicoes";
+            } else{
+                $stm = "SELECT '" . $key . "' AS nivel,
+                    IF(
+                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
+                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                            ) > 0, 
+                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
+                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
+                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
+                                    WHERE cm.nome IN " . $value . "
+                                    AND c.ativo_inativo = 'A'
+                                    AND c.status = '2P'
+                            ), 0
+                    ) AS instituicoes";
             }
             array_push($stms, $stm);
         }
@@ -1981,7 +2000,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             )
         );
 
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
+        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ." ": " ";
 
         $stms = array();
         foreach ($producoes as $key => $value) {
@@ -1996,7 +2015,6 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             } else if (strpos($value['tabela'], 'trabalho') !== false) {
                 $stm .= "AND p.tipo = '" . $key . "'";
             }
-
             array_push($stms, $stm);
         }
 

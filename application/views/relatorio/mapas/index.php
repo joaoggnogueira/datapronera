@@ -70,7 +70,7 @@
         background-color: black;
         z-index: 9;
     }
-    
+
     .BADGE{
         display: inline-block;
         min-width: 10px;
@@ -85,7 +85,7 @@
         background-color: #999999;
         border-radius: 10px;
     }
-    
+
     #content{
         width: 100% !important;
     }
@@ -106,7 +106,10 @@
     .labels{
         line-height: 100px;
     }
-
+    .panel-search .panel-heading{
+        background: rgb(71,164,71);
+        color: white !important;
+    }
     #searchbutton{
         height: 32px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -116,7 +119,7 @@
         width: 100% !important;
     }
 
-    #helpModal{
+    .modal{
         z-index: 10001;
     }
 
@@ -140,14 +143,20 @@
 
 </style>
 <div class="panel panel-default" style="margin-bottom: 0px">
-    <div class="panel-heading">
-        <div class="col-md-10">    
+    <div class="panel-heading" style="height: 50px !important;">
+        <div class="col-md-7">    
             <h5><b>Relatório de Mapas</b></h5>
         </div>
-        <div style="text-align: right">
-            <button class="btn btn-primary" data-toggle="modal" data-target="#helpModal">
+        <div style="text-align: right;" class="col-md-5">
+            <a class="btn btn-success" id="search-curso" data-toggle="modal" data-target="#searchCursoModal">
+                Buscar curso <i class="glyphicon glyphicon-search"></i>
+            </a>
+            <a class="btn btn-success" id="search-educando" data-toggle="modal" data-target="#searchEducandoModal">
+                Buscar Educando <i class="glyphicon glyphicon-search"></i>
+            </a>
+            <a class="btn btn-primary" data-toggle="modal" data-target="#helpModal">
                 Ajuda <i class="glyphicon glyphicon-question-sign"></i>
-            </button>
+            </a>
         </div>
     </div>
     <div class="panel-body" style="padding: 0px">
@@ -158,7 +167,7 @@
             </select>
             <div id="input-group-search" style="display: none" class="input-group">
                 <span class="input-group-addon controls"><i class="glyphicon glyphicon-search"></i></span>
-                <input id="pac-input" class="controls" type="text" placeholder="Pesquise a cidade aqui">
+                <input id="pac-input" class="controls" type="text" placeholder="Pesquise o município aqui">
             </div>
 
             <div id="map">
@@ -206,6 +215,8 @@
         var input = document.getElementById('pac-input');
         var selectbox = document.getElementById("mapa-select");
         var inputgroup = document.getElementById("input-group-search");
+
+
 
         $(inputgroup).fadeIn(1000);
         $(selectbox).fadeIn(1000);
@@ -363,10 +374,11 @@
             icon: "<?= base_url('css/images/marker.png') ?>",
             label: {
                 text: node.total,
+                title: node.municipio,
                 color: 'white',
                 fontSize: '12px',
                 x: '20',
-                y: '70'
+                y: '70',
             },
             labelClass: "labels"
         });
@@ -419,17 +431,7 @@
             var markers = cursos.map(function (curso) {
 
                 if (typeof (google) !== "undefined") {
-                    var marker = new google.maps.Marker({
-                        position: {lng: parseFloat(curso.lng), lat: parseFloat(curso.lat)},
-                        icon: "<?= base_url('css/images/marker.png') ?>",
-                        label: {
-                            text: curso.total,
-                            color: 'white',
-                            fontSize: '12px',
-                            x: '20',
-                            y: '70'
-                        }
-                    });
+                    var marker = createMarker(curso);
                     hashMarkers[curso.id] = marker;
                     marker.addListener('click', function () {
                         openWindow([
@@ -443,6 +445,10 @@
             if (typeof (google) !== "undefined") {
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
+            var searchEducandoBtn = document.getElementById('search-educando');
+            searchEducandoBtn.style.display = "none";
+            var searchCursoBtn = document.getElementById('search-curso');
+            searchCursoBtn.style.display = "inline-block";
         }, "json");
 
     }
@@ -470,6 +476,10 @@
             if (typeof (google) !== "undefined") {
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
+            var searchCursoBtn = document.getElementById('search-curso');
+            searchCursoBtn.style.display = "none";
+            var searchEducandoBtn = document.getElementById('search-educando');
+            searchEducandoBtn.style.display = "inline-block";
         }, "json");
 
     }
@@ -505,10 +515,10 @@
     }
 
     function getCursos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'instituição','total educandos <span class="badge">nacional</span>'], btn,
-            function (data) {
-                getEducandosCursos(id_municipio, $(".option li:nth-child(2)").get(0), data[0]);
-            });
+        appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'instituição', 'total educandos <span class="badge">nacional</span>'], btn,
+                function (data) {
+                    getEducandosCursos(id_municipio, $(".option li:nth-child(2)").get(0), data[0]);
+                });
     }
 
     function getInstituicoes(id_municipio, btn) {
@@ -518,12 +528,12 @@
     function getEducandos(id_municipio, btn, search) {
         appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'código sipra', 'código curso'], btn, false, search);
     }
-    
+
     //Lista Educandos do mapa Curso
     function getEducandosCursos(id_municipio, btn, search) {
-        appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio, ["educando","Cidade","nome do território","tipo do território","código curso"], btn, false, search);
+        appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio, ["educando", "Cidade", "nome do território", "tipo do território", "código curso"], btn, false, search);
     }
-    
+
     //Lista Cursos do mapa Educando
     function getCursosEducandos(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'total educandos <span class="badge">no município</span>'], btn,
@@ -644,9 +654,84 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="searchCursoModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content panel panel-search">
+            <div class="modal-header panel-heading">
+                <i class="fa fa-bookmark"></i> Buscar Curso 
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Digite abaixo o nome (ou parte do nome) do curso</label>
+                        <div class="input-group">
+                            <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
+                            <input type="search" name="search" style="text-transform: uppercase;margin: 1px 0px" class="form-control"/>      
+                        </div>
+                    </div>
+                    <button class="btn btn-success">Buscar</button>
+                </form>
+                <hr/>
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th> CURSO </th>
+                            <th> MUNICÍPIO </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="searchEducandoModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content panel panel-search">
+            <div class="modal-header panel-heading">
+                <i class="fa fa-graduation-cap"></i> Buscar Município do Educando 
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Digite abaixo o nome (ou parte do nome) do educando</label>
+                        <div class="input-group">
+                            <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
+                            <input type="search" name="search" style="text-transform: uppercase; margin: 1px 0px" class="form-control"/>      
+                        </div>
+                    </div>
+                    <button class="btn btn-success">Buscar</button>
+                </form>
+                <hr/>
+                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th> NOME </th>
+                            <th> CURSO </th>
+                            <th> MUNICÍPIO </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function () {
+        var searchCursoBtn = document.getElementById('search-curso');
+        var searchEducandoBtn = document.getElementById('search-educando');
+        searchCursoBtn.style.display = "none";
+        searchEducandoBtn.style.display = "none";
         $(document.body).append($("#helpModal"));
         setTimeout(function () {
             if ($("#loading").length !== 0) {
@@ -656,5 +741,17 @@
                 }, 1000);
             }
         }, 10000);
+        
+        $('#searchCursoModal').on('shown.bs.modal', function() {
+            $(this).find("input[type='search']").focus();
+            $(this).find("table").hide();
+        });
+        
+        $('#searchEducandoModal').on('shown.bs.modal', function() {
+            $(this).find("input[type='search']").focus();
+            $(this).find("table").hide();
+        });
+        
+        
     });
 </script>

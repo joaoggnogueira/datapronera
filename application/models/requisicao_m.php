@@ -340,7 +340,6 @@ class Requisicao_m extends CI_Model {
     function get_funcoes() {
 
         $where = array(
-            'id >' => 5,
             'nivel_acesso <=' => $this->session->userdata('access_level')
         );
 

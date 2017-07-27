@@ -47,6 +47,11 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     private function create_header($name, $tipo){
         $xls = array();
+        $access_level = $this->session->userdata('access_level');
+        if ($access_level <= 3) {
+            $nomeSR = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+        }
+        
         if($tipo == 1){
             $cabe = array("------------------------------------------------------------------------------------------", "", "", "", "", "", "", "","","");
             array_push($xls, $cabe);
@@ -56,6 +61,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             array_push($xls, $cabe);
             $cabe = array("Relatório: ".$name, "", "", "", "", "", "", "", "", "");
             array_push($xls, $cabe);
+            if ($access_level <= 3) {
+                $cabe = array("Superintendência: ".$nomeSR, "", "", "", "", "", "", "", "", "");
+                array_push($xls, $cabe);
+            }
             $cabe = array("Data de Emissão: ".date('d/m/y'), "", "", "", "", "", "", "","","");
             array_push($xls, $cabe);
             $cabe = array("------------------------------------------------------------------------------------------", "", "", "", "", "", "","","");
@@ -72,6 +81,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             array_push($xls, $cabe);
             $cabe = array($name, "", "", "", "", "", "");
             array_push($xls, $cabe);
+            if ($access_level <= 3) {
+                $cabe = array("Superintendência: ".$nomeSR, "", "", "", "", "", "", "", "", "");
+                array_push($xls, $cabe);
+            }
             $cabe = array("Data de Emissão: ".date('d/m/y'), "", "", "", "", "", "");
             array_push($xls, $cabe);
             $cabe = array("--------------------------------------------------------","", "", "", "", "", "");
@@ -544,8 +557,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     }
 
     public function alunos_concluintes_modalidade($tipo) {
-
-        if ($result = $this->relatorio_geral_m_pnera2->alunos_concluintes_modalidade($this->session->userdata('access_level'))) {
+        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_modalidade($this->session->userdata('access_level'));
+        if (is_array($result)) {
             if($tipo==1){
                 $xls = array();
                 $xls = $this->create_header("Alunos concluintes por modalidade", 2);

@@ -341,7 +341,7 @@ if ($operacao == 'add') {
             </div>
         </div>
         <div class="form-group">
-            <label>7. Data de criação do curso<br><small>dd/mm/aaaa</small></label>
+            <label>7. Data da publica&ccedil;&abreve;o no di&aacute;rio oficial</label>
             <div class="form-group">
                 <div>
                     <input pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="DD/MM/AAAA" name="data" id="data" class="form-control tamanho-sm2" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>
@@ -350,7 +350,6 @@ if ($operacao == 'add') {
             </div>
         </div>
 
-        </div>
         <?PHP if ($operacao != 'add'): ?>
             <?PHP if ($dados[0]->id_pesquisador): ?>
                 <div class="form-group">

@@ -173,7 +173,7 @@
 
                     <li class="li-rel">
                         <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/alunos_curso/1'); ?>">XLS</a> 
-                        <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/alunos_curso/2'); ?>" disabled>PDF</a> 
+                        <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/alunos_curso/2'); ?>">PDF</a> 
                         Lista de alunos por curso <span class="badge badge-nominal">nominal</span>
                     </li>
                 </ul>
@@ -219,11 +219,6 @@
                         Participa&ccedil;&atilde;o (%) de homens e mulheres como educadores dos cursos por modalidade <span class="badge badge-nacional">total nacional</span>
                     </li>
 
-                    <li class="li-rel">
-                        <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/alunos_curso/1'); ?>">XLS</a> 
-                        <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/alunos_curso/2'); ?>" disabled>PDF</a> 
-                        Lista de alunos por curso<span class="badge badge-nominal">nominal</span>
-                    </li>
                 </ul>
                 <hr/>
             </li>
@@ -270,7 +265,7 @@
                     <li class="li-rel">
                         <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/educandos_assentamento_modalidade/1'); ?>">XLS</a> 
                         <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_andamento/educandos_assentamento_modalidade/2'); ?>">PDF</a> 
-                        Educandos por assentamento e modalidade de curso <span class="badge badge-nacional">total nacional</span>
+                        Educandos por assentamento e modalidade de curso <span class="badge badge-nacional">total nacional</span> <span class="badge badge-alert">demorado</span>
                     </li>
 
                     <li class="li-rel">

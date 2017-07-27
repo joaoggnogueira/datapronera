@@ -13,7 +13,7 @@
     <br>
 
     <b>4. Nome do(a)(s) Assegurador(a)(es)(as)</b>
-        <?PHP 
+        <?
         foreach ($insurers as $item) {
             echo '<div style="margin-left: 20px;" >'. $item[1] .' </div>';
         }

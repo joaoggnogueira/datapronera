@@ -9,9 +9,13 @@ class Mapas_m extends CI_Model {
         $this->load->library('session'); // Loading Session
         $this->load->helper('url');  // Loading Helper
     }
-
-    function get_municipios_cursos() {
-
+    
+    //mapas
+    function get_municipios_cursos($filtros) {
+        
+        $filtros = str_replace("[", "(", $filtros);
+        $filtros = str_replace("]", ")", $filtros);
+        
         $query = $this->db->query("
             SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng 
             FROM `curso` c
@@ -20,14 +24,17 @@ class Mapas_m extends CI_Model {
             INNER JOIN cidade m ON m.id = ccr.id_cidade
             INNER JOIN estado est ON est.id = m.id_estado 
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
-            WHERE c.ativo_inativo = 'A' 
+            WHERE c.ativo_inativo = 'A' AND c.status in $filtros
             GROUP BY m.id");
 
         return $query->result();
     }
 
-    function get_municipios_educandos() {
-
+    function get_municipios_educandos($filtros) {
+        
+        $filtros = str_replace("[", "(", $filtros);
+        $filtros = str_replace("]", ")", $filtros);
+        
         $query = $this->db->query("
             SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng FROM `educando` e
             INNER JOIN educando_cidade ec ON ec.id_educando = e.id
@@ -35,13 +42,15 @@ class Mapas_m extends CI_Model {
             INNER JOIN estado est ON est.id = m.id_estado  
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
             INNER JOIN curso c ON c.id = e.id_curso 
-            WHERE c.ativo_inativo = 'A' 
+            WHERE c.ativo_inativo = 'A' AND c.status in $filtros
             GROUP BY m.id
         ");
+
         return $query->result();
     }
-
-    function get_municipios_instituicoes() {
+    
+    //desabilitado
+    function get_municipios_instituicoes($filtros) {
         $query = $this->db->query("
             SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng 
             FROM `instituicao_ensino` ie
@@ -54,6 +63,8 @@ class Mapas_m extends CI_Model {
         return $query->result();
     }
 
+    
+    //tabelas
     function get_cursos_educandos($id_municipio) {
         $query = $this->db->query("
             SELECT DISTINCT CONCAT(LPAD(c.id_superintendencia, 2, 0 ),'.', LPAD(c.id, 3, 0 )), `c`.`nome` , `m`.`nome` as modal, `c`.`id` as idcurso
@@ -146,7 +157,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN `curso_modalidade` modal ON `modal`.`id` = `c`.`id_modalidade` 
             INNER JOIN instituicao_ensino ie ON ie.id_curso = c.id 
             WHERE c.ativo_inativo = 'A' AND m.id = " . $id);
-        
+
         $result = $this->get_table($query);
         $table = $result['aaData'];
 
@@ -164,6 +175,28 @@ class Mapas_m extends CI_Model {
         }
 
         return $result;
+    }
+
+    //Buscas
+    function search_educando($search) {
+        $this->db->select('ec.id_cidade as id,e.nome as nome,c.nome as curso');
+        $this->db->from('educando e');
+        $this->db->join('educando_cidade ec', 'ec.id_educando = e.id');
+        $this->db->join('curso c', 'c.id = e.id_curso');
+        $this->db->like('e.nome', "$search");
+        $this->db->where('c.ativo_inativo', "A");
+        return $this->get_table($this->db->get());
+    }
+
+    function search_curso($search) {
+        $this->db->select('cc.id_cidade as id, c.nome as curso, cid.nome as município');
+        $this->db->from('caracterizacao_cidade cc');
+        $this->db->join('caracterizacao ca', 'cc.id_caracterizacao = ca.id');
+        $this->db->join('curso c', 'c.id = ca.id_curso');
+        $this->db->join('cidade cid', 'cid.id = cc.id_cidade');
+        $this->db->like('c.nome', "$search");
+        $this->db->where('c.ativo_inativo', "A");
+        return $this->get_table($this->db->get());
     }
 
     function get_table($query) {

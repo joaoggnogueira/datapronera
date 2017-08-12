@@ -96,6 +96,10 @@ class Requisicao extends CI_Controller {
     function get_estados_rel() {
         return $this->requisicao_m->get_estados_rel();
     }
+    
+    function get_municipio_desc(){
+        return $this->requisicao_m->get_municipio_desc($this->uri->segment(3));
+    }
 
     function get_municipios_rel() {
         return $this->requisicao_m->get_municipios_rel($this->uri->segment(3));

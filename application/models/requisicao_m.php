@@ -35,7 +35,7 @@ class Requisicao_m extends CI_Model {
             'nome <>' => ''
         ));
 
-        $this->db->order_by('nome');
+        $this->db->order_by('id');
         $query = $this->db->get('curso_tipo_instrumento');
 
         $resultado = "<option value=\"0\" disabled selected> Selecione o tipo do instrumento </option>";
@@ -176,9 +176,9 @@ class Requisicao_m extends CI_Model {
         $this->db->where('c.ativo_inativo', 'A');
         $this->db->where('c.status', '2P');
         $this->db->where('c.id_superintendencia', $sr);
-        
+
         $query = $this->db->get();
-        
+
         return $query->num_rows();
     }
 
@@ -344,6 +344,7 @@ class Requisicao_m extends CI_Model {
         );
 
         $this->db->where($where);
+        $this->db->like('ativo_inativo', 'A');
         $this->db->order_by('funcao');
         $query = $this->db->get('funcao');
         $resultado = "<option value=\"0\" disabled selected> Selecione a Função </option>";
@@ -367,6 +368,17 @@ class Requisicao_m extends CI_Model {
         }
 
         echo $resultado;
+    }
+
+    function get_municipio_desc($id_cidade) {
+        $this->db->select('c.nome, e.sigla');
+        $this->db->from('cidade c');
+        $this->db->join('estado e', 'c.id_estado = e.id');
+        $this->db->where('c.id', $id_cidade);
+
+        $query = $this->db->get();
+        $fetch = $query->result();
+        echo $fetch[0]->nome . " (" . $fetch[0]->sigla . ")";
     }
 
     function get_municipios_rel($id_estado) {

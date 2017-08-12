@@ -22,7 +22,7 @@ class Relatorio_mapas extends CI_Controller {
 
       //if ($this->session->userdata('access_level') > 3){
       $this->session->set_userdata('curr_content', 'relatorio/mapas/index');
-      $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+//      $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
       //}
 
         $data['content'] = $this->session->userdata('curr_content');
@@ -41,15 +41,15 @@ class Relatorio_mapas extends CI_Controller {
     
     //MAPAS
     function get_municipios_cursos(){
-        echo json_encode($this->mapas_m->get_municipios_cursos());
+        echo json_encode($this->mapas_m->get_municipios_cursos($this->input->get("filters")));
     }
 
     function get_municipios_educandos(){
-        echo json_encode($this->mapas_m->get_municipios_educandos());
+        echo json_encode($this->mapas_m->get_municipios_educandos($this->input->get("filters")));
     }
 
     function get_municipios_instituicoes(){
-        echo json_encode($this->mapas_m->get_municipios_instituicoes());
+        echo json_encode($this->mapas_m->get_municipios_instituicoes($this->input->get("filters")));
     }
 
     //TABELAS
@@ -72,6 +72,16 @@ class Relatorio_mapas extends CI_Controller {
     
     function get_educandos_cursos(){
         echo json_encode($this->mapas_m->get_educandos_cursos($this->uri->segment(3)));
+    }
+    
+    //BUSCAS
+    
+    function search_educando(){ //Município de Origem
+        echo json_encode($this->mapas_m->search_educando($this->uri->segment(3)));
+    }
+    
+    function search_curso(){ //Município de Realização
+        echo json_encode($this->mapas_m->search_curso($this->uri->segment(3)));
     }
     
 }

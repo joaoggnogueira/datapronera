@@ -43,7 +43,7 @@
 	request('<?php echo site_url('contato/index'); ?>', null, 'hide');
 ">Contatos</a></li>
 
-<li><a href="#">Manual</a></li>
+<!--<li><a href="#">Manual</a></li>-->
 <li class="dropdown
 	<?php
 		if (

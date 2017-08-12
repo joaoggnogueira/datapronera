@@ -41,6 +41,7 @@ class Ctrl_login extends CI_Controller {
 					'access_level' => $account_data->nivel_acesso,
 					'id_superintendencia' => $account_data->id_superintendencia,
 					'is_logged_in' => true,
+                                        'acesso_publico' => false,
 					'curr_content' => 'cursos',
 					'curr_top_menu' => 'menus/principal.php',
 					'curr_course_info' => 'blank.php',

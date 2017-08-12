@@ -176,7 +176,7 @@ function request(_url, _data, _fn) {
         timeout: 20000,
         success: function (data) {
 
-
+            console.log(data.debug);
             // Login autorizado
             if (data.success) {
 
@@ -222,7 +222,7 @@ function request(_url, _data, _fn) {
         },
         error: function (data) {
 
-//            console.log(data);
+            console.log(data);
 
             // Falha na requisição
             var error = {
@@ -592,7 +592,6 @@ function isFormComplete(_form) {
 
             // Busca e realiza operação de validação
             switch (_form[i].extra.operation) {
-
                 // Valida CPF
                 case 'cpf' :
 
@@ -667,6 +666,21 @@ function isFormComplete(_form) {
                         $elem.hideErrorMessage();
                     }
 
+                    break;
+                case 'password':
+                    if ($elem[0].value.length <= 4) {
+                        $elem.showErrorMessage(_form[i].extra.message);
+                        flag = false;
+
+                        // Rola página até onde está o primeiro erro
+                        if (!top) {
+                            scrollPage($elem);
+                            top = true;
+                        }
+
+                    } else {
+                        $elem.hideErrorMessage();
+                    }
                     break;
                 case 'pattern':
                     if ($elem[0].validity.patternMismatch) {

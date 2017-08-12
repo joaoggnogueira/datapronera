@@ -170,7 +170,7 @@ class Pessoa extends CI_Controller {
 
 				$response = array(
 					'success' => false,
-					'message' => 'Falha ao efetuar cadastro '.$pessoa['cpf']
+					'message' => 'Falha ao efetuar cadastro'
 				);
 			}
 

@@ -10,7 +10,13 @@
         outline: none;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
-
+    #filters{
+        padding: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        margin: 10px;
+        background: rgba(255,255,255,0.6);
+        display: none;
+    }
     #mapa-select{
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         margin-top: 10px;
@@ -142,12 +148,25 @@
     }
 
 </style>
+<div id="filters">
+    <label>Status do Curso</label>
+    <div class="checkbox">
+        <label><input checked value="AN" type="checkbox">ANDAMENTO</label>
+    </div>
+    <div class="checkbox">
+        <label><input checked value="CC" type="checkbox">CONCLUIDO</label>
+    </div>
+    <div class="checkbox">
+        <label><input checked value="2P" type="checkbox">PNERA II</label>
+    </div>
+</div>
 <div class="panel panel-default" style="margin-bottom: 0px">
     <div class="panel-heading" style="height: 50px !important;">
         <div class="col-md-7">    
             <h5><b>Relatório de Mapas</b></h5>
         </div>
         <div style="text-align: right;" class="col-md-5">
+            <span id="loadingmarkers"><i class="glyphicon glyphicon-refresh"></i> Carregando ...</span>
             <a class="btn btn-success" id="search-curso" data-toggle="modal" data-target="#searchCursoModal">
                 Buscar curso <i class="glyphicon glyphicon-search"></i>
             </a>
@@ -215,14 +234,21 @@
         var input = document.getElementById('pac-input');
         var selectbox = document.getElementById("mapa-select");
         var inputgroup = document.getElementById("input-group-search");
+        var filters = document.getElementById("filters");
 
-
-
-        $(inputgroup).fadeIn(1000);
-        $(selectbox).fadeIn(1000);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(selectbox);
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputgroup);
+        map.controls[google.maps.ControlPosition.LEFT].push(filters);
+        
+        $(inputgroup).fadeIn(1000);
+        $(selectbox).fadeIn(1000);
+        setTimeout(function(){
+            $(filters).slideDown(1000);
+        },1000);
+        
+        $(filters).find("input[type='checkbox']").change(updateFilters);
+        
         var options = {
             types: ['(cities)'],
             componentRestrictions: {country: 'br'}
@@ -273,14 +299,37 @@
             updateMap();
         }, 1000);
     }
-
+    
+    function updateFilters(event){
+        console.log($("#filters input[type='checkbox']:checked").length);
+        if($("#filters input[type='checkbox']:checked").length===0){
+            event.originalEvent.originalTarget.checked = true;
+        }
+        updateMap();
+    }
+    
+    function getFilter(){
+        
+        var data = [];
+        
+        $("#filters").find("input[type='checkbox']:checked").each(function(){
+            data.push(this.value); 
+        });
+        
+        return JSON.stringify(data);
+    }
+    
     function updateMap() {
         if (typeof (google) !== "undefined") {
             if (map === null) {
                 initMap();
             } else {
                 markerCluster.clearMarkers();
-
+                var searchEducandoBtn = document.getElementById('search-educando');
+                searchEducandoBtn.style.display = "none";
+                var searchCursoBtn = document.getElementById('search-curso');
+                searchCursoBtn.style.display = "none";
+                $("#loadingmarkers").show();
             }
         }
         switch ($("#mapa-select").val()) {
@@ -294,6 +343,7 @@
                 prepareMapaInstituicao();
                 break;
         }
+
         if (infowindow) {
             infowindow.remove();
         }
@@ -359,7 +409,6 @@
         markerwindow = marker;
         infowindow = div;
         map_recenter(markerwindow.getPosition(), 0, 0);
-        console.log(buttonsr[0]);
         $(buttonsr[0]).click();
         if (buttons.length === 1) {
             $(ul).remove();
@@ -378,7 +427,7 @@
                 color: 'white',
                 fontSize: '12px',
                 x: '20',
-                y: '70',
+                y: '70'
             },
             labelClass: "labels"
         });
@@ -393,8 +442,9 @@
         }
     }
 
+    //desabilitado
     function prepareMapaInstituicao() {
-        $.get("<?php echo site_url('relatorio_mapas/get_municipios_instituicoes'); ?>", function (instituicoes) {
+        $.get("<?php echo site_url('relatorio_mapas/get_municipios_instituicoes'); ?>",{filters:getFilter()}, function (instituicoes) {
             hashMarkers = [];
             var markers = instituicoes.map(function (instituicao) {
                 if (typeof (google) !== "undefined") {
@@ -425,8 +475,8 @@
     }
 
     function prepareMapaCurso() {
-
-        $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", function (cursos) {
+   
+        $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>",{filters:getFilter()}, function (cursos) {
             hashMarkers = [];
             var markers = cursos.map(function (curso) {
 
@@ -445,17 +495,16 @@
             if (typeof (google) !== "undefined") {
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
-            var searchEducandoBtn = document.getElementById('search-educando');
-            searchEducandoBtn.style.display = "none";
+            $("#loadingmarkers").hide();
             var searchCursoBtn = document.getElementById('search-curso');
             searchCursoBtn.style.display = "inline-block";
+
         }, "json");
 
     }
 
     function prepareMapaEducando() {
-
-        $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>", function (educandos) {
+        var get = $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>",{filters:getFilter()}, function (educandos) {
             hashMarkers = [];
             var markers = educandos.map(function (educando) {
 
@@ -476,12 +525,11 @@
             if (typeof (google) !== "undefined") {
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
-            var searchCursoBtn = document.getElementById('search-curso');
-            searchCursoBtn.style.display = "none";
+            $("#loadingmarkers").hide();
             var searchEducandoBtn = document.getElementById('search-educando');
             searchEducandoBtn.style.display = "inline-block";
         }, "json");
-
+        console.log(get);
     }
 
     var tableopened = null;
@@ -673,11 +721,14 @@
                         </div>
                     </div>
                     <button class="btn btn-success">Buscar</button>
+                    <br/>
+                    <div class="alert alert-success">Não utilizar acentuação!</div>
                 </form>
                 <hr/>
                 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th> ID_MUN </th>
                             <th> CURSO </th>
                             <th> MUNICÍPIO </th>
                         </tr>
@@ -693,29 +744,35 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content panel panel-search">
             <div class="modal-header panel-heading">
-                <i class="fa fa-graduation-cap"></i> Buscar Município do Educando 
+                <i class="fa fa-graduation-cap"></i> Buscar Município de Origem do Educando 
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
                 </button>
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-group">
-                        <label>Digite abaixo o nome (ou parte do nome) do educando</label>
-                        <div class="input-group">
-                            <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
-                            <input type="search" name="search" style="text-transform: uppercase; margin: 1px 0px" class="form-control"/>      
+                    <label>Digite abaixo o nome (ou parte do nome) do educando</label>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
+                                <input type="search" name="search" style="text-transform: uppercase; margin: 1px 0px" class="form-control"/>    
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success">Buscar</button>
                         </div>
                     </div>
-                    <button class="btn btn-success">Buscar</button>
+                    <br/>
+                    <div class="alert alert-success">Não utilizar acentuação!</div>
                 </form>
                 <hr/>
                 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th> ID_MUN </th>
                             <th> NOME </th>
                             <th> CURSO </th>
-                            <th> MUNICÍPIO </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -741,17 +798,75 @@
                 }, 1000);
             }
         }, 10000);
-        
-        $('#searchCursoModal').on('shown.bs.modal', function() {
+
+        var tableSearchCursoModal = null;
+
+        $('#searchCursoModal').on('shown.bs.modal', function () {
             $(this).find("input[type='search']").focus();
-            $(this).find("table").hide();
+            if (tableSearchCursoModal === null) {
+                $(this).find("table").hide();
+            }
         });
-        
-        $('#searchEducandoModal').on('shown.bs.modal', function() {
+
+        $("#searchCursoModal form").submit(function (e) {
+            e.preventDefault();
+        });
+
+        $("#searchCursoModal form").submit(function (e) {
+            e.preventDefault($(this).find("input[type='search']").val());
+            var term = $(this).find("input[type='search']").val().toUpperCase();
+            var table = $("#searchCursoModal").find("table").eq(0);
+
+            if (tableSearchCursoModal !== null) {
+                tableSearchCursoModal.destroy();
+            }
+            table.show();
+            tableSearchCursoModal = new Table({
+                url: "<?= site_url("relatorio_mapas/search_curso/") ?>/" + term,
+                table: table,
+                controls: null
+            });
+            tableSearchCursoModal.hideColumns([0]);
+            tableSearchCursoModal.appendEvent(function (data) {
+                var marker = hashMarkers[data[0]];
+                map_recenter(marker.getPosition(), 0, 0);
+                map.setZoom(15);
+                $("#searchCursoModal").modal('hide');
+            });
+        });
+
+        $('#searchEducandoModal').on('shown.bs.modal', function () {
             $(this).find("input[type='search']").focus();
-            $(this).find("table").hide();
+            if (tableSearchEducandoModal === null) {
+                $(this).find("table").hide();
+            }
         });
-        
-        
+
+
+
+        var tableSearchEducandoModal = null;
+
+        $("#searchEducandoModal form").submit(function (e) {
+            e.preventDefault($(this).find("input[type='search']").val());
+            var term = $(this).find("input[type='search']").val().toUpperCase();
+            var table = $("#searchEducandoModal").find("table").eq(0);
+
+            if (tableSearchEducandoModal !== null) {
+                tableSearchEducandoModal.destroy();
+            }
+            table.show();
+            tableSearchEducandoModal = new Table({
+                url: "<?= site_url("relatorio_mapas/search_educando/") ?>/" + term,
+                table: table,
+                controls: null
+            });
+            tableSearchEducandoModal.hideColumns([0]);
+            tableSearchEducandoModal.appendEvent(function (data) {
+                var marker = hashMarkers[data[0]];
+                map_recenter(marker.getPosition(), 0, 0);
+                map.setZoom(15);
+                $("#searchEducandoModal").modal('hide');
+            });
+        });
     });
 </script>

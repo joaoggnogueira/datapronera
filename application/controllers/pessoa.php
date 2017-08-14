@@ -2,433 +2,420 @@
 
 class Pessoa extends CI_Controller {
 
-	public function __construct() {
+    public function __construct() {
         parent::__construct();
 
-        $this->load->database();		 // Loading Database
+        $this->load->database();   // Loading Database
         $this->load->library('session'); // Loading Session
-        $this->load->helper('url'); 	// Loading Helper
+        $this->load->helper('url');  // Loading Helper
 
-		$this->load->model('pessoa_m');
+        $this->load->model('pessoa_m');
     }
 
-	function index() {
+    function index() {
 
-    	$this->session->set_userdata('curr_content', 'cadastro_pessoa');
-    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        $this->session->set_userdata('curr_content', 'cadastro_pessoa');
+        $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-    	$data['content'] = $this->session->userdata('curr_content');
-		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		$html = array(
-			'content' => $this->load->view($data['content'], '', true)
-			//'top_menu' => $this->load->view($data['top_menu'], '', true)
-		);
+        $html = array(
+            'content' => $this->load->view($data['content'], '', true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
 
-		$response = array(
-			'success' => true,
-			'html' => $html
-		);
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
 
-		echo json_encode($response);
-	}
+        echo json_encode($response);
+    }
 
-	function index_add() {
+    function index_add() {
+
+        $pessoa['id'] = 0;
+
+        $this->session->set_userdata('curr_content', 'formulario_cad_pessoa');
+        $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		$pessoa['id'] = 0;
+        $valores['pessoa'] = $pessoa;
+        $valores['operacao'] = $this->input->post('operacao');
 
-    	$this->session->set_userdata('curr_content', 'formulario_cad_pessoa');
-    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        $html = array(
+            'content' => $this->load->view($data['content'], $valores, true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
 
-    	$data['content'] = $this->session->userdata('curr_content');
-		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
 
-		$valores['pessoa'] = $pessoa;
-		$valores['operacao'] =  $this->input->post('operacao');
+        echo json_encode($response);
+    }
 
-		$html = array(
-			'content' => $this->load->view($data['content'], $valores, true)
-			//'top_menu' => $this->load->view($data['top_menu'], '', true)
-		);
+    function index_update() {
 
-		$response = array(
-			'success' => true,
-			'html' => $html
-		);
+        $pessoa['id'] = $this->input->post('id_pessoa');
 
-		echo json_encode($response);
-	}
+        if ($dados = $this->pessoa_m->get_record($pessoa['id'])) {
 
-	function index_update() {
+            $dados[0]->data_nascimento = implode("/", array_reverse(explode("-", $dados[0]->data_nascimento), true));
 
-		$pessoa['id'] = $this->input->post('id_pessoa');
+            $this->session->set_userdata('curr_content', 'formulario_cad_pessoa');
+            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		if ($dados = $this->pessoa_m->get_record($pessoa['id'])) {
+            $valores['dados'] = $dados;
+            $valores['pessoa'] = $pessoa;
+            $valores['operacao'] = $this->input->post('operacao');
 
-			$dados[0]->data_nascimento =
-				implode("/", array_reverse(explode("-", $dados[0]->data_nascimento),true));
+            $html = array(
+                'content' => $this->load->view($data['content'], $valores, true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            );
+
+            $response = array(
+                'success' => true,
+                'html' => $html
+            );
+        } else {
+
+            $response = array(
+                'success' => false,
+                'message' => 'Falha na requisição, tente novamente em instantes'
+            );
+        }
 
-			$this->session->set_userdata('curr_content', 'formulario_cad_pessoa');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        echo json_encode($response);
+    }
 
-	    	$data['content'] = $this->session->userdata('curr_content');
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+    function add() {
+
+        if ($this->input->post('ckTelefone2') == 'true') {
+            $tel2 = "NAOINFORMADO";
+        } else {
+            $tel2 = $this->input->post('telefone2');
+        }
+
+        $pessoa = array(
+            'cpf' => trim($this->input->post('cpf')),
+            'rg' => trim($this->input->post('rg')),
+            'rg_emissor' => trim($this->input->post('rg_emissor')),
+            'nome' => trim($this->input->post('nome')),
+            'genero' => trim($this->input->post('sexo')),
+            'data_nascimento' => implode("-", array_reverse(explode("/", $this->input->post('data_nascimento')), true)),
+            'telefone_1' => trim($this->input->post('telefone1')),
+            'telefone_2' => $tel2,
+            'logradouro' => trim($this->input->post('rua')),
+            'numero' => trim($this->input->post('numero')),
+            'complemento' => trim($this->input->post('complemento')),
+            'bairro' => trim($this->input->post('bairro')),
+            'cep' => trim($this->input->post('cep')),
+            'id_cidade' => trim($this->input->post('municipio')),
+            'id_funcao' => trim($this->input->post('funcao')),
+            'id_superintendencia' => trim($this->input->post('superintendencia'))
+        );
+
+        // Starts transaction
+        $this->db->trans_begin();
+
+        if ($inserted_id = $this->pessoa_m->add_record($pessoa)) {
+
+            $conta = array(
+                'email' => trim($this->input->post('email')),
+                'senha' => md5($this->input->post('cpf')),
+                'ativo_inativo' => 'A',
+                'data_criacao' => date('Y-m-d H:i:s'),
+                //'codigo_controle' => hash('md5', trim($this->input->post('cpf'))),
+                'id_pessoa' => $inserted_id
+            );
+
+            if ($this->pessoa_m->add_record_conta($conta)) {
+
+                $this->log->save("USUÁRIO ADICIONADO: ID '" . $inserted_id . "'");
+
+                $this->db->trans_commit();
+
+                $this->session->set_userdata('curr_content', 'cadastro_pessoa');
+                $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true),
+                );
+
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro efetuado'
+                );
+            } else {
+
+                $this->db->trans_rollback();
+
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao efetuar cadastro ' . $pessoa['cpf']
+                );
+            }
+
+            // Duplicate entry for CPF key
+        } else if ($this->db->_error_number() == 1062) {
+
+            $this->db->trans_rollback();
+
+            $response = array(
+                'success' => false,
+                'message' => 'CPF informado já cadastrado'
+            );
+        } else {
+            $this->db->trans_rollback();
+
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao efetuar cadastro'
+            );
+        }
+
+        echo json_encode($response);
+    }
+
+    function update() {
 
-			$valores['dados'] = $dados;
-			$valores['pessoa'] = $pessoa;
-			$valores['operacao'] =  $this->input->post('operacao');
+        if ($this->input->post('ckTelefone2') == 'true') {
+            $tel2 = "NAOINFORMADO";
+        } else {
+            $tel2 = $this->input->post('telefone2');
+        }
+
+        $pessoa = array(
+            'cpf' => trim($this->input->post('cpf')),
+            'rg' => trim($this->input->post('rg')),
+            'rg_emissor' => trim($this->input->post('rg_emissor')),
+            'nome' => trim($this->input->post('nome')),
+            'genero' => trim($this->input->post('sexo')),
+            'data_nascimento' => implode("-", array_reverse(explode("/", $this->input->post('data_nascimento')), true)),
+            'telefone_1' => trim($this->input->post('telefone1')),
+            'telefone_2' => $tel2,
+            'logradouro' => trim($this->input->post('rua')),
+            'numero' => trim($this->input->post('numero')),
+            'complemento' => trim($this->input->post('complemento')),
+            'bairro' => trim($this->input->post('bairro')),
+            'cep' => trim($this->input->post('cep')),
+            'id_cidade' => trim($this->input->post('municipio')),
+            'id_funcao' => trim($this->input->post('funcao')),
+            'id_superintendencia' => trim($this->input->post('superintendencia'))
+        );
+
+        // Starts transaction
+        $this->db->trans_begin();
+
+        if ($inserted_id = $this->pessoa_m->update_record($pessoa, $this->input->post('id'))) {
+
+            $conta = array(
+                'email' => trim($this->input->post('email'))
+            );
+
+            if ($this->pessoa_m->update_record_conta($conta, $this->input->post('id'))) {
+
+                $this->log->save("USUÁRIO ATUALIZADO: ID '" . $this->input->post('id') . "'");
+
+                $this->db->trans_commit();
 
-			$html = array(
-				'content' => $this->load->view($data['content'], $valores, true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true)
-			);
+                $this->session->set_userdata('curr_content', 'cadastro_pessoa');
+                $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-			$response = array(
-				'success' => true,
-				'html' => $html
-			);
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		}  else {
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true),
+                );
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha na requisição, tente novamente em instantes'
-			);
-		}
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro atualizado'
+                );
+            } else {
 
-		echo json_encode($response);
-	}
+                $this->db->trans_rollback();
 
-	function add() {
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao atualizar cadastro'
+                );
+            }
+        } else {
 
-		if ($this->input->post('ckTelefone2') == 'true') {
-			$tel2 = "NAOINFORMADO";
+            $this->db->trans_rollback();
 
-		} else {
-			$tel2 = $this->input->post('telefone2');
-		}
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao atualizar cadastro'
+            );
+        }
 
-		$pessoa = array(
-			'cpf' => trim($this->input->post('cpf')),
-			'rg' => trim($this->input->post('rg')),
-			'rg_emissor' => trim($this->input->post('rg_emissor')),
-			'nome' => trim($this->input->post('nome')),
-			'genero' => trim($this->input->post('sexo')),
-			'data_nascimento' => implode("-", array_reverse(explode("/", $this->input->post('data_nascimento')),true)),
-			'telefone_1' => trim($this->input->post('telefone1')),
-			'telefone_2' => $tel2,
-			'logradouro' => trim($this->input->post('rua')),
-			'numero' => trim($this->input->post('numero')),
-			'complemento' => trim($this->input->post('complemento')),
-			'bairro' => trim($this->input->post('bairro')),
-			'cep' => trim($this->input->post('cep')),
-			'id_cidade' => trim($this->input->post('municipio')),
-			'id_funcao' => trim($this->input->post('funcao')),
-			'id_superintendencia' => trim($this->input->post('superintendencia'))
-		);
-
-		// Starts transaction
-		$this->db->trans_begin();
-
-		if ($inserted_id = $this->pessoa_m->add_record($pessoa)) {
-
-			$conta = array(
-				'email' => trim($this->input->post('email')),
-				'senha' => md5($this->input->post('cpf')),
-				'ativo_inativo' => 'A',
-				'data_criacao' => date('Y-m-d H:i:s'),
-				//'codigo_controle' => hash('md5', trim($this->input->post('cpf'))),
-				'id_pessoa' => $inserted_id
-			);
-
-			if ($this->pessoa_m->add_record_conta($conta)) {
-
-				$this->log->save("USUÁRIO ADICIONADO: ID '".$inserted_id."'");
-
-				$this->db->trans_commit();
-
-				$this->session->set_userdata('curr_content', 'cadastro_pessoa');
-    			$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
-
-		    	$data['content'] = $this->session->userdata('curr_content');
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true),
-				);
-
-				$response = array(
-					'success' => true,
-					'html'	  => $html,
-					'message' => 'Cadastro efetuado'
-				);
-
-			} else {
-
-				$this->db->trans_rollback();
-
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao efetuar cadastro '.$pessoa['cpf']
-				);
-			}
-
-		// Duplicate entry for CPF key
-		} else if ($this->db->_error_number() == 1062) {
-
-			$this->db->trans_rollback();
-
-			$response = array(
-				'success' => false,
-				'message' => 'CPF informado já cadastrado'
-			);
-
-		} else {
-			$this->db->trans_rollback();
+        echo json_encode($response);
+    }
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao efetuar cadastro'
-			);
-		}
+    function deactivate() {
 
-		echo json_encode($response);
-	}
+        // Starts transaction
+        $this->db->trans_begin();
 
-	function update() {
+        $this->load->model('conta');
 
-		if ($this->input->post('ckTelefone2') == 'true') {
-			$tel2 = "NAOINFORMADO";
+        if ($this->pessoa_m->toggle_record($this->input->post('id_pessoa'), 'I')) {
 
-		} else {
-			$tel2 = $this->input->post('telefone2');
-		}
+            if ($this->pessoa_m->toggle_record_conta($this->input->post('id_pessoa'), 'I')) {
 
-		$pessoa = array(
-			'cpf' => trim($this->input->post('cpf')),
-			'rg' => trim($this->input->post('rg')),
-			'rg_emissor' => trim($this->input->post('rg_emissor')),
-			'nome' => trim($this->input->post('nome')),
-			'genero' => trim($this->input->post('sexo')),
-			'data_nascimento' => implode("-", array_reverse(explode("/", $this->input->post('data_nascimento')),true)),
-			'telefone_1' => trim($this->input->post('telefone1')),
-			'telefone_2' => $tel2,
-			'logradouro' => trim($this->input->post('rua')),
-			'numero' => trim($this->input->post('numero')),
-			'complemento' => trim($this->input->post('complemento')),
-			'bairro' => trim($this->input->post('bairro')),
-			'cep' => trim($this->input->post('cep')),
-			'id_cidade' => trim($this->input->post('municipio')),
-			'id_funcao' => trim($this->input->post('funcao')),
-			'id_superintendencia' => trim($this->input->post('superintendencia'))
-		);
+                $this->log->save("USUÁRIO DESATIVADO: ID '" . $this->input->post('id_pessoa') . "'");
 
-		// Starts transaction
-		$this->db->trans_begin();
+                $this->db->trans_commit();
 
-		if ($inserted_id = $this->pessoa_m->update_record($pessoa, $this->input->post('id'))) {
+                $this->session->set_userdata('curr_content', 'cadastro_pessoa');
+                $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-			$conta = array(
-				'email' => trim($this->input->post('email'))
-			);
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-			if ($this->pessoa_m->update_record_conta($conta, $this->input->post('id'))) {
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true)
+                );
 
-				$this->log->save("USUÁRIO ATUALIZADO: ID '".$this->input->post('id')."'");
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro desativado'
+                );
+            } else {
 
-				$this->db->trans_commit();
+                $this->db->trans_rollback();
 
-				$this->session->set_userdata('curr_content', 'cadastro_pessoa');
-    			$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao desativar cadastro 1'
+                );
+            }
+        } else {
 
-		    	$data['content'] = $this->session->userdata('curr_content');
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+            $this->db->trans_rollback();
 
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true),
-				);
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao desativar cadastro 2'
+            );
+        }
 
-				$response = array(
-					'success' => true,
-					'html'	  => $html,
-					'message' => 'Cadastro atualizado'
-				);
+        echo json_encode($response);
+    }
 
-			} else {
+    function reactivate() {
 
-				$this->db->trans_rollback();
+        // Starts transaction
+        $this->db->trans_begin();
 
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao atualizar cadastro'
-				);
-			}
+        if ($this->pessoa_m->toggle_record($this->input->post('id_pessoa'), 'A')) {
 
-		} else {
+            if ($this->pessoa_m->toggle_record_conta($this->input->post('id_pessoa'), 'A')) {
 
-			$this->db->trans_rollback();
+                $this->log->save("USUÁRIO REATIVADO: ID '" . $this->input->post('id_pessoa') . "'");
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao atualizar cadastro'
-			);
-		}
+                $this->db->trans_commit();
 
-		echo json_encode($response);
-	}
+                $this->session->set_userdata('curr_content', 'cadastro_pessoa');
+                $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-	function deactivate() {
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		// Starts transaction
-		$this->db->trans_begin();
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true)
+                );
 
-		$this->load->model('conta');
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro reativado'
+                );
+            } else {
 
-		if ($this->pessoa_m->toggle_record($this->input->post('id_pessoa'), 'I')) {
+                $this->db->trans_rollback();
 
-			if ($this->pessoa_m->toggle_record_conta($this->input->post('id_pessoa'), 'I')) {
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao reativar cadastro'
+                );
+            }
+        } else {
 
-				$this->log->save("USUÁRIO DESATIVADO: ID '".$this->input->post('id_pessoa')."'");
+            $this->db->trans_rollback();
 
-				$this->db->trans_commit();
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao reativar cadastro'
+            );
+        }
 
-				$this->session->set_userdata('curr_content', 'cadastro_pessoa');
-		    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        echo json_encode($response);
+    }
 
-		    	$data['content'] = $this->session->userdata('curr_content');
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+    function reset_password() {
+        // Starts transaction
+        $this->db->trans_begin();
 
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true)
-				);
+        $this->load->model('conta');
 
-				$response = array(
-					'success' => true,
-					'html' => $html,
-					'message' => 'Cadastro desativado'
-				);
+        $cpf = $this->input->post('cpf');
 
-			} else {
+        if ($id = ($this->conta->reset_password($cpf, $cpf))) {
 
-				$this->db->trans_rollback();
+            $this->log->save("SENHA DE USUÁRIO RESETADA: ID '" . $id . "'");
 
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao desativar cadastro 1'
-				);
-			}
+            $this->db->trans_commit();
 
-		} else {
+            $this->session->set_userdata('curr_content', 'cadastro_pessoa');
+            $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
 
-			$this->db->trans_rollback();
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao desativar cadastro 2'
-			);
-		}
+            $html = array(
+                'content' => $this->load->view($data['content'], '', true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            );
 
-		echo json_encode($response);
-	}
+            $response = array(
+                'success' => true,
+                'html' => $html,
+                'message' => 'Senha resetada'
+            );
+        } else {
 
-	function reactivate() {
+            $this->db->trans_rollback();
 
-		// Starts transaction
-		$this->db->trans_begin();
+            $response = array(
+                'success' => false,
+                'message' => 'Esta senha já está resetada!'
+            );
+        }
 
-		if ($this->pessoa_m->toggle_record($this->input->post('id_pessoa'), 'A')) {
+        echo json_encode($response);
+    }
 
-			if ($this->pessoa_m->toggle_record_conta($this->input->post('id_pessoa'), 'A')) {
-
-				$this->log->save("USUÁRIO REATIVADO: ID '".$this->input->post('id_pessoa')."'");
-
-				$this->db->trans_commit();
-
-				$this->session->set_userdata('curr_content', 'cadastro_pessoa');
-		    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
-
-		    	$data['content'] = $this->session->userdata('curr_content');
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true)
-				);
-
-				$response = array(
-					'success' => true,
-					'html' => $html,
-					'message' => 'Cadastro reativado'
-				);
-
-			} else {
-
-				$this->db->trans_rollback();
-
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao reativar cadastro'
-				);
-			}
-
-		} else {
-
-			$this->db->trans_rollback();
-
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao reativar cadastro'
-			);
-		}
-
-		echo json_encode($response);
-	}
-
-	function reset_password() {
-
-		// Starts transaction
-		$this->db->trans_begin();
-
-		$this->load->model('conta');
-
-		$cpf = $this->input->post('cpf');
-
-		if ($id = ($this->conta->reset_password($cpf, $cpf))) {
-
-			$this->log->save("SENHA DE USUÁRIO RESETADA: ID '".$id."'");
-
-			$this->db->trans_commit();
-
-			$this->session->set_userdata('curr_content', 'cadastro_pessoa');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
-
-	    	$data['content'] = $this->session->userdata('curr_content');
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
-
-			$html = array(
-				'content' => $this->load->view($data['content'], '', true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true)
-			);
-
-			$response = array(
-				'success' => true,
-				'html' => $html,
-				'message' => 'Senha resetada'
-			);
-
-		} else {
-
-			$this->db->trans_rollback();
-
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao resetar senha'
-			);
-		}
-
-		echo json_encode($response);
-	}
 }

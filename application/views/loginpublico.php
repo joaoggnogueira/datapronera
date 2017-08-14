@@ -218,9 +218,6 @@ if (!defined('BASEPATH'))
                         <div class="form-group" style="margin:10px;">
                             <label>UF</label>
                             <select id="uf-up" class="form-control" style="width: 80px;margin: 0px;">
-                                <option>SP</option>
-                                <option>MG</option>
-                                <option>RJ</option>
                             </select>
                             <label class="control-label center" for="uf-up"></label>
                         </div>
@@ -229,9 +226,6 @@ if (!defined('BASEPATH'))
                         <div class="form-group" style="margin:10px;">
                             <label>Múnicipio</label>
                             <select id="municipio-up" class="form-control" style="width: 100%;margin: 0px;">
-                                <option>Presidente Prudente</option>
-                                <option>São Paulo</option>
-                                <option>Osvaldo Cruz</option>
                             </select>
                             <label class="control-label center" for="municipio-up"></label>
                         </div>

@@ -23,6 +23,26 @@ class Acesso_publico extends CI_Controller {
         echo json_encode($response);
     }
 
+    function gerenciar_index() {
+
+        $this->session->set_userdata('curr_content', 'gerenciar_conta_publica');
+
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
+
+        $html = array(
+            'content' => $this->load->view($data['content'], '', true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
+
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
+
+        echo json_encode($response);
+    }
+
     function sign_in() {
 
         // Checks if account is allowed to sign in on system
@@ -72,13 +92,129 @@ class Acesso_publico extends CI_Controller {
         echo json_encode($response);
     }
 
+    function password_reset() {
+        $senha = $this->input->post('nova_senha');
+        if (strlen($senha) < 5) {
+            echo json_encode(array(
+                'success' => false,
+                'message' => 'A senha nova deve ter no minimo 5 caracteres'
+            ));
+            return;
+        }
+        $id = $this->session->userdata('id');
+        $senha_atual = md5($this->input->post('senha_atual'));
+        $senha_nova = md5($senha);
+
+        if (($this->acesso_publico_m->update_password($id, $senha_atual, $senha_nova))) {
+
+            $this->log->save("SENHA DE ACESSO PUBLICO ATUALIZADA: $id");
+
+            $html = array(
+                'content' => $this->load->view($this->session->userdata('curr_content'), '', true)
+            );
+
+            $response = array(
+                'success' => true,
+                'message' => "Senha atualizada com sucesso",
+                'html' => $html
+            );
+        } else {
+
+            $response = array(
+                'success' => false,
+                'message' => "Falha ao atualizar senha. Verifique se a senha atual está correta"
+            );
+        }
+
+        echo json_encode($response);
+    }
+
+    function update() {
+
+        $id = $this->session->userdata('id');
+        $data = Array(
+            "nome" => trim($this->input->post('nome')),
+            "id_cidade" => trim($this->input->post('municipio'))
+        );
+
+        if ($this->acesso_publico_m->update($id, $data)) {
+
+            $this->log->save("DADOS DE ACESSO PUBLICO ATUALIZADO :$id");
+
+            $this->session->set_userdata('name', $data['nome']);
+            $this->session->set_userdata('id_cidade', $data['id_cidade']);
+
+            $html = array(
+                'content' => $this->load->view($this->session->userdata('curr_content'), '', true),
+                'top_menu' => $this->load->view($this->session->userdata('curr_top_menu'), '', true)
+            );
+
+            $response = array(
+                'success' => true,
+                'message' => "Dados atualizado com sucesso",
+                'html' => $html
+            );
+        } else {
+
+            $response = array(
+                'success' => false,
+                'message' => "Falha ao atualizar ddados"
+            );
+        }
+
+        echo json_encode($response);
+    }
+
+    function email_reset() {
+
+        $id = $this->session->userdata('id');
+        $senha_atual = md5($this->input->post('senha_atual_email'));
+        $novo_email = trim($this->input->post('novo_email'));
+
+        if ($this->acesso_publico_m->update_email($id, $senha_atual, $novo_email)) {
+
+            $this->log->save("EMAIL DE ACESSO PUBLICO ATUALIZADO :$id");
+
+            $this->session->set_userdata('email', $novo_email);
+
+            $html = array(
+                'content' => $this->load->view($this->session->userdata('curr_content'), '', true)
+            );
+
+            $response = array(
+                'success' => true,
+                'message' => "Email atualizado com sucesso",
+                'html' => $html
+            );
+        } else {
+
+            $response = array(
+                'success' => false,
+                'message' => "Falha ao atualizar email",
+                'email' => $this->session->userdata('email')
+            );
+        }
+
+        echo json_encode($response);
+    }
+
     function signup() {
+
+        $senha = $this->input->post('senha');
+
+        if (strlen($senha) < 5) {
+            echo json_encode(array(
+                'success' => false,
+                'message' => 'A senha deve ter no minimo 5 caracteres'
+            ));
+            return;
+        }
 
         $pessoa = array(
             'nome' => trim($this->input->post('nome')),
             'id_cidade' => trim($this->input->post('municipio')),
             'email' => trim($this->input->post('email')),
-            'senha' => md5($this->input->post('senha')),
+            'senha' => md5($senha),
             'data_criacao' => date('Y-m-d H:i:s')
         );
 
@@ -120,10 +256,6 @@ class Acesso_publico extends CI_Controller {
         }
 
         echo json_encode($response);
-    }
-
-    function gerenciar_index() {
-        
     }
 
 }

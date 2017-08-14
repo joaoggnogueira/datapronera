@@ -83,6 +83,10 @@ class Requisicao extends CI_Controller {
     function get_modalidade_by_super() {
         return $this->requisicao_m->get_modalidade_by_super($this->uri->segment(3));
     }
+    
+    function get_estado_do_municipio(){
+        return $this->requisicao_m->get_estado_do_municipio($this->uri->segment(3));
+    }
 
     /* Requisições relatório dinâmico */
     function get_superintendencias_cursos_rel() {

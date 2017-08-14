@@ -1,3 +1,7 @@
+<?PHP 
+    $publico = $this->session->userdata("publico");
+
+?>
 <style>
 
     .controls {
@@ -240,15 +244,15 @@
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputgroup);
         map.controls[google.maps.ControlPosition.LEFT].push(filters);
-        
+
         $(inputgroup).fadeIn(1000);
         $(selectbox).fadeIn(1000);
-        setTimeout(function(){
+        setTimeout(function () {
             $(filters).slideDown(1000);
-        },1000);
-        
+        }, 1000);
+
         $(filters).find("input[type='checkbox']").change(updateFilters);
-        
+
         var options = {
             types: ['(cities)'],
             componentRestrictions: {country: 'br'}
@@ -299,26 +303,26 @@
             updateMap();
         }, 1000);
     }
-    
-    function updateFilters(event){
+
+    function updateFilters(event) {
         console.log($("#filters input[type='checkbox']:checked").length);
-        if($("#filters input[type='checkbox']:checked").length===0){
+        if ($("#filters input[type='checkbox']:checked").length === 0) {
             event.originalEvent.originalTarget.checked = true;
         }
         updateMap();
     }
-    
-    function getFilter(){
-        
+
+    function getFilter() {
+
         var data = [];
-        
-        $("#filters").find("input[type='checkbox']:checked").each(function(){
-            data.push(this.value); 
+
+        $("#filters").find("input[type='checkbox']:checked").each(function () {
+            data.push(this.value);
         });
-        
+
         return JSON.stringify(data);
     }
-    
+
     function updateMap() {
         if (typeof (google) !== "undefined") {
             if (map === null) {
@@ -444,7 +448,7 @@
 
     //desabilitado
     function prepareMapaInstituicao() {
-        $.get("<?php echo site_url('relatorio_mapas/get_municipios_instituicoes'); ?>",{filters:getFilter()}, function (instituicoes) {
+        $.get("<?php echo site_url('relatorio_mapas/get_municipios_instituicoes'); ?>", {filters: getFilter()}, function (instituicoes) {
             hashMarkers = [];
             var markers = instituicoes.map(function (instituicao) {
                 if (typeof (google) !== "undefined") {
@@ -475,8 +479,8 @@
     }
 
     function prepareMapaCurso() {
-   
-        $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>",{filters:getFilter()}, function (cursos) {
+
+        $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", {filters: getFilter()}, function (cursos) {
             hashMarkers = [];
             var markers = cursos.map(function (curso) {
 
@@ -484,10 +488,16 @@
                     var marker = createMarker(curso);
                     hashMarkers[curso.id] = marker;
                     marker.addListener('click', function () {
-                        openWindow([
-                            {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos},
-                            {title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos}
-                        ], marker, curso);
+                        var data = [
+                            {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
+                        ];
+                        <?PHP if(!$publico): ?>
+                        
+                        data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
+                        
+                        <?PHP endif; ?>
+                        openWindow(data , marker, curso);
+                        
                     });
                 }
                 return marker;
@@ -504,7 +514,7 @@
     }
 
     function prepareMapaEducando() {
-        var get = $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>",{filters:getFilter()}, function (educandos) {
+        var get = $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>", {filters: getFilter()}, function (educandos) {
             hashMarkers = [];
             var markers = educandos.map(function (educando) {
 
@@ -512,12 +522,15 @@
                     var marker = createMarker(educando);
 
                     hashMarkers[educando.id] = marker;
-                    marker.addListener('click', function () {
-                        openWindow([
-                            {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
-                            {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
-                        ], marker, educando);
-                    });
+                    <?PHP if(!$publico): ?>
+                        marker.addListener('click', function () {
+
+                            openWindow([
+                                {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
+                                {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
+                            ], marker, educando);
+                        });
+                    <?PHP endif; ?>
 
                 }
                 return marker;
@@ -526,8 +539,10 @@
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
             $("#loadingmarkers").hide();
-            var searchEducandoBtn = document.getElementById('search-educando');
-            searchEducandoBtn.style.display = "inline-block";
+            <?PHP if(!$publico): ?>
+                var searchEducandoBtn = document.getElementById('search-educando');
+                searchEducandoBtn.style.display = "inline-block";
+            <?PHP endif; ?>
         }, "json");
         console.log(get);
     }
@@ -572,7 +587,9 @@
     function getInstituicoes(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_instituicoes/") ?>/" + id_municipio, ['id', 'nome', 'sigla', 'unidade', 'curso'], btn);
     }
-
+    
+    <?PHP if(!$publico): ?>
+    
     function getEducandos(id_municipio, btn, search) {
         appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'código sipra', 'código curso'], btn, false, search);
     }
@@ -581,7 +598,7 @@
     function getEducandosCursos(id_municipio, btn, search) {
         appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio, ["educando", "Cidade", "nome do território", "tipo do território", "código curso"], btn, false, search);
     }
-
+    
     //Lista Cursos do mapa Educando
     function getCursosEducandos(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'total educandos <span class="badge">no município</span>'], btn,
@@ -589,6 +606,8 @@
                     getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
                 });
     }
+    
+    <?PHP endif; ?>
 
     function map_recenter(latlng, offsetx, offsety) {
         var point1 = map.getProjection().fromLatLngToPoint(
@@ -637,6 +656,10 @@
                     </div>
                     <hr/>
                     <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador para visualizar informações sobre as caracterizações !</div>
+                    <br/>
+                    <?PHP if($publico): ?>
+                        <div class="alert alert-danger"><i class="fa fa-exclamation"></i> No modo de acesso público, não é possível visualizar informações educandos</div>
+                    <?PHP endif; ?>
                     <hr/>
                     <div style="text-align: right">
                         <a class="btn btn-primary" onclick="$('#tabHelp > li:nth-child(2) > a').click();">Continuar <i class="glyphicon glyphicon-chevron-right"></i></a>
@@ -740,6 +763,7 @@
         </div>
     </div>
 </div>
+<?PHP if(!$publico): ?>
 <div class="modal fade" id="searchEducandoModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content panel panel-search">
@@ -782,7 +806,7 @@
         </div>
     </div>
 </div>
-
+<?PHP endif; ?>
 <script>
     $(document).ready(function () {
         var searchCursoBtn = document.getElementById('search-curso');

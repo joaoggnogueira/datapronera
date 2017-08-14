@@ -2,7 +2,7 @@
 
 class Acesso_publico_m extends CI_Model {
 
-    function allow($email,$senha) {
+    function allow($email, $senha) {
 
         $this->db->select('id,nome,id_cidade');
         $this->db->from('conta_publica c');
@@ -16,6 +16,43 @@ class Acesso_publico_m extends CI_Model {
         } else {
             return false;
         }
+    }
+
+    function update($id, $data) {
+
+        $where = array(
+            'id' => $id
+        );
+
+        return (($this->db->update('conta_publica', $data, $where) != null) && ($this->db->affected_rows() > 0));
+    }
+    function update_password($id, $_old_password, $_new_password) {
+
+        $data = array(
+            'senha' => $_new_password
+        );
+
+        $where = array(
+            'id' => $id,
+            'senha' => $_old_password
+        );
+
+        return (($this->db->update('conta_publica', $data, $where) != null) && ($this->db->affected_rows() > 0));
+    }
+
+    function update_email($id, $_password, $_new_email) {
+
+        $data = array(
+            'email' => $_new_email
+        );
+
+        $where = array(
+            'id' => $id,
+            'senha' => $_password
+        );
+
+        return (($this->db->update('conta_publica', $data, $where) != null) && ($this->db->affected_rows() > 0));
+        
     }
 
     function signup($pessoa) {

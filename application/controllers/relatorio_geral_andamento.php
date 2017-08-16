@@ -137,6 +137,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Municípios de realização dos cursos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -193,6 +197,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Municípios de realização dos cursos';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -239,6 +247,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Cursos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -285,6 +297,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Cursos por nivel';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -332,6 +348,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Cursos por nivel e superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -382,6 +402,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Cursos por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -431,6 +455,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos ingressantes por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -480,6 +508,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos ingressantes por nível';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -533,6 +565,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos ingressantes por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -580,6 +616,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos ingressantes por nível e superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -629,6 +669,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos concluintes por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -678,6 +722,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos concluintes por nível';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -731,6 +779,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos concluintes por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -778,6 +830,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Alunos concluintes por nível e superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -823,6 +879,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Lista de cursos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -872,6 +932,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Lista de cursos por modalidade e superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -919,6 +983,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Lista de alunos por curso';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -971,6 +1039,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Escolaridade/titulação dos educadores';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1016,6 +1088,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Escolaridade/titulação dos educadores por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1065,6 +1141,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educadores por nível';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1121,6 +1201,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educadores por curso';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1178,6 +1262,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educadores por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1227,6 +1315,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Participação de homens e mulheres como educadores dos cursos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1280,6 +1372,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educandos por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1321,6 +1417,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Município de origem dos educandos';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1363,6 +1463,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Território de origem dos educandos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1406,6 +1510,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Território de origem dos educandos por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1454,6 +1562,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Idade média dos educandos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1503,6 +1615,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Participação de homens e mulheres como educandos nos cursos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1551,6 +1667,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educandos por assentamento e modalidade de curso';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1596,6 +1716,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educandos por assentamento e nível de curso';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1642,6 +1766,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Educandos, superintendência e curso';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1683,6 +1811,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Localização das instituições de ensino';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1729,6 +1861,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1775,6 +1911,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por nível';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1822,6 +1962,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1871,6 +2015,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por municípios';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1917,6 +2065,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Instituições de ensino que realizaram cursos por estados';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -1963,6 +2115,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Natureza das instituições de ensino e número de cursos realizados';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2004,6 +2160,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Lista das instituições de ensino e número de cursos realizados';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2050,6 +2210,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Organizações demandantes por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2103,6 +2267,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Porcentagem dos membros das organizações demandantes participantes de cursos do PRONERA por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2144,6 +2312,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Lista das organizações demandantes e número de cursos demandados';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2185,6 +2357,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Localização dos parceiros';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2231,6 +2407,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Parceiros por modalidade';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2278,6 +2458,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Parceiros por superintendência';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2324,6 +2508,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Parceiros por natureza da parceria';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2366,6 +2554,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Lista dos parceiros';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2407,6 +2599,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2449,6 +2645,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2495,6 +2695,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2536,6 +2740,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2578,6 +2786,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');
@@ -2624,6 +2836,10 @@ class Relatorio_geral_andamento extends CI_Controller {
                 $this->load->library('pdf');
                 $pdf = $this->pdf->load();
                 $data['titulo_relatorio'] = 'Produções por tipo de produção';
+                $access_level = $this->session->userdata('access_level');
+                if ($access_level <= 3) {
+                    $data['nomeSR'] = $this->requisicao_m->get_superintendencias_nome(1, $this->session->userdata('id_superintendencia'));
+                }
                 $header = $this->load->view('relatorio/andamento/header_pdf', $data, true);
                 $pdf->SetHTMLHeader($header);
                 $pdf->SetFooter('   Relatório Extraído do Sistema DataPronera' . '|Página {PAGENO}|' . date("d.m.Y") . '   ');

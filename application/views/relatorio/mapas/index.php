@@ -1,6 +1,5 @@
-<?PHP 
-    $publico = $this->session->userdata("publico");
-
+<?PHP
+$publico = $this->session->userdata("publico");
 ?>
 <style>
 
@@ -18,7 +17,7 @@
         padding: 10px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         margin: 10px;
-        background: rgba(255,255,255,0.6);
+        background: rgba(255,255,255,0.8);
         display: none;
     }
     #mapa-select{
@@ -307,9 +306,10 @@
     function updateFilters(event) {
         console.log($("#filters input[type='checkbox']:checked").length);
         if ($("#filters input[type='checkbox']:checked").length === 0) {
-            event.originalEvent.originalTarget.checked = true;
+            event.target.checked = true;
+        } else {
+            updateMap();
         }
-        updateMap();
     }
 
     function getFilter() {
@@ -333,6 +333,7 @@
                 searchEducandoBtn.style.display = "none";
                 var searchCursoBtn = document.getElementById('search-curso');
                 searchCursoBtn.style.display = "none";
+                $("#filters input[type='checkbox']").attr('disabled','disabled');
                 $("#loadingmarkers").show();
             }
         }
@@ -491,13 +492,13 @@
                         var data = [
                             {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
                         ];
-                        <?PHP if(!$publico): ?>
-                        
-                        data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
-                        
-                        <?PHP endif; ?>
-                        openWindow(data , marker, curso);
-                        
+<?PHP if (!$publico): ?>
+
+                            data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
+
+<?PHP endif; ?>
+                        openWindow(data, marker, curso);
+
                     });
                 }
                 return marker;
@@ -506,9 +507,10 @@
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
             $("#loadingmarkers").hide();
+            $("#filters input[type='checkbox']").removeAttr('disabled');
             var searchCursoBtn = document.getElementById('search-curso');
             searchCursoBtn.style.display = "inline-block";
-
+            
         }, "json");
 
     }
@@ -522,7 +524,7 @@
                     var marker = createMarker(educando);
 
                     hashMarkers[educando.id] = marker;
-                    <?PHP if(!$publico): ?>
+                    <?PHP if (!$publico): ?>
                         marker.addListener('click', function () {
 
                             openWindow([
@@ -539,7 +541,8 @@
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
             $("#loadingmarkers").hide();
-            <?PHP if(!$publico): ?>
+            $("#filters input[type='checkbox']").removeAttr('disabled');
+            <?PHP if (!$publico): ?>
                 var searchEducandoBtn = document.getElementById('search-educando');
                 searchEducandoBtn.style.display = "inline-block";
             <?PHP endif; ?>
@@ -587,27 +590,27 @@
     function getInstituicoes(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_instituicoes/") ?>/" + id_municipio, ['id', 'nome', 'sigla', 'unidade', 'curso'], btn);
     }
-    
-    <?PHP if(!$publico): ?>
-    
-    function getEducandos(id_municipio, btn, search) {
-        appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'código sipra', 'código curso'], btn, false, search);
-    }
 
-    //Lista Educandos do mapa Curso
-    function getEducandosCursos(id_municipio, btn, search) {
-        appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio, ["educando", "Cidade", "nome do território", "tipo do território", "código curso"], btn, false, search);
-    }
-    
-    //Lista Cursos do mapa Educando
-    function getCursosEducandos(id_municipio, btn) {
-        appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'total educandos <span class="badge">no município</span>'], btn,
-                function (data) {
-                    getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
-                });
-    }
-    
-    <?PHP endif; ?>
+<?PHP if (!$publico): ?>
+
+        function getEducandos(id_municipio, btn, search) {
+            appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio, ['nome', 'assentamento', 'código sipra', 'código curso'], btn, false, search);
+        }
+
+        //Lista Educandos do mapa Curso
+        function getEducandosCursos(id_municipio, btn, search) {
+            appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio, ["educando", "Cidade", "nome do território", "tipo do território", "código curso"], btn, false, search);
+        }
+
+        //Lista Cursos do mapa Educando
+        function getCursosEducandos(id_municipio, btn) {
+            appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio, ['codigo', 'curso', 'modalidade', 'total educandos <span class="badge">no município</span>'], btn,
+                    function (data) {
+                        getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
+                    });
+        }
+
+<?PHP endif; ?>
 
     function map_recenter(latlng, offsetx, offsety) {
         var point1 = map.getProjection().fromLatLngToPoint(
@@ -657,7 +660,7 @@
                     <hr/>
                     <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador para visualizar informações sobre as caracterizações !</div>
                     <br/>
-                    <?PHP if($publico): ?>
+                    <?PHP if ($publico): ?>
                         <div class="alert alert-danger"><i class="fa fa-exclamation"></i> No modo de acesso público, não é possível visualizar informações educandos</div>
                     <?PHP endif; ?>
                     <hr/>
@@ -763,49 +766,49 @@
         </div>
     </div>
 </div>
-<?PHP if(!$publico): ?>
-<div class="modal fade" id="searchEducandoModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content panel panel-search">
-            <div class="modal-header panel-heading">
-                <i class="fa fa-graduation-cap"></i> Buscar Município de Origem do Educando 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <label>Digite abaixo o nome (ou parte do nome) do educando</label>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="input-group">
-                                <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
-                                <input type="search" name="search" style="text-transform: uppercase; margin: 1px 0px" class="form-control"/>    
+<?PHP if (!$publico): ?>
+    <div class="modal fade" id="searchEducandoModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content panel panel-search">
+                <div class="modal-header panel-heading">
+                    <i class="fa fa-graduation-cap"></i> Buscar Município de Origem do Educando 
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label>Digite abaixo o nome (ou parte do nome) do educando</label>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="input-group">
+                                    <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
+                                    <input type="search" name="search" style="text-transform: uppercase; margin: 1px 0px" class="form-control"/>    
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-success">Buscar</button>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-success">Buscar</button>
-                        </div>
-                    </div>
-                    <br/>
-                    <div class="alert alert-success">Não utilizar acentuação!</div>
-                </form>
-                <hr/>
-                <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th> ID_MUN </th>
-                            <th> NOME </th>
-                            <th> CURSO </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                        <br/>
+                        <div class="alert alert-success">Não utilizar acentuação!</div>
+                    </form>
+                    <hr/>
+                    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th> ID_MUN </th>
+                                <th> NOME </th>
+                                <th> CURSO </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 <?PHP endif; ?>
 <script>
     $(document).ready(function () {

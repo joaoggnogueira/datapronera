@@ -159,7 +159,7 @@ if (!defined('BASEPATH'))
                             <label>E-mail</label>
                             <div class="input-group">
                                 <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-at"></i></span>
-                                <input type="email" class="form-control center" id="email" name="email" onkeypress="return preventChar();" autofocus>
+                                <input type="email" class="form-control center" id="email" name="email" autofocus>
                             </div>
                             <label class="control-label center" for="email"></label>
                         </div>
@@ -191,7 +191,7 @@ if (!defined('BASEPATH'))
                         <label>E-mail</label>
                         <div class="input-group">
                             <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-at"></i></span>
-                            <input type="email" class="form-control center" id="email-up" name="email" onkeypress="return preventChar();" autofocus>
+                            <input type="email" class="form-control center" id="email-up" name="email" autofocus>
                         </div>
                         <label class="control-label center" for="email-up"></label>
                     </div>
@@ -210,7 +210,7 @@ if (!defined('BASEPATH'))
                         <label>Nome</label>
                         <div class="input-group">
                             <span class="input-group-addon" id="sizing-addon1"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control center" id="name-up" name="name" onkeypress="return preventChar();" autofocus>
+                            <input type="text" class="form-control center" id="name-up" name="name" autofocus>
                         </div>
                         <label class="control-label center" for="name-up"></label>
                     </div>

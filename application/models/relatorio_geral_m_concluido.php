@@ -19,7 +19,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->from('curso_modalidade cm');
         $this->db->join('curso c', 'cm.id = c.id_modalidade', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -51,13 +51,13 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ) IS NULL, 0, 
                         (SELECT COUNT(c.id) AS qtde FROM curso c
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . ")
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . ")
                 ) AS cursos";
             }
             $stm = "SELECT '" . $key . "' AS nivel,
@@ -66,13 +66,13 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ) IS NULL, 0, 
                         (SELECT COUNT(c.id) AS qtde FROM curso c
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC')
+                                AND c.status IN ('CC','2P'))
                 ) AS cursos";
 
             array_push($stms, $stm);
@@ -101,39 +101,39 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								WHERE cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND c.ativo_inativo = 'A'
-								AND c.status = 'CC') IS NULL, 0, 
+								AND c.status IN ('CC','2P')) IS NULL, 0, 
 							(SELECT COUNT(c.id) FROM curso c
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND c.ativo_inativo = 'A'
-								AND c.status = 'CC')
+								AND c.status IN ('CC','2P'))
 						) AS eja_fundamental,
 						IF((SELECT COUNT(c.id) FROM curso c
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND c.ativo_inativo = 'A'
-								AND c.status = 'CC') IS NULL, 0, 
+								AND c.status IN ('CC','2P')) IS NULL, 0, 
 							(SELECT COUNT(c.id) FROM curso c
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND c.ativo_inativo = 'A'
-								AND c.status = 'CC')
+								AND c.status IN ('CC','2P'))
 						) AS ensino_medio,
 						IF((SELECT COUNT(c.id) FROM curso c
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND c.ativo_inativo = 'A'
-								AND c.status = 'CC') IS NULL, 0, 
+								AND c.status IN ('CC','2P')) IS NULL, 0, 
 							(SELECT COUNT(c.id) FROM curso c
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND c.ativo_inativo = 'A'
-								AND c.status = 'CC')
+								AND c.status IN ('CC','2P'))
 						) AS ensino_superior";
                 if ($bool = $this->db->query($stm2)) {
                     $result_parcial = $bool->result_array();
@@ -152,7 +152,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->from('superintendencia s');
         $this->db->join('curso c', 's.id = c.id_superintendencia', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('s.id');
         $this->db->order_by('s.id');
 
@@ -173,7 +173,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('cr.numero_ingressantes >=', 0);
 
         if ($access_level <= 3) {
@@ -207,14 +207,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND .c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND .c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ) > 0, 
                         (SELECT SUM(cr.numero_ingressantes) FROM caracterizacao cr
                                 LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND .c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND .c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ), 0
                 ) AS alunos";
             } else {
@@ -226,14 +226,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ) > 0, 
                         (SELECT SUM(cr.numero_ingressantes) FROM caracterizacao cr
                                 LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ), 0
                 ) AS alunos";
             }
@@ -247,7 +247,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         //$this->db->join('curso c', 'cr.id_curso = c.id', 'left');
         //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', 'CC');
+        //$this->db->where('c.status IN ("CC","2P")');
         //$this->db->where('cr.numero_ingressantes >=', 0);
         //if ($access_level <= 3) {
         //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -274,7 +274,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
 							) IS NULL, 0, 
@@ -282,7 +282,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS'))
 						) AS eja_fundamental,
@@ -290,7 +290,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
 							) IS NULL, 0, 
@@ -298,7 +298,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)'))
 						) AS ensino_medio,
@@ -306,7 +306,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
 							) IS NULL, 0, 
@@ -314,7 +314,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO'))
 						) AS ensino_superior";
@@ -339,7 +339,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('cr.numero_ingressantes >=', 0);
         $this->db->group_by('s.id');
 
@@ -360,7 +360,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('cr.numero_concluintes >=', 0);
 
         if ($access_level <= 3) {
@@ -394,14 +394,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ) > 0, 
                         (SELECT SUM(cr.numero_concluintes) FROM caracterizacao cr
                                 LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ), 0
                 ) AS alunos";
             } else {
@@ -412,14 +412,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ) > 0, 
                         (SELECT SUM(cr.numero_concluintes) FROM caracterizacao cr
                                 LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ), 0
                 ) AS alunos";
             }
@@ -433,7 +433,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         //$this->db->join('curso c', 'cr.id_curso = c.id', 'left');
         //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', 'CC');
+        //$this->db->where('c.status IN ("CC","2P")');
         //$this->db->where('cr.numero_concluintes >=', 0);
         //if ($access_level <= 3) {
         //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -460,7 +460,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
 							) IS NULL, 0, 
@@ -468,7 +468,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS'))
 						) AS eja_fundamental,
@@ -476,7 +476,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
 							) IS NULL, 0, 
@@ -484,7 +484,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)'))
 						) AS ensino_medio,
@@ -492,7 +492,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
 							) IS NULL, 0, 
@@ -500,7 +500,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
 								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
 								WHERE c.ativo_inativo =  'A' 
-								AND c.status = 'CC'
+								AND c.status IN ('CC','2P')
 								AND c.id_superintendencia = '" . $row['id'] . "'
 								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO'))
 						) AS ensino_superior";
@@ -525,7 +525,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('cr.numero_concluintes >=', 0);
         $this->db->group_by('s.id');
 
@@ -884,12 +884,12 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('cidade cd', 'cc.id_cidade = cd.id', 'left');
         $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
         }
-
+        
 
         $this->db->group_by('c.nome, cm.nome, e.sigla, cd.cod_municipio, cd.nome, s.id, c.id');
         if (($query = $this->db->get()) != null) {
@@ -908,7 +908,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('cidade cd', 'cc.id_cidade = cd.id', 'left');
         $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('cd.cod_municipio IS NOT ', 'NULL', false);
 
         if ($access_level <= 3) {
@@ -932,7 +932,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -955,7 +955,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -977,7 +977,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'e.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->order_by('c.id');
 
         if (($query = $this->db->get()) != null) {
@@ -1010,22 +1010,22 @@ class Relatorio_geral_m_concluido extends CI_Model {
 						(((SELECT COUNT(p.id) FROM professor p
 							LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 							WHERE c.ativo_inativo = 'A' $complement
-							AND c.status = 'CC'
+							AND c.status IN ('CC','2P')
 							AND p.titulacao = '" . $key . "') * 100) /
 								(SELECT COUNT(p.id) FROM professor p
 									LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 									WHERE c.ativo_inativo = 'A' $complement
-									AND c.status = 'CC')
+									AND c.status IN ('CC','2P'))
 						) IS NULL, 0,
 						(((SELECT COUNT(p.id) FROM professor p
 							LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 							WHERE c.ativo_inativo = 'A' $complement
-							AND c.status = 'CC'
+							AND c.status IN ('CC','2P')
 							AND p.titulacao = '" . $key . "') * 100) /
 								(SELECT COUNT(p.id) FROM professor p
 									LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 									WHERE c.ativo_inativo = 'A' $complement
-									AND c.status = 'CC')
+									AND c.status IN ('CC','2P'))
 						)
 					) AS educadores";
 
@@ -1063,25 +1063,25 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			        (((SELECT COUNT(p.id) FROM professor p
 			            LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 			            LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			            WHERE c.ativo_inativo = 'A' AND c.status = 'CC'
+			            WHERE c.ativo_inativo = 'A' AND c.status IN ('CC','2P')
 			            AND p.titulacao = '" . $value . "'
 			            AND sp.id = s.id) * 100) /
 			                (SELECT COUNT(p.id) FROM professor p
 			                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 			                    LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			                    WHERE c.ativo_inativo = 'A' AND c.status = 'CC'
+			                    WHERE c.ativo_inativo = 'A' AND c.status IN ('CC','2P')
 			                    AND sp.id = s.id)
 			        ) IS NULl, 0,
 			        (((SELECT COUNT(p.id) FROM professor p
 			            LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 			            LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			            WHERE c.ativo_inativo = 'A' AND c.status = 'CC'
+			            WHERE c.ativo_inativo = 'A' AND c.status IN ('CC','2P')
 			            AND p.titulacao = '" . $value . "'
 			            AND sp.id = s.id) * 100) /
 			                (SELECT COUNT(p.id) FROM professor p
 			                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 			                    LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			                    WHERE c.ativo_inativo = 'A' AND c.status = 'CC'
+			                    WHERE c.ativo_inativo = 'A' AND c.status IN ('CC','2P')
 			                    AND sp.id = s.id)
 			        )
 			    ) AS $key";
@@ -1118,14 +1118,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ) > 0, 
                         (SELECT COUNT(p.id) FROM professor p
                                 LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
                         ), 0
                 ) AS educadores";
             } else {
@@ -1136,14 +1136,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ) > 0, 
                         (SELECT COUNT(p.id) FROM professor p
                                 LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ), 0
                 ) AS educadores";
             }
@@ -1157,7 +1157,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         //$this->db->join('curso c', 'p.id_curso = c.id', 'left');
         //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', 'CC');
+        //$this->db->where('c.status IN ("CC","2P")');
         //if ($access_level <= 3) {
         //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
         //}
@@ -1177,7 +1177,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'p.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1200,7 +1200,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'p.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('s.id');
 
         if (($query = $this->db->get()) != null) {
@@ -1227,28 +1227,28 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			            LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
 			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status = 'CC'
+			            AND c.status IN ('CC','2P')
 			            AND cmd.id = cm.id
 			            AND p.genero = '" . $value . "') * 100) /
 			                (SELECT COUNT(p.id) FROM professor p
 			                    LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
 			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status = 'CC'
+					            AND c.status IN ('CC','2P')
 					            AND cmd.id = cm.id)
 			        ) IS NULL, 0,
 			        (((SELECT COUNT(p.id) FROM professor p
 			            LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
 			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status = 'CC'
+			            AND c.status IN ('CC','2P')
 			            AND cmd.id = cm.id
 			            AND p.genero = '" . $value . "') * 100) /
 			                (SELECT COUNT(p.id) FROM professor p
 			                    LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
 			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status = 'CC'
+					            AND c.status IN ('CC','2P')
 					            AND cmd.id = cm.id)
 			        )
 			    ) AS $key";
@@ -1274,7 +1274,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'e.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('s.id');
 
         if (($query = $this->db->get()) != null) {
@@ -1299,7 +1299,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('educando ed', 'ec.id_educando = ed.id', 'left');
         $this->db->join('curso c', 'ed.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1344,7 +1344,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         			LEFT OUTER JOIN curso c ON (e.id_curso = c.id)
         			LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
         			WHERE c.ativo_inativo = 'A' $complement
-        			AND c.status = 'CC'
+        			AND c.status IN ('CC','2P')
         			AND cmd.id = cm.id
         			AND e.tipo_territorio = '" . $value . "') AS $key";
 
@@ -1388,7 +1388,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         			LEFT OUTER JOIN curso c ON (e.id_curso = c.id)
         			LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
         			WHERE c.ativo_inativo = 'A'
-        			AND c.status = 'CC'
+        			AND c.status IN ('CC','2P')
         			AND sp.id = s.id
         			AND e.tipo_territorio = '" . $value . "') AS $key";
 
@@ -1418,7 +1418,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->join('caracterizacao cr', 'c.id = cr.id_curso', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('e.idade >', 0);
         $this->db->where('e.data_nascimento <>', '0000-00-00');
         $this->db->where('e.data_nascimento <>', '1900-01-01');
@@ -1453,28 +1453,28 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			            LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
 			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status = 'CC'
+			            AND c.status IN ('CC','2P')
 			            AND cmd.id = cm.id
 			            AND e.genero = '" . $value . "') * 100) /
 			                (SELECT COUNT(e.id) FROM educando e
 			                    LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
 			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status = 'CC'
+					            AND c.status IN ('CC','2P')
 					            AND cmd.id = cm.id)
 			        ) IS NULL, 0,
 			        (((SELECT COUNT(e.id) FROM educando e
 			            LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
 			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status = 'CC'
+			            AND c.status IN ('CC','2P')
 			            AND cmd.id = cm.id
 			            AND e.genero = '" . $value . "') * 100) /
 			                (SELECT COUNT(e.id) FROM educando e
 			                    LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
 			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status = 'CC'
+					            AND c.status IN ('CC','2P')
 					            AND cmd.id = cm.id)
 			        )
 			    ) AS $key";
@@ -1501,7 +1501,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
         $this->db->join('curso c', 'i.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1523,7 +1523,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1547,7 +1547,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('cidade cd', 'ie.id_cidade = cd.id', 'left');
         $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1572,7 +1572,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('cidade cd', 'ie.id_cidade = cd.id', 'left');
         $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('e.sigla');
 
 
@@ -1601,14 +1601,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                 AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
+                                 AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
                         ) > 0, 
                         (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
                                 LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC' AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
+                                AND c.status IN ('CC','2P') AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') ."
                         ), 0
                 ) AS instituicoes";
             } else {
@@ -1619,14 +1619,14 @@ class Relatorio_geral_m_concluido extends CI_Model {
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ) > 0, 
                         (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
                                 LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
                                 LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
                                 WHERE cm.nome IN " . $value . "
                                 AND c.ativo_inativo = 'A'
-                                AND c.status = 'CC'
+                                AND c.status IN ('CC','2P')
                         ), 0
                 ) AS instituicoes";
             }
@@ -1640,7 +1640,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         //$this->db->join('curso c', 'ie.id_curso = c.id', 'left');
         //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', 'CC');
+        //$this->db->where('c.status IN ("CC","2P")');
         //if ($access_level <= 3) {
         //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
         //}
@@ -1661,7 +1661,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('s.id'); // Verificar isso
 
         if (($query = $this->db->get()) != null) {
@@ -1690,7 +1690,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 					FROM instituicao_ensino ie
                 	LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
                 	WHERE c.ativo_inativo = 'A' $complement
-                	AND c.status = 'CC'
+                	AND c.status IN ('CC','2P')
                 	AND ie.natureza_instituicao = '" . $key . "'";
 
             array_push($stms, $stm);
@@ -1711,7 +1711,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->from('instituicao_ensino ie');
         $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1737,7 +1737,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'od.id_curso = c.id', 'left');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('cm.nome');
 
         if ($access_level <= 3) {
@@ -1768,7 +1768,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			            LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
 			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status = 'CC'
+			            AND c.status IN ('CC','2P')
 			            AND odc.estuda_pronera = '" . $value . "'
 			            AND cmd.id = cm.id) * 100) /
 			                (SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
@@ -1776,7 +1776,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			                    LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
 			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			                    WHERE c.ativo_inativo = 'A' $complement
-			                    AND c.status = 'CC'
+			                    AND c.status IN ('CC','2P')
 			                    AND cmd.id = cm.id)
 			        ) IS NULL, 0,
 			        (((SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
@@ -1784,7 +1784,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			            LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
 			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status = 'CC'
+			            AND c.status IN ('CC','2P')
 			            AND odc.estuda_pronera = '" . $value . "'
 			            AND cmd.id = cm.id) * 100) /
 			                (SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
@@ -1792,7 +1792,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 			                    LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
 			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
 			                    WHERE c.ativo_inativo = 'A' $complement
-			                    AND c.status = 'CC'
+			                    AND c.status IN ('CC','2P')
 			                    AND cmd.id = cm.id)
 			        )
 			    ) AS $key";
@@ -1817,7 +1817,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->from('organizacao_demandante od');
         $this->db->join('curso c', 'od.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1840,7 +1840,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('cidade cd', 'p.id_cidade = cd.id', 'left');
         $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->where('p.id_cidade <>', 0);
 
         if ($access_level <= 3) {
@@ -1867,7 +1867,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'p.id_curso = c.id', 'left');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1889,7 +1889,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->join('curso c', 'p.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
         $this->db->group_by('s.id');
 
         if (($query = $this->db->get()) != null) {
@@ -1907,7 +1907,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->where('p.natureza IS NOT NULL', null, false);
         $this->db->where('p.natureza <>', '');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1928,7 +1928,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
         $this->db->from('parceiro p');
         $this->db->join('curso c', 'p.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where('c.status', 'CC');
+        $this->db->where('c.status IN ("CC","2P")');
 
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
@@ -1963,7 +1963,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 					LEFT OUTER JOIN superintendencia s ON (c.id_superintendencia = s.id)
 			        LEFT OUTER JOIN estado et ON (s.id_estado = et.id)
 			        WHERE c.ativo_inativo = 'A'
-			        AND c.status = 'CC'
+			        AND c.status IN ('CC','2P')
 			        AND et.id = e.id) AS $key";
 
             array_push($stms, $stm);
@@ -2001,7 +2001,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
 					LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 					LEFT OUTER JOIN superintendencia si ON (c.id_superintendencia = si.id)
 					WHERE c.ativo_inativo = 'A'
-					AND c.status = 'CC'
+					AND c.status IN ('CC','2P')
 					AND si.id = s.id) AS $key";
 
             array_push($stms, $stm);
@@ -2084,7 +2084,7 @@ class Relatorio_geral_m_concluido extends CI_Model {
             $stm = "SELECT CAST('" . $value['cast'] . "' AS CHAR(30)) AS natureza_producao,
 					COUNT(p.id) AS producoes FROM " . $value['tabela'] . " p
         			LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-       				WHERE c.ativo_inativo = 'A' AND c.status = 'CC' $complement ";
+       				WHERE c.ativo_inativo = 'A' AND c.status IN ('CC','2P') $complement ";
 
             if (strpos($value['tabela'], 'geral') !== false) {
                 $stm .= "AND p.natureza_producao = '" . $key . "'";

@@ -18,12 +18,13 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
     // Tipo do Instrumento
     $.get("<?php echo site_url('requisicao/get_tipo_instrumento_curso'); ?>", function (instrumentos_html_options) {
         $('#instrumento').html(instrumentos_html_options);
+        <?php if($operacao != 'add'): ?>
+            var instrumento_curso = "<?= ($dados[0]->id_instrumento != 0 ? $dados[0]->id_instrumento : 8)  ?>";
 
-        var instrumento_curso = "<?php echo ($operacao != 'add') ? $dados[0]->id_instrumento : 0; ?>";
-
-        if (instrumento_curso != 0) {
-            $('#instrumento option[value="' + instrumento_curso + '"]').attr("selected", true);
-        }
+            if (instrumento_curso != 0) {
+                $('#instrumento option[value="' + instrumento_curso + '"]').attr("selected", true);
+            }
+        <?PHP endif; ?>
     });
 
     $(document).ready(function () {
@@ -175,7 +176,7 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
              }*/
             );
 
-            if (document.getElementById("nprocesso").value !== "") {
+            if (!document.getElementById("ck_nprocesso").checked) {
                 form.push({
                     'id': 'nprocesso',
                     'message': 'Informe o numero do processo',
@@ -183,9 +184,9 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                 });
             } else {
                 $("#nprocesso").hideErrorMessage();
-                
+
             }
-            if (document.getElementById("ninstrumento").value !== "") {
+            if (!document.getElementById("ck_ninstrumento").checked) {
                 form.push({
                     'id': 'ninstrumento',
                     'message': 'Informe o numero do instrumento',
@@ -215,12 +216,12 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
 
 
                 urlRequest = "<?php
-if ($operacao == 'add') {
-    echo site_url('curso/add/');
-} else if ($operacao == 'update') {
-    echo site_url('curso/update/');
-}
-?>";
+                    if ($operacao == 'add') {
+                        echo site_url('curso/add/');
+                    } else if ($operacao == 'update') {
+                        echo site_url('curso/update/');
+                    }
+                ?>";
                 request(urlRequest, formData);
             }
         });
@@ -232,6 +233,14 @@ if ($operacao == 'add') {
             request(urlRequest, null, 'hide');
         });
 
+        $('#ck_nprocesso').niCheck({
+            'id': ['nprocesso']
+        });
+    
+        $('#ck_ninstrumento').niCheck({
+            'id': ['ninstrumento']
+        });
+    
     });
 </script>
 
@@ -312,10 +321,17 @@ if ($operacao == 'add') {
             </div> 
         </div>
         <div class="form-group">
-            <label>4. Numero do Processo <span class="badge">Opcional</span></label>
-            <div>
-                <input placeholder="XXXXX.XXXXXX/AAAA-XX" pattern="[0-9]{5}.[0-9]{6}\/[0-9]{4}-[0-9]{2}" maxlength="20" class="form-control tamanho-sm" id="nprocesso" name="nprocesso" value="<?php if ($operacao != 'add') echo $dados[0]->nprocesso; ?>"/>
-                <label class="control-label form bold" for="nprocesso"></label>
+            <label class="negacao">4. Numero do Processo </label>
+            <div class="checkbox negacao-sm">
+                <label>
+                    <input type="checkbox" name="ck_nprocesso" id="ck_nprocesso" <?php if ($operacao != 'add' && strlen($dados[0]->nprocesso)==0) echo "checked" ?>/> N&atilde;o Informado 
+                </label>
+            </div>
+            <div class="form-group">
+                <div>
+                    <input placeholder="XXXXX.XXXXXX/AAAA-XX" pattern="[0-9]{5}.[0-9]{6}\/[0-9]{4}-[0-9]{2}" maxlength="20" class="form-control tamanho-sm" id="nprocesso" name="nprocesso" value="<?php if ($operacao != 'add') echo $dados[0]->nprocesso; ?>"/>
+                    <label class="control-label form bold" for="nprocesso"></label>
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -334,14 +350,21 @@ if ($operacao == 'add') {
             </div>
         </div>
         <div class="form-group">
-            <label>6. Numero do Instrumento <span class="badge">Opcional</span></label>
-            <div>
-                <input maxlength="20" class="form-control tamanho-sm" id="ninstrumento" name="ninstrumento" value="<?php if ($operacao != 'add') echo $dados[0]->ninstrumento; ?>"/>
-                <label class="control-label form bold" for="ninstrumento"></label>
+            <label class="negacao">6. Numero do Instrumento </label>
+            <div class="checkbox negacao-sm">
+                <label>
+                    <input type="checkbox" name="ck_ninstrumento" id="ck_ninstrumento" <?php if ($operacao != 'add' && strlen($dados[0]->ninstrumento)==0) echo "checked" ?>/> N&atilde;o Informado 
+                </label>
+            </div>
+            <div class="form-group">
+                <div>
+                    <input maxlength="20" class="form-control tamanho-sm" id="ninstrumento" name="ninstrumento" value="<?php if ($operacao != 'add') echo $dados[0]->ninstrumento; ?>"/>
+                    <label class="control-label form bold" for="ninstrumento"></label>
+                </div>
             </div>
         </div>
         <div class="form-group">
-            <label>7. Data da publica&ccedil;&abreve;o no di&aacute;rio oficial</label>
+            <label>7. Data da publica&ccedil;&abreve;o no di&aacute;rio oficial (DOA)</label>
             <div class="form-group">
                 <div>
                     <input pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="DD/MM/AAAA" name="data" id="data" class="form-control tamanho-sm2" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>

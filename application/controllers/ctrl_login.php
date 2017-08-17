@@ -8,11 +8,13 @@ class Ctrl_login extends CI_Controller {
 			$data['content'] = 'login.php';
 			$data['top_menu'] = 'blank.php';
 			$data['course_info'] = 'blank.php';
+                        $data['data'] = '';
 
 		} else {
 			$data['content'] = $this->session->userdata('curr_content');
 			$data['top_menu'] = $this->session->userdata('curr_top_menu');
 			$data['course_info'] = $this->session->userdata('curr_course_info');
+                        $data['data'] = $this->session->userdata('curr_data');
 		}
 
 		$this->load->view('include/template.php', $data);

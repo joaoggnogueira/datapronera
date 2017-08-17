@@ -339,11 +339,11 @@
             <li>
                 <h4>Organiza&ccedil;&otilde;es Demandantes</h4>
                 <ul>
-                    <li class="li-rel">
+<!--                    <li class="li-rel">
                         <a disabled class="btn btn-success" target="_blank" href="<?php //echo site_url('relatorio_geral_concluido/principais_organizacoes');    ?>">XLS</a> 
                         <a disabled class="btn btn-success" target="_blank" href="<?php //echo site_url('relatorio_geral_concluido/principais_organizacoes');    ?>">PDF</a> 
                         Seis principais organiza&ccedil;&otilde;es demandantes e respectivos cursos <span class="badge badge-nacional">total nacional</span> <span class="badge badge-municipio">por munic&iacute;pios</span>
-                    </li>
+                    </li>-->
                     
                     <li class="li-rel">
                         <a class="btn btn-success" target="_blank" href="<?php echo site_url('relatorio_geral_concluido/organizacoes_demandantes_modalidade/1'); ?>">XLS</a> 

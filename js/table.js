@@ -5,12 +5,20 @@ function Table(obj) {
     var $this = this;
     this.element = obj.table;
 
-    this.oTable = obj.table.dataTable({
+    var dataProcessDataTable = {
         "bProcessing": true,
         "bDestroy": true,
         "sPaginationType": "bootstrap",
         "sAjaxSource": obj.url
-    });
+    };
+    if (obj.data) {
+        dataProcessDataTable["fnServerParams"] = function (aoData) {
+            for(var key in obj.data){
+                aoData.push( { "name": key, "value": JSON.stringify(obj.data[key]) });
+            }
+        };
+    }
+    this.oTable = obj.table.dataTable(dataProcessDataTable);
 
     /* Add a click handler to select the rows */
     obj.table.find('tbody').click(function (event) {
@@ -49,18 +57,18 @@ function Table(obj) {
     });
 }
 
-Table.prototype.appendEvent = function(event){
+Table.prototype.appendEvent = function (event) {
     var oThis = this;
-    this.element.get(0).onclick = function(){
+    this.element.get(0).onclick = function () {
         var anSelected = oThis.fnGetSelected();
-        if(anSelected.length !== 0){
+        if (anSelected.length !== 0) {
             var data = oThis.oTable.fnGetData(anSelected[0]);
             event(data);
         }
     };
 };
 
-Table.prototype.destroy = function(){
+Table.prototype.destroy = function () {
     this.oTable.fnDestroy();
 };
 
@@ -178,13 +186,13 @@ Table.prototype.nodeExists = function (_node) {
     return false;
 }
 
-Table.prototype.nodeExistsById = function (_node,row_id) {
+Table.prototype.nodeExistsById = function (_node, row_id) {
 
     var nodes = this.oTable.fnGetNodes();
 
     for (var i = 0; i < nodes.length; i++) {
         var data = this.oTable.fnGetData(nodes[i]);
-        if (_node[row_id]==data[row_id]) {
+        if (_node[row_id] == data[row_id]) {
             return true;
         }
     }

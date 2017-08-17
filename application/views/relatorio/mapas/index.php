@@ -13,13 +13,7 @@ $publico = $this->session->userdata("publico");
         outline: none;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
-    #filters{
-        padding: 10px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        margin: 10px;
-        background: rgba(255,255,255,0.8);
-        display: none;
-    }
+
     #mapa-select{
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         margin-top: 10px;
@@ -150,19 +144,151 @@ $publico = $this->session->userdata("publico");
         line-height: 25px;
     }
 
+    #options{
+        max-height: calc(100% - 100px);
+        min-width: 300px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        display: none;
+        margin-top: 10px;
+    }
+
+    #filters,#markersconfig{
+        padding: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        margin: 10px;
+        background: rgba(255,255,255,0.8);
+    }
+    #filters > summary, #markersconfig > summary{
+        padding: 10px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+    #filters summary,#markersconfig summary{
+        cursor: pointer;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                              supported by Chrome and Opera */
+    }
+
+    #filters summary:hover,#markersconfig summary:hover{
+        font-weight: bold;
+    }
+
+    #filters ul,#tipo_marker{
+        margin-top: 10px;
+        padding: 0px;
+    }
+
+    #filters label{
+        line-height: 20px;
+    }
+
+    #filters li{
+        padding: 10px;
+        background: white;
+        margin-left: 10px;
+        cursor: pointer;
+        margin: 10px;
+        list-style: none;
+    }
+
+    #filters[open=''] > summary,#markersconfig[open=''] > summary{
+        font-size: 12px;
+    }
+
+    #filters[open=''],#markersconfig[open='']{
+        padding: 5px;
+        padding-top: 10px;
+    }
+
+    #filters > summary,#markersconfig > summary{
+        font-size: 18px;
+    }
+
+    #filters details > summary{
+        font-size: 13px;
+    }
+    #markersconfig label{
+        margin-top: 10px;
+        padding-left: 10px;
+    }
+    #markersconfig ul{
+        padding: 10px;
+        padding-left: 20px;
+    }
+    .control-chk{
+        font-size: 13px;
+        padding: 5px;
+    }
+    
+    #options > summary{
+        background: rgba(255,255,255,0.5);
+        font-size: 20px;
+        padding: 10px;
+        margin: 10px;
+    }
+
 </style>
-<div id="filters">
-    <label>Status do Curso</label>
-    <div class="checkbox">
-        <label><input checked value="AN" type="checkbox">ANDAMENTO</label>
-    </div>
-    <div class="checkbox">
-        <label><input checked value="CC" type="checkbox">CONCLUIDO</label>
-    </div>
-    <div class="checkbox">
-        <label><input checked value="2P" type="checkbox">PNERA II</label>
-    </div>
-</div>
+<details id="options">
+    <summary><span class="fa fa-cogs"> Opções</span></summary>
+    <details id="markersconfig" style="max-width: 300px;">
+        <summary>MARCADORES</summary>
+        <select id="tipo_marker" class="form-control option" style="width: 250px;">
+            <option value="group">Com Agrupamento</option>
+            <option value="normal">Sem Agrupamento</option>
+            <option value="circle">Circulo Ponderado</option>
+        </select>
+        <label>Observações:</label>
+        <ul>
+            <li><b>Com agrupamento: </b>Marcadores muito próximos serão agrupados</li>  
+            <li><b>Sem agrupamento: </b>Pode levar muito tempo para processar devido a quantidade de marcadores</li>  
+            <li><b>Circulo Ponderado: </b>Não possui interação, mas permite ver a concentração de caracterizações</li>  
+        </ul>
+    </details>
+    <details id="filters">
+        <summary>FILTROS</summary>
+        <ul>
+            <li>
+                <details class='filter-option'>
+                    <summary>Status do Curso</summary>
+                    <hr/>
+                    <span><a class="btn btn-default all control-chk">Selecionar tudo</a></span>
+                    <span><a class="btn btn-default one control-chk">Selecionar um</a></span>
+                    <hr/>
+                    <div class="checkbox">
+                        <label><input class='filter option status-filter' checked value="AN" type="checkbox"/>ANDAMENTO</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input class='filter option status-filter' checked value="CC" type="checkbox"/>CONCLUIDO</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input class='filter option status-filter' checked value="2P" type="checkbox"/>PNERA II</label>
+                    </div>
+                </details>
+            </li>
+            <li>
+                <details class='filter-option'>
+                    <summary>Modalidade</summary>
+                    <hr/>
+                    <span><a class="btn btn-default all control-chk">Selecionar tudo</a></span>
+                    <span><a class="btn btn-default one control-chk">Selecionar um</a></span>
+                    <hr/>
+                    <?PHP foreach ($modalidades as $modalidade): ?>
+                        <div class="checkbox">
+                            <label><input class='filter option modalidade-filter' checked value="<?= $modalidade->id ?>" type="checkbox"/><?= $modalidade->nome ?></label>
+                        </div>
+                    <?PHP endforeach; ?>
+                </details>
+            </li>
+        </ul>
+    </details>
+</details>
 <div class="panel panel-default" style="margin-bottom: 0px">
     <div class="panel-heading" style="height: 50px !important;">
         <div class="col-md-7">    
@@ -211,6 +337,7 @@ $publico = $this->session->userdata("publico");
     var markerCluster = null;
     var map = null;
     var hashMarkers = null;
+    var lastType = "";
 
     function setCity(data) {
         var idCity = data[0];
@@ -237,21 +364,25 @@ $publico = $this->session->userdata("publico");
         var input = document.getElementById('pac-input');
         var selectbox = document.getElementById("mapa-select");
         var inputgroup = document.getElementById("input-group-search");
-        var filters = document.getElementById("filters");
+        var config = document.getElementById("options");
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(selectbox);
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputgroup);
-        map.controls[google.maps.ControlPosition.LEFT].push(filters);
+        map.controls[google.maps.ControlPosition.LEFT].push(config);
 
         $(inputgroup).fadeIn(1000);
         $(selectbox).fadeIn(1000);
         setTimeout(function () {
-            $(filters).slideDown(1000);
+            $(config).slideDown(1000);
         }, 1000);
 
-        $(filters).find("input[type='checkbox']").change(updateFilters);
-
+        $(config).find("#tipo_marker").change(updateTypeMarker);
+        $(config).find("input[type='checkbox']").change(updateFilters);
+        
+        $(config).find(".control-chk.all").click(checkAll);
+        $(config).find(".control-chk.one").click(checkOne);
+        
         var options = {
             types: ['(cities)'],
             componentRestrictions: {country: 'br'}
@@ -302,25 +433,63 @@ $publico = $this->session->userdata("publico");
             updateMap();
         }, 1000);
     }
+    
+    function checkAll(event){
+        console.log(event);
+        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function(){
+            this.checked = true;
+        });
+        updateMap();
+    }
+    
+    function checkOne(event){
+        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function(){
+            this.checked = false;
+        });
+        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").get(0).checked = true;
+        updateMap();
+    }
+    
+    function updateTypeMarker(event) {
+        switch (event.target.value) {
+            case "normal":
+                setTimeout(function () {
+                    alert("Aguarde até que todos os marcadores sejão colocados. Isso pode levar um tempo");
+                }, 1);
+
+                break;
+        }
+        updateMap();
+    }
 
     function updateFilters(event) {
-        console.log($("#filters input[type='checkbox']:checked").length);
-        if ($("#filters input[type='checkbox']:checked").length === 0) {
+
+        if ($(event.target).parents(".filter-option").eq(0).find(".filter:checked").length === 0) {
             event.target.checked = true;
         } else {
             updateMap();
         }
+
     }
 
     function getFilter() {
 
-        var data = [];
+        var data = {
+            "status": [],
+            "modalidade": {"ids": [], "nil": false}
+        };
 
-        $("#filters").find("input[type='checkbox']:checked").each(function () {
-            data.push(this.value);
+        $("#filters").find(".status-filter:checked").each(function () {
+            data.status.push(this.value);
         });
-
-        return JSON.stringify(data);
+        $("#filters").find(".modalidade-filter:checked").each(function () {
+            if (this.value !== "NULL") {
+                data.modalidade.ids.push(this.value);
+            } else {
+                data.modalidade.nil = true;
+            }
+        });
+        return data;
     }
 
     function updateMap() {
@@ -328,12 +497,23 @@ $publico = $this->session->userdata("publico");
             if (map === null) {
                 initMap();
             } else {
-                markerCluster.clearMarkers();
+                if (markerCluster) {
+                    markerCluster.clearMarkers();
+                    markerCluster = null;
+                    hashMarkers.length = 0;
+                } else {
+                    for (var key in hashMarkers) {
+                        if (hashMarkers[key].setMap) {
+                            hashMarkers[key].setMap(null);
+                        }
+                    }
+                    hashMarkers.length = 0;
+                }
                 var searchEducandoBtn = document.getElementById('search-educando');
                 searchEducandoBtn.style.display = "none";
                 var searchCursoBtn = document.getElementById('search-curso');
                 searchCursoBtn.style.display = "none";
-                $("#filters input[type='checkbox']").attr('disabled','disabled');
+                $("#options .input").attr('disabled', 'disabled');
                 $("#loadingmarkers").show();
             }
         }
@@ -423,19 +603,43 @@ $publico = $this->session->userdata("publico");
     }
 
     function createMarker(node) {
-        return new google.maps.Marker({
-            position: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
-            icon: "<?= base_url('css/images/marker.png') ?>",
-            label: {
-                text: node.total,
-                title: node.municipio,
-                color: 'white',
-                fontSize: '12px',
-                x: '20',
-                y: '70'
-            },
-            labelClass: "labels"
-        });
+        if (!typeMarkerIs("circle")) {
+            var marker_data = {
+                position: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
+                icon: "<?= base_url('css/images/marker.png') ?>",
+                label: {
+                    text: node.total,
+                    title: node.municipio,
+                    color: 'white',
+                    fontSize: '12px',
+                    x: '20',
+                    y: '70'
+                },
+                labelClass: "labels"
+            };
+
+            if (typeMarkerIs("normal")) {
+                marker_data.map = map;
+            }
+            return new google.maps.Marker(marker_data);
+        } else {
+            var circle = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                center: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
+                radius: node.total * 100 + 10000
+            });
+            return circle;
+        }
+
+    }
+
+    function typeMarkerIs(type) {
+        return $("#tipo_marker").val() === type;
     }
 
     function closeWindow() {
@@ -481,7 +685,7 @@ $publico = $this->session->userdata("publico");
 
     function prepareMapaCurso() {
 
-        $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", {filters: getFilter()}, function (cursos) {
+        var get = $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", {filters: getFilter()}, function (cursos) {
             hashMarkers = [];
             var markers = cursos.map(function (curso) {
 
@@ -492,27 +696,25 @@ $publico = $this->session->userdata("publico");
                         var data = [
                             {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
                         ];
-<?PHP if (!$publico): ?>
-
+                        <?PHP if (!$publico): ?>
                             data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
-
-<?PHP endif; ?>
+                        <?PHP endif; ?>
                         openWindow(data, marker, curso);
 
                     });
                 }
                 return marker;
             });
-            if (typeof (google) !== "undefined") {
+            if (typeof (google) !== "undefined" && typeMarkerIs("group")) {
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
             $("#loadingmarkers").hide();
-            $("#filters input[type='checkbox']").removeAttr('disabled');
+            $("#options .input").removeAttr('disabled');
             var searchCursoBtn = document.getElementById('search-curso');
             searchCursoBtn.style.display = "inline-block";
-            
-        }, "json");
 
+        }, "json");
+        console.log(get);
     }
 
     function prepareMapaEducando() {
@@ -525,27 +727,27 @@ $publico = $this->session->userdata("publico");
 
                     hashMarkers[educando.id] = marker;
                     <?PHP if (!$publico): ?>
-                        marker.addListener('click', function () {
-
-                            openWindow([
-                                {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
-                                {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
-                            ], marker, educando);
-                        });
+                    marker.addListener('click', function () {
+                        
+                        openWindow([
+                            {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
+                            {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
+                        ], marker, educando);
+                    });
                     <?PHP endif; ?>
 
                 }
                 return marker;
             });
-            if (typeof (google) !== "undefined") {
+            if (typeof (google) !== "undefined" && typeMarkerIs("group")) {
                 markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
             }
             $("#loadingmarkers").hide();
-            $("#filters input[type='checkbox']").removeAttr('disabled');
-            <?PHP if (!$publico): ?>
+            $("#options .input").removeAttr('disabled');
+<?PHP if (!$publico): ?>
                 var searchEducandoBtn = document.getElementById('search-educando');
                 searchEducandoBtn.style.display = "inline-block";
-            <?PHP endif; ?>
+<?PHP endif; ?>
         }, "json");
         console.log(get);
     }
@@ -570,6 +772,7 @@ $publico = $this->session->userdata("publico");
         }
         table.html(innerHTML);
         tableopened = new Table({
+            data: {filters: getFilter()},
             url: url,
             table: table,
             controls: null
@@ -654,8 +857,12 @@ $publico = $this->session->userdata("publico");
                     </div>
                     <hr/>
                     <div class="input-group desc">
-                        <span class="input-group-addon"><img src="<?= base_url('css/images/markerexample.png') ?>" width="40" height="37"/></span>
-                        <label>O número representa a quantidade caracterizações de <u>cursos</u> ou <u>educandos</u> <i>(dependendo do mapa selecionado)</i></label>
+                        <span class="input-group-addon" style='height: 37px'><img src="<?= base_url('css/images/markerexample.png') ?>" width="40" height="37"/></span>
+                        <label>O número representa a quantidade caracterizações de:</label>
+                        <ul>
+                            <li><b>Cursos</b>, ou seja, a quantidade de cursos foram realizados no município</li>
+                            <li><b>Educandos</b>, ou seja, a quantidade de educandos tem origem no município</li>
+                        </ul>
                     </div>
                     <hr/>
                     <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador para visualizar informações sobre as caracterizações !</div>
@@ -739,16 +946,27 @@ $publico = $this->session->userdata("publico");
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-group">
-                        <label>Digite abaixo o nome (ou parte do nome) do curso</label>
-                        <div class="input-group">
-                            <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
-                            <input type="search" name="search" style="text-transform: uppercase;margin: 1px 0px" class="form-control"/>      
+                    <label>Digite abaixo o nome (ou parte do nome) do curso</label>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <span style="height: 34px" class="input-group-addon glyphicon glyphicon-search"></span>
+                                <input type="search" name="search" style="text-transform: uppercase;margin: 1px 0px" class="form-control"/>      
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-success">Buscar</button>
                         </div>
                     </div>
-                    <button class="btn btn-success">Buscar</button>
                     <br/>
-                    <div class="alert alert-success">Não utilizar acentuação!</div>
+                    <div class="alert alert-success">
+                        A busca será realizada de acordo com os filtros escolhidos no mapa!
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    </div>
+                    <div class="alert alert-success">
+                        Não utilizar acentuação!
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    </div>
                 </form>
                 <hr/>
                 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -791,7 +1009,14 @@ $publico = $this->session->userdata("publico");
                             </div>
                         </div>
                         <br/>
-                        <div class="alert alert-success">Não utilizar acentuação!</div>
+                        <div class="alert alert-success">
+                            A busca será realizada de acordo com os filtros escolhidos no mapa!
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        </div>
+                        <div class="alert alert-success">
+                            Não utilizar acentuação!
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        </div>
                     </form>
                     <hr/>
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -849,6 +1074,7 @@ $publico = $this->session->userdata("publico");
             }
             table.show();
             tableSearchCursoModal = new Table({
+                data: {filters: getFilter()},
                 url: "<?= site_url("relatorio_mapas/search_curso/") ?>/" + term,
                 table: table,
                 controls: null
@@ -869,8 +1095,6 @@ $publico = $this->session->userdata("publico");
             }
         });
 
-
-
         var tableSearchEducandoModal = null;
 
         $("#searchEducandoModal form").submit(function (e) {
@@ -883,6 +1107,7 @@ $publico = $this->session->userdata("publico");
             }
             table.show();
             tableSearchEducandoModal = new Table({
+                data: {filters: getFilter()},
                 url: "<?= site_url("relatorio_mapas/search_educando/") ?>/" + term,
                 table: table,
                 controls: null

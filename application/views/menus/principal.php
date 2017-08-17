@@ -116,7 +116,10 @@
 		">Relatórios Gerais - II PNERA</a></li>
                 <li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_producoes/index'); ?>', null, 'hide');
-		">Relatórios de Produções</a></li>
+		">Relatórios de Produções do Pronera</a></li>
+                <li><a href="#" onclick="
+			request('<?php echo site_url('relatorio_pesquisas/index'); ?>', null, 'hide');
+		">Relatórios de Pesquisas - Produções sobre o Pronera</a></li>
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_dinamico/index'); ?>', null, 'hide');
 		">Relatório Dinâmico</a></li>

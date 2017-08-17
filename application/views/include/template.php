@@ -26,7 +26,7 @@
 <div id="middle">			
 	<div id="content">
 
-		<?php $this->load->view($content); ?>
+		<?php $this->load->view($content,$data); ?>
 
 	</div>
 </div>		

@@ -50,6 +50,27 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
+    function list_modalidades() {
+        $this->db->where(
+                array(
+                    'nome <>' => '',
+                    'nome <>' => 'OUTROS'
+                )
+        );
+        $this->db->order_by('nome');
+        $query = $this->db->get('curso_modalidade');
+
+        $saida = array();
+
+        foreach ($query->result() as $row) {
+            $saida[] = $row;
+        }
+        
+        $saida[] = (object) array("id"=>"NULL","nome"=>"NÃO IDENTIFICADO");
+
+        return $saida;
+    }
+
     function get_modalidades() {
         $this->db->where(
                 array(
@@ -381,14 +402,14 @@ class Requisicao_m extends CI_Model {
         echo $fetch[0]->nome . " (" . $fetch[0]->sigla . ")";
     }
 
-    function get_estado_do_municipio($id){
+    function get_estado_do_municipio($id) {
         $this->db->select('id_estado');
         $this->db->where('id', $id);
         $query = $this->db->get('cidade');
         $fetch = $query->result();
         echo $fetch[0]->id_estado;
     }
-    
+
     function get_municipios_rel($id_estado) {
         $this->db->where('id_estado', $id_estado);
         $this->db->order_by('nome');

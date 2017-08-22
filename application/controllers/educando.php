@@ -305,27 +305,37 @@ class Educando extends CI_Controller {
         $this->db->trans_begin();
 
         if ($this->educando_m->update_record($data, $this->input->post('id'))) {
-
-            if (($municipios = $this->input->post('municipios'))) {
-                $data_mun = array(
-                    'id_cidade' => $municipios
-                );
-
-                if (!$this->educando_m->update_record_municipio($data_mun, $this->input->post('id'))) {
-                    $data_mun['id_educando'] = $this->input->post('id');
-                    if (!$this->educando_m->add_record_municipio($data_mun)) {
-                        $response = array(
-                            'success' => false,
-                            'message' => 'Falha ao vincular municipio',
-                        );
-                        echo json_encode($response);
-                        return;
-                    }
+            $ckEst_ni = $this->input->post("ckEst_ni");
+            if ($ckEst_ni == "true") {
+                if (!$this->educando_m->remove_record_municipio($this->input->post('id'))) {
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Falha desvincular município',
+                    );
+                    echo json_encode($response);
+                    return;
                 }
+            } else {
+                if (($municipios = $this->input->post('municipios'))) {
+                    $data_mun = array(
+                        'id_cidade' => $municipios
+                    );
 
-                $this->log->save("MUNICÍPIO '" . $data_mun['id_cidade'] . "' ADICIONADO: EDUCANDO ID '" . $this->input->post('id') . "'");
+                    if (!$this->educando_m->update_record_municipio($data_mun, $this->input->post('id'))) {
+                        $data_mun['id_educando'] = $this->input->post('id');
+                        if (!$this->educando_m->add_record_municipio($data_mun)) {
+                            $response = array(
+                                'success' => false,
+                                'message' => 'Falha ao vincular municipio',
+                            );
+                            echo json_encode($response);
+                            return;
+                        }
+                    }
+
+                    $this->log->save("MUNICÍPIO '" . $data_mun['id_cidade'] . "' ADICIONADO: EDUCANDO ID '" . $this->input->post('id') . "'");
+                }
             }
-
             if ($this->input->post('atualizar_ic') == 1) {
 
                 $data_curso = array(

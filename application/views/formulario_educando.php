@@ -124,9 +124,7 @@ else
         $('#inicio_curso').mask('99/9999');
 
         // Não informados
-        $('#ckCPF_ni').niCheck({
-            'id': ['educando_cpf', 'ckCPF_na']
-        });
+
 
         $('#ckEst_ni').niCheck({
             'id': ['educando_sel_est','educando_sel_mun','ckMun_ni'],
@@ -160,14 +158,18 @@ else
             'id': ['educando_cpf', 'ckCPF_ni']
         });
 
-        $('#ckRg_ni').niCheck({
-            'id': ['educando_rg', 'ckRg_na']
-        });
-
         $('#ckRg_na').niCheck({
             'id': ['educando_rg', 'ckRg_ni']
         });
-
+        
+        $('#ckRg_ni').niCheck({
+            'id': ['educando_rg', 'ckRg_na']
+        });
+        
+        $('#ckCPF_ni').niCheck({
+            'id': ['educando_cpf', 'ckCPF_na']
+        });
+        
         $('#educando_data_nasc').focusout(function () {
 
             var date1 = $(this).val();
@@ -325,7 +327,7 @@ else
                     terr_sipra_code: null,
                     ckEducandoConcluinte_ni: $('#ckEducandoConcluinte_ni').prop('checked'),
                     reducando_concluinte: $("input:radio[name=reducando_concluinte]:checked").val(),
-                    checkMunicipio: $("#ckEst_ni").prop('checked'),
+                    ckEst_ni: $("#ckEst_ni").prop('checked'),
                     municipios: $('#educando_sel_mun').val(),
                     //mun_excluidos: table.getDeletedRows(1),
                     inicio_curso: $('#inicio_curso_hidden').val(),
@@ -399,7 +401,7 @@ else
         <label class="negacao">3. CPF (somente n&uacute;meros)</label>
 
         <div class="checkbox">
-            <label class="negacao-sm"> <input type="checkbox" name="ckCPF_ni" id="ckCPF_ni"  value="NAOINFORMADO" <?php if ($retrivial && $dados[0]->cpf == "NAOINFORMADO") echo "checked"; ?>> N&atilde;o encontrado </label>
+            <label class="negacao-sm"> <input type="checkbox" name="ckCPF_ni" id="ckCPF_ni"  value="NAOINFORMADO" <?php if ($retrivial && ($dados[0]->cpf == "NAOINFORMADO" || strlen($dados[0]->rg) == 0)) echo "checked"; ?>> N&atilde;o encontrado </label>
             <label class="negacao-sm"> <input type="checkbox" name="ckCPF_na" id="ckCPF_na"  value="NAOAPLICA" <?php if ($retrivial && $dados[0]->cpf == "NAOAPLICA") echo "checked"; ?>> Não se aplica </label>
         </div>
         <div>
@@ -413,7 +415,7 @@ else
         <label class="negacao">4. R.G.</label>
 
         <div class="checkbox">
-            <label class="negacao-sm"> <input type="checkbox" name="ckRg_ni" id="ckRg_ni"  value="NAOINFORMADO" <?php if ($retrivial && $dados[0]->rg == "NAOINFORMADO") echo "checked"; ?>> N&atilde;o encontrado </label>
+            <label class="negacao-sm"> <input type="checkbox" name="ckRg_ni" id="ckRg_ni"  value="NAOINFORMADO" <?php if ($retrivial && ($dados[0]->rg == "NAOINFORMADO" || strlen($dados[0]->rg) == 0)) echo "checked"; ?>> N&atilde;o encontrado </label>
             <label class="negacao-sm"> <input type="checkbox" name="ckRg_na" id="ckRg_na"  value="NAOAPLICA" <?php if ($retrivial && $dados[0]->rg == "NAOAPLICA") echo "checked"; ?>> Não se aplica </label>
         </div>
         <div>
@@ -424,7 +426,6 @@ else
     </div>
 
     <div class="form-group">
-        <?PHP var_dump($municipio_estado) ?>
         <label class="negacao">5. Data de nascimento do(a) educando(a)</label>
 
         <div class="checkbox negacao-smaller">
@@ -549,15 +550,14 @@ else
         <br /><br />
 
         <strong>Para realizar o cadastro informe o dado no campo abaixo (Mês/Ano)</strong>
-        <h5>
-            <div class="form-group">
-                <div>
-                    <input type="text" class="form-control tamanho-sm2" id="inicio_curso" name="inicio_curso" palceholder="MM/AAAA"/>
-                    <label class="control-label form" for="inicio_curso"></label>
-                </div>
+        <div class="form-group">
+            <div>
+                <input type="text" class="form-control tamanho-sm2" id="inicio_curso" name="inicio_curso" placeholder="MM/AAAA"/>
+                <label class="control-label form" for="inicio_curso"></label>
             </div>
+        </div>
 
-            <h4>Efetuar cadastro?</h4>
+        <h4>Efetuar cadastro?</h4>
     </div>
 
 </fieldset>

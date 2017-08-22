@@ -82,7 +82,12 @@ class Educando_m extends CI_Model {
             return false;
         }
     }
-
+    
+    function remove_record_municipio($id){
+        $this->db->where('id_educando', $id);
+        return $this->db->delete('educando_cidade');
+    }
+    
     function delete_record_municipio($id_cidade, $id) {
         $this->db->where('id_educando', $id);
         $this->db->where('id_cidade', $id_cidade);

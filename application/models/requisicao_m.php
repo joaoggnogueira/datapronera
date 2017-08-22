@@ -97,9 +97,8 @@ class Requisicao_m extends CI_Model {
         $this->db->select('a.codigo, a.nome');
         $this->db->from('assentamentos a');
         $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
-        if($estado!=0){
-            $this->db->join('estado e', 'e.id = s.id_estado', 'left');
-            $this->db->where('e.sigla', $estado);
+        if($estado!="0"){
+            $this->db->where('s.id_estado', $estado);
         }
         
         $query = $this->db->get();

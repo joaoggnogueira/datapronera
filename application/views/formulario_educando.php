@@ -20,11 +20,11 @@ else
         }).done(function () {
             //Deixa selecionado o estado atual se caso for update
             var idEstado = <?php
-if (array_key_exists(0, $municipio_estado))
-    echo $municipio_estado[0]->estado;
-else
-    echo 0;
-?>;
+            if (array_key_exists(0, $municipio_estado))
+                echo $municipio_estado[0]->estado;
+            else
+                echo 0;
+            ?>;
             if (idEstado > 0) {
                 $('#educando_sel_est option[value="' + idEstado + '"]').attr('selected', true);
                 appendSelectorToASSENTAMENTO();
@@ -38,11 +38,11 @@ else
                         $('#educando_sel_mun').html(cities);
                     }).done(function () {
                         var idMunicipio = <?php
-if (array_key_exists(0, $municipio_estado))
-    echo $municipio_estado[0]->cidade;
-else
-    echo 0;
-?>;
+                        if (array_key_exists(0, $municipio_estado))
+                            echo $municipio_estado[0]->cidade;
+                        else
+                            echo 0;
+                        ?>;
                         $('#educando_sel_mun option[value="' + idMunicipio + '"]').attr('selected', true);
                     });
                 }).change();
@@ -56,60 +56,18 @@ else
 
         var url = "<?php echo site_url('request/get_educando_mun') . '/'; ?>" + id;
 
-        /* -IMPLEMENTAÇÃO COM WEBSERVICE. NÃO DELETAR -
-         // Dados do WebService
-         var assentamentos = <??php echo $assentamentos; ?>;
-         assentamentos = $.unique(assentamentos);
-         
-         //ORDENA JSON DOS ASSENTAMENTOS
-         function sortJSON(data, key, way) {
-         return data.sort(function(a, b) {
-         var x = a[key]; var y = b[key];
-         if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
-         if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
-         });
-         }
-         assentamentos = sortJSON(assentamentos,'Nome', '123'); // 123 or 321
-         var nome_assentamentos = '';
-         $.each( assentamentos, function( key, value ) {
-         nome_assentamentos  += '<option value="'+assentamentos[key].Nome+'">'+assentamentos[key].Nome+'</option>';
-         });
-         //CASO FOR ASSENTAMENTO, CRIA SELECTBOX
-         $( "#educando_tipo_terr" ).change(function() {
-         console.log(assentamentos);
-         if($(this).val() == "ASSENTAMENTO"){
-         $("#educando_nome_terr").remove();
-         $("#educando_territorio").append(
-         $('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
-         .append('<option selected disabled value="">Selecione</option>')
-         .append(nome_assentamentos)
-         )
-         $('#educando_nome_terr').select2();
-         }else{
-         $("#educando_nome_terr").select2('destroy'); 
-         $("#educando_nome_terr").remove();
-         $("#educando_territorio").append('<input type="text" class="form-control tamanho-n" id="educando_nome_terr" name="educando_nome_terr">')
-         }
-         });
-         */
-
         var appendSelectorToASSENTAMENTO = function () {
-            if ($('#educando_sel_est option:selected').text() != "") {
-                var urlAssentamentos = "<?php echo site_url('requisicao/get_assentamentos') . '/'; ?>" + $('#educando_sel_est option:selected').text();
+            if ($('#educando_sel_est option:selected').val() !== "0" && !$("#ckNome_terr_ni").prop("checked")) {
+                var urlAssentamentos = "<?php echo site_url('requisicao/get_assentamentos') . '/'; ?>" + $('#educando_sel_est option:selected').val();
                 $.get(urlAssentamentos, function (assentamentos) {
-                    try {
-                        $("#educando_nome_terr").select2('destroy');
-                    } catch (e) {
-
-                    }
+                    try { $("#educando_nome_terr").select2('destroy'); } catch (e) {}
                     $("#educando_nome_terr").remove();
                     $("#educando_territorio").append($('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
                             .append('<option selected disabled value="">Selecione</option>')
                             .append(assentamentos));
-<?PHP if ($retrivial && $dados[0]->tipo_territorio == "ASSENTAMENTO" && $dados[0]->code_sipra_assentamento): ?>
+                    <?PHP if ($retrivial && $dados[0]->tipo_territorio == "ASSENTAMENTO" && $dados[0]->code_sipra_assentamento): ?>
                         $('#educando_nome_terr option[value="<?= $dados[0]->code_sipra_assentamento ?>"]').attr('selected', true);
-<?PHP endif; ?>
-
+                    <?PHP endif; ?>
                     $('#educando_nome_terr').select2();
                 });
             }
@@ -137,6 +95,7 @@ else
                 appendSelectorToASSENTAMENTO();
             } else {
                 removeSelectorToASSENTAMENTO();
+                $("#ckNome_terr_ni").change();
             }
         });
 
@@ -146,29 +105,20 @@ else
         });
 
         //INICIALIZA RETREVIAL SIPRA
-<?PHP
-if ($retrivial):
-    if ($dados[0]->tipo_territorio == "ASSENTAMENTO"):
-        ?>
         <?PHP
-        if (!$dados[0]->code_sipra_assentamento):
-            ?>
-                    appendSelectorToASSENTAMENTO();
-            <?PHP
+        if ($retrivial):
+            if ($dados[0]->tipo_territorio == "ASSENTAMENTO"):
+                ?>
+                <?PHP
+                if (!$dados[0]->code_sipra_assentamento):
+                    ?>
+                            appendSelectorToASSENTAMENTO();
+                    <?PHP
+                endif;
+            endif;
         endif;
-    endif;
-endif;
-?>
+        ?>
 
-        /*
-         var table = new Table({
-         url      : url,
-         table    : $('#cities_table'),
-         controls : $('#cities_controls')
-         });
-         
-         table.hideColumns([0,1,3]);
-         */
         /* Masking Inputs */
         $('#educando_data_nasc').mask('99/99/9999');
         $('#inicio_curso').mask('99/9999');
@@ -186,7 +136,19 @@ endif;
         });
         
         $("#ckNome_terr_ni").niCheck({
-            'id': ['educando_nome_terr']
+            'id': ['educando_nome_terr'],
+            'onuncheck': function(){
+                console.log("passou");
+                if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
+                    appendSelectorToASSENTAMENTO();
+                }
+            },
+            'oncheck': function(){
+                if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
+                    removeSelectorToASSENTAMENTO();
+                    $("#educando_nome_terr").attr("disabled",true);
+                }
+            }
         });
         
         $("#ckTipo_terr_ni").niCheck({
@@ -243,52 +205,6 @@ endif;
                 }, [370, 550]);
             }
         });
-        /* FUNÇÃO ADD MUNICIO TABELA
-         $('#educando_botao_mun').click(function () {
-         var form = Array(
-         {
-         'id'      : 'educando_sel_est',
-         'message' : 'Selecione o estado',
-         'extra'   : null
-         },
-         
-         {
-         'id'      : 'educando_sel_mun',
-         'message' : 'Selecione o município',
-         'extra'   : null
-         }
-         );
-         
-         if (isFormComplete(form)) {
-         cod_estado = $('#educando_sel_est').val();
-         cod_municipio = $('#educando_sel_mun').val();
-         estado = $('#educando_sel_est option:selected').text();
-         municipio = $('#educando_sel_mun option:selected').text();
-         
-         var node = ['N', cod_municipio, municipio, cod_estado, estado];
-         
-         if (! table.nodeExists(node)) {
-         
-         //$('#municipios_table').dataTable().fnAddData(node);
-         table.addData(node);
-         
-         $('#educando_sel_est').val(0);
-         $('#educando_sel_mun').val(0);
-         
-         } else {
-         $('#educando_sel_mun').showErrorMessage('Município já cadastrado');
-         }
-         }
-         });
-         */
-        /* Add a click handler for the delete row
-         $('#deletar').click( function() {
-         var anSelected = fnGetSelected( oTable );
-         if ( anSelected.length !== 0 ) {
-         oTable.fnDeleteRow( anSelected[0] );
-         }
-         } );*/
-
 
         /* NÃO INFROMADOS */
         $('#ckSexo_ni').niCheck({
@@ -409,6 +325,7 @@ endif;
                     terr_sipra_code: null,
                     ckEducandoConcluinte_ni: $('#ckEducandoConcluinte_ni').prop('checked'),
                     reducando_concluinte: $("input:radio[name=reducando_concluinte]:checked").val(),
+                    checkMunicipio: $("#ckEst_ni").prop('checked'),
                     municipios: $('#educando_sel_mun').val(),
                     //mun_excluidos: table.getDeletedRows(1),
                     inicio_curso: $('#inicio_curso_hidden').val(),
@@ -420,12 +337,12 @@ endif;
                 }
 
                 var urlRequest = "<?php
-if ($operacao == 'add')
-    echo site_url('educando/add/');
-if ($operacao == 'update')
-    echo site_url('educando/update/');
-?>";
-
+                if ($operacao == 'add')
+                    echo site_url('educando/add/');
+                if ($operacao == 'update')
+                    echo site_url('educando/update/');
+                ?>";
+//                console.log(formData);
 //                 Faz requisição de login ao servidor (retorna um objeto JSON)
                 request(urlRequest, formData);
             }
@@ -442,8 +359,6 @@ if ($operacao == 'update')
     });
 
 </script>
-
-
 
 <fieldset>
     <legend> Caracteriza&ccedil;&atilde;o do(a) Educando(a) </legend>
@@ -509,6 +424,7 @@ if ($operacao == 'update')
     </div>
 
     <div class="form-group">
+        <?PHP var_dump($municipio_estado) ?>
         <label class="negacao">5. Data de nascimento do(a) educando(a)</label>
 
         <div class="checkbox negacao-smaller">
@@ -551,7 +467,7 @@ if ($operacao == 'update')
         <div class="form-group interno">
             <label class="negacao">b. Município do educando</label>
             <div class="checkbox">
-                <label class="negacao-sm"> <input <?= ($retrivial && $dados[0]->id_cidade == null ? "checked" : "") ?>  type="checkbox" name="ckEst_ni" id="ckEst_ni"> N&atilde;o informado </label>
+                <label class="negacao-sm"> <input <?= ($retrivial && !isset($municipio_estado[0]) ? "checked" : "") ?>  type="checkbox" name="ckEst_ni" id="ckEst_ni"> N&atilde;o informado </label>
             </div>
             <div>
                 <select class="form-control select_municipio" id="educando_sel_mun" name="educando_sel_mun"></select>
@@ -605,42 +521,6 @@ if ($operacao == 'update')
         endif;
         ?>
     </div>
-    <!--
-    <div class="table-box table-box-lg">
-        <label>8. Munic&iacute;pio(s) do territ&oacute;rio onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso</label>
-        <div class="form-group">
-            <ul id="cities_controls" class="nav nav-pills buttons">
-                <li>
-                    <select class="form-control select_estado" id="educando_sel_est" name="educando_sel_est"></select>
-                    <p class="text-danger select estado"><label for="educando_sel_est"><label></p>
-                </li>
-                <li>
-                    <select class="form-control select_municipio" id="educando_sel_mun" name="educando_sel_mun"></select>
-                    <p class="text-danger select municipio"><label for="educando_sel_mun"><label></p>
-                </li>
-                <li class="buttons"><button type="button" class="btn btn-default" id="educando_botao_mun" name="educando_botao_mun">Adicionar</button></li>
-                <li class="buttons"><button type="button" class="btn btn-default btn-disabled disabled delete-row" id="deletar" name="deletar"> Remover Selecionado </button></li>
-            </ul>
-        </div>
-
-        <div class="table-size">
-            <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="cities_table">
-                <thead>
-                    <tr>
-                        <th style="width:  10px;"> FLAG </th>
-                        <th style="width:  10px;"> CÓDIGO MUNICIPIO</th>
-                        <th style="width: 250px;"> MUNICÍPIO </th>
-                        <th style="width:  10px;"> CÓDIGO ESTADO </th>
-                        <th style="width: 250px;"> ESTADO </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    -->
     <div class="form-group">
         <label class="negacao">8. O(A) educando(a) concluiu o curso ?</label>
 
@@ -656,8 +536,6 @@ if ($operacao == 'update')
             </div>
         </div>
     </div>
-    <!--<input type="text" id="municipios_objeto" name="municipios_objeto" hidden/>-->
-
     <input type="hidden" id="inicio_curso_hidden" name="inicio_curso_hidden" value="<?php echo $dados[0]->inicio_curso; ?>"/>
     <input type="hidden" id="atualizar_ic" name="atualizar_ic" value="0"/>
 

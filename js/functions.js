@@ -787,6 +787,7 @@ $.fn.niCheck = function (_obj) {
             if (_obj.oncheck) {
                 _obj.oncheck();
             }
+        } else {
             if (_obj.onuncheck) {
                 _obj.onuncheck();
             }

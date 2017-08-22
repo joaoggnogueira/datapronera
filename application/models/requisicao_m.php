@@ -97,11 +97,15 @@ class Requisicao_m extends CI_Model {
         $this->db->select('a.codigo, a.nome');
         $this->db->from('assentamentos a');
         $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
-        $this->db->join('estado e', 'e.id = s.id_estado', 'left');
-        $this->db->where('e.sigla', $estado);
-
+        if($estado!=0){
+            $this->db->join('estado e', 'e.id = s.id_estado', 'left');
+            $this->db->where('e.sigla', $estado);
+        }
+        
         $query = $this->db->get();
-
+        
+        $resultado = "";
+        
         foreach ($query->result() as $row) {
             $resultado .= "<option value='" . $row->codigo . "' title='" . $row->nome . "'>" . $row->codigo . " - " . $row->nome . "</option>";
         }

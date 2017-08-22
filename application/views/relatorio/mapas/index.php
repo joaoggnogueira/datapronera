@@ -1,5 +1,13 @@
 <?PHP
 $publico = $this->session->userdata("publico");
+if (!isset($modalidades)):
+    ?> 
+    <script>
+        request('<?php echo site_url('relatorio_mapas/index'); ?>', null, 'hide');
+    </script>    
+    <?PHP
+    return;
+endif;
 ?>
 <style>
 
@@ -208,7 +216,7 @@ $publico = $this->session->userdata("publico");
     }
 
     #filters > summary,#markersconfig > summary{
-        font-size: 18px;
+        font-size: 15px;
     }
 
     #filters details > summary{
@@ -226,19 +234,26 @@ $publico = $this->session->userdata("publico");
         font-size: 13px;
         padding: 5px;
     }
-    
+
     #options > summary{
         background: rgba(255,255,255,0.5);
         font-size: 20px;
         padding: 10px;
         margin: 10px;
+        cursor:pointer;
+    }
+
+    .help-a{
+        color: green;
+        font-weight: bold;
+        cursor: pointer;
     }
 
 </style>
 <details id="options">
     <summary><span class="fa fa-cogs"> Opções</span></summary>
     <details id="markersconfig" style="max-width: 300px;">
-        <summary>MARCADORES</summary>
+        <summary><i class="fa fa-map-marker"></i> TIPO DE MARCADOR</summary>
         <select id="tipo_marker" class="form-control option" style="width: 250px;">
             <option value="group">Com Agrupamento</option>
             <option value="normal">Sem Agrupamento</option>
@@ -252,7 +267,7 @@ $publico = $this->session->userdata("publico");
         </ul>
     </details>
     <details id="filters">
-        <summary>FILTROS</summary>
+        <summary><i class="fa fa-filter"></i> FILTROS</summary>
         <ul>
             <li>
                 <details class='filter-option'>
@@ -379,10 +394,10 @@ $publico = $this->session->userdata("publico");
 
         $(config).find("#tipo_marker").change(updateTypeMarker);
         $(config).find("input[type='checkbox']").change(updateFilters);
-        
+
         $(config).find(".control-chk.all").click(checkAll);
         $(config).find(".control-chk.one").click(checkOne);
-        
+
         var options = {
             types: ['(cities)'],
             componentRestrictions: {country: 'br'}
@@ -433,28 +448,28 @@ $publico = $this->session->userdata("publico");
             updateMap();
         }, 1000);
     }
-    
-    function checkAll(event){
+
+    function checkAll(event) {
         console.log(event);
-        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function(){
+        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function () {
             this.checked = true;
         });
         updateMap();
     }
-    
-    function checkOne(event){
-        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function(){
+
+    function checkOne(event) {
+        $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function () {
             this.checked = false;
         });
         $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").get(0).checked = true;
         updateMap();
     }
-    
+
     function updateTypeMarker(event) {
         switch (event.target.value) {
             case "normal":
                 setTimeout(function () {
-                    alert("Aguarde até que todos os marcadores sejão colocados. Isso pode levar um tempo");
+                    alert("Aguarde até que todos os marcadores sejam colocados. Isso pode levar um tempo");
                 }, 1);
 
                 break;
@@ -623,15 +638,27 @@ $publico = $this->session->userdata("publico");
             }
             return new google.maps.Marker(marker_data);
         } else {
+            switch ($("#mapa-select").val()) {
+                case "educando":
+                    var radius = node.total * 100 + 10000;
+                    break;
+                case "curso":
+                    var radius = node.total * 5000 + 10000;
+                    break;
+            }
+
             var circle = new google.maps.Circle({
                 strokeColor: '#FF0000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
                 fillColor: '#FF0000',
                 fillOpacity: 0.35,
+                label: {
+                    text: node.total
+                },
                 map: map,
                 center: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
-                radius: node.total * 100 + 10000
+                radius: radius
             });
             return circle;
         }
@@ -696,9 +723,9 @@ $publico = $this->session->userdata("publico");
                         var data = [
                             {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
                         ];
-                        <?PHP if (!$publico): ?>
+<?PHP if (!$publico): ?>
                             data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
-                        <?PHP endif; ?>
+<?PHP endif; ?>
                         openWindow(data, marker, curso);
 
                     });
@@ -726,15 +753,15 @@ $publico = $this->session->userdata("publico");
                     var marker = createMarker(educando);
 
                     hashMarkers[educando.id] = marker;
-                    <?PHP if (!$publico): ?>
-                    marker.addListener('click', function () {
-                        
-                        openWindow([
-                            {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
-                            {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
-                        ], marker, educando);
-                    });
-                    <?PHP endif; ?>
+<?PHP if (!$publico): ?>
+                        marker.addListener('click', function () {
+
+                            openWindow([
+                                {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
+                                {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
+                            ], marker, educando);
+                        });
+<?PHP endif; ?>
 
                 }
                 return marker;
@@ -858,16 +885,25 @@ $publico = $this->session->userdata("publico");
                     <hr/>
                     <div class="input-group desc">
                         <span class="input-group-addon" style='height: 37px'><img src="<?= base_url('css/images/markerexample.png') ?>" width="40" height="37"/></span>
-                        <label>O número representa a quantidade caracterizações de:</label>
+                        <label>O número representa a quantidade caracterizações no município</label>
+                    </div>
+                    <hr/>
+                    <div class="input-group desc">
+                        <span class="input-group-addon" style='height: 37px'><img src="<?= base_url('css/images/circleexample.png') ?>" width="40" height="37"/></span>
+                        <label>O tamanho do marcador em circulo representa, para o município no centro dele, a concentração de caracterizações</label>
+                    </div>
+                    <hr/>
+                    <div class="input-group desc">
+                        Uma <b>caracterização</b> pode significar (dependendo do mapa selecionado):
                         <ul>
-                            <li><b>Cursos</b>, ou seja, a quantidade de cursos foram realizados no município</li>
-                            <li><b>Educandos</b>, ou seja, a quantidade de educandos tem origem no município</li>
+                            <li><b>Um Curso</b>, ou seja, uma realização do curso no município</li>
+                            <li>Ou <b>um educando</b>, ou seja, um educando que tem origem no município</li>
                         </ul>
                     </div>
                     <hr/>
-                    <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador para visualizar informações sobre as caracterizações !</div>
-                    <br/>
-                    <?PHP if ($publico): ?>
+                    <?PHP if (!$publico): ?>
+                        <div class="alert alert-info"><i class="glyphicon glyphicon-hand-up"></i> Clique no marcador para visualizar informações sobre as caracterizações !</div>
+                    <?PHP else: ?>
                         <div class="alert alert-danger"><i class="fa fa-exclamation"></i> No modo de acesso público, não é possível visualizar informações educandos</div>
                     <?PHP endif; ?>
                     <hr/>
@@ -919,7 +955,7 @@ $publico = $this->session->userdata("publico");
                     <hr/>
                     <div class="input-group desc">
                         <span class="input-group-addon"><a class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></a></span>
-                        <label>Use este ícone para pesquisar um município </label>
+                        <label>Use a barra de pesquisa com este ícone para pesquisar um município </label>
                     </div>
                     <hr/>
                     <div class="input-group desc">
@@ -959,14 +995,7 @@ $publico = $this->session->userdata("publico");
                         </div>
                     </div>
                     <br/>
-                    <div class="alert alert-success">
-                        A busca será realizada de acordo com os filtros escolhidos no mapa!
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    </div>
-                    <div class="alert alert-success">
-                        Não utilizar acentuação!
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    </div>
+                    <a class="help-a" data-toggle="modal" data-target="#helpSearchCurso">Porque não estou encontrando o curso?</a>
                 </form>
                 <hr/>
                 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -980,6 +1009,45 @@ $publico = $this->session->userdata("publico");
                     <tbody>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="helpSearchCurso">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content panel panel-search">
+            <div class="modal-header panel-heading">
+                <i class="fa fa-question-circle"></i> Ajuda com a Busca de Curso
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3>Porque não estou encontrando o curso?</h3>
+                <br>
+                <p>Supondo que o nome digitado está correto, abaixo a lista de problemas que podem estar causando a dificuldade em encontra-lo:</p>
+                <ul>
+                    <li>
+                        <p>Os <b>filtros</b> selecionados no <b>mapa</b> podem estar ocultando o curso,</p>
+                        <p>Tente resetar, cliquando em <button class="btn btn-default">Selecionar Tudo</button> para cada filtro</p>
+                    </li>
+                    <li>
+                        <p>O curso pode estar <b>cadastro</b>, porém:</p>
+                        <p>
+                        <ul>
+                            <li><p>Não foi cadastrado nenhum <b>município de realização</b></li>
+                            <li><p>Ou, pode ter sido <b>desativado</b></p></li>
+                        </ul>    
+                    </li>
+                    <li>
+                        <p>O nome cadastrado pode estar <b>incorreto</b> ou <b>diferente</b>,</p>
+                        <p>Tente utilizar <b>outra palavra</b> do nome</p>
+                    </li>
+                    <li>
+                        <p>O curso não foi cadastrado</p>
+                        <p>Se for um curso novo, é possível que ele seja cadastrado <b>posteriormente</b></p>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -1009,14 +1077,7 @@ $publico = $this->session->userdata("publico");
                             </div>
                         </div>
                         <br/>
-                        <div class="alert alert-success">
-                            A busca será realizada de acordo com os filtros escolhidos no mapa!
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        </div>
-                        <div class="alert alert-success">
-                            Não utilizar acentuação!
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        </div>
+                        <a class="help-a" data-toggle="modal" data-target="#helpSearchEducando">Porque não estou encontrando o educando?</a>
                     </form>
                     <hr/>
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -1034,9 +1095,69 @@ $publico = $this->session->userdata("publico");
             </div>
         </div>
     </div>
+    <div class="modal fade" id="helpSearchEducando">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content panel panel-search">
+                <div class="modal-header panel-heading">
+                    <i class="fa fa-question-circle"></i> Ajuda com a Busca de Educandos
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3>Porque não estou encontrando o educando?</h3>
+                    <br>
+                    <p>Supondo que o nome digitado está correto, abaixo a lista de problemas que podem estar causando a dificuldade em encontra-lo:</p>
+                    <ul>
+                        <li>
+                            <p>Os <b>filtros</b> selecionados no <b>mapa</b> podem estar ocultando o educando,</p>
+                            <p>Tente resetar, cliquando em <button class="btn btn-default">Selecionar Tudo</button> para cada filtro</p>
+                        </li>
+                        <li>
+                            <p>O educando pode estar <b>cadastro</b>, porém:</p>
+                            <p>
+                            <ul>
+                                <li><p>Não foi cadastrado o seu <b>município</b> de origem</p></li>
+                                <li><p>Ou, o <b>curso</b> dele pode ter sido <b>desativado</b></p></li>
+                            </ul>    
+                        </li>
+                        <li>
+                            <p>O nome cadastrado pode estar <b>incorreto</b>,</p>
+                            <p>Tente utilizar <b>outra palavra</b> do nome</p>
+                        </li>
+                        <li>
+                            <p>O educando não foi cadastrado</p>
+                            <p>Se for um curso novo, é possível que ele seja cadastrado <b>posteriormente</b></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 <?PHP endif; ?>
 <script>
     $(document).ready(function () {
+
+        function funcaoMarotaParaRemoverAcentos(newStringComAcento) {
+            newStringComAcento = newStringComAcento.toLowerCase();
+            var string = newStringComAcento;
+            var mapaAcentosHex = {
+                a: /[\xE0-\xE6]/g,
+                e: /[\xE8-\xEB]/g,
+                i: /[\xEC-\xEF]/g,
+                o: /[\xF2-\xF6]/g,
+                u: /[\xF9-\xFC]/g,
+                c: /\xE7/g,
+                n: /\xF1/g
+            };
+
+            for (var letra in mapaAcentosHex) {
+                var expressaoRegular = mapaAcentosHex[letra];
+                string = string.replace(expressaoRegular, letra);
+            }
+            return string.toUpperCase();
+        }
+
         var searchCursoBtn = document.getElementById('search-curso');
         var searchEducandoBtn = document.getElementById('search-educando');
         searchCursoBtn.style.display = "none";
@@ -1066,7 +1187,7 @@ $publico = $this->session->userdata("publico");
 
         $("#searchCursoModal form").submit(function (e) {
             e.preventDefault($(this).find("input[type='search']").val());
-            var term = $(this).find("input[type='search']").val().toUpperCase();
+            var term = funcaoMarotaParaRemoverAcentos($(this).find("input[type='search']").val());
             var table = $("#searchCursoModal").find("table").eq(0);
 
             if (tableSearchCursoModal !== null) {
@@ -1099,7 +1220,7 @@ $publico = $this->session->userdata("publico");
 
         $("#searchEducandoModal form").submit(function (e) {
             e.preventDefault($(this).find("input[type='search']").val());
-            var term = $(this).find("input[type='search']").val().toUpperCase();
+            var term = funcaoMarotaParaRemoverAcentos($(this).find("input[type='search']").val());
             var table = $("#searchEducandoModal").find("table").eq(0);
 
             if (tableSearchEducandoModal !== null) {

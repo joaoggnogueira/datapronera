@@ -739,41 +739,58 @@ $.fn.niCheck = function (_obj) {
                         $elem = $('.' + value[i]);
                         break;
                 }
+                if ($elem) {
+                    $elem.each(function (index) {
+                        if ($checkbox.is(':checked')) {
 
-                $elem.each(function () {
-                    if ($checkbox.is(':checked')) {
+                            switch ($(this).getInputType()) {
+                                case 'select':
+                                    if (_obj.niValue) {
+                                        $(this).val(_obj.niValue[index]);
+                                    } else {
+                                        $(this).val(0);
+                                    }
+                                    $(this).attr('disabled', true);
+                                    break;
+                                case 'text' :
+                                case 'textarea' :
+                                    $(this).val('');
+                                    $(this).attr('disabled', true);
+                                    break;
 
-                        switch ($(this).getInputType()) {
-                            case 'text' :
-                            case 'textarea' :
-                                $(this).val('');
-                                $(this).attr('disabled', true);
-                                break;
+                                case 'radio' :
+                                    $(this).attr('checked', false);
+                                    $(this).attr('disabled', true);
+                                    break;
 
-                            case 'radio' :
-                                $(this).attr('checked', false);
-                                $(this).attr('disabled', true);
-                                break;
+                                case 'checkbox' :
+                                    if ($(this).prop('checked')) {
+                                        $(this).click();
+                                    }
 
-                            case 'checkbox' :
-                                if ($(this).prop('checked')) {
-                                    $(this).click();
-                                }
+                                    $(this).attr('disabled', true);
+                                    break;
 
-                                $(this).attr('disabled', true);
-                                break;
+                                default:
+                                    $(this).attr('disabled', true);
+                                    break;
+                            }
 
-                            default:
-                                $(this).attr('disabled', true);
-                                break;
+                        } else {
+                            $(this).removeAttr('disabled');
                         }
-
-                    } else {
-                        $(this).removeAttr('disabled');
-                    }
-                });
+                    });
+                }
             }
         });
+        if ($checkbox.is(':checked')) {
+            if (_obj.oncheck) {
+                _obj.oncheck();
+            }
+            if (_obj.onuncheck) {
+                _obj.onuncheck();
+            }
+        }
 
     }).change();
 }

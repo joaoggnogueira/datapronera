@@ -106,10 +106,10 @@ else
                     $("#educando_territorio").append($('<select class="form-control" name="educando_nome_terr" id="educando_nome_terr">')
                             .append('<option selected disabled value="">Selecione</option>')
                             .append(assentamentos));
-                    <?PHP if ($retrivial && $dados[0]->tipo_territorio == "ASSENTAMENTO" && $dados[0]->code_sipra_assentamento): ?>
+<?PHP if ($retrivial && $dados[0]->tipo_territorio == "ASSENTAMENTO" && $dados[0]->code_sipra_assentamento): ?>
                         $('#educando_nome_terr option[value="<?= $dados[0]->code_sipra_assentamento ?>"]').attr('selected', true);
-                    <?PHP endif; ?>
-                
+<?PHP endif; ?>
+
                     $('#educando_nome_terr').select2();
                 });
             }
@@ -176,6 +176,22 @@ endif;
         // Não informados
         $('#ckCPF_ni').niCheck({
             'id': ['educando_cpf', 'ckCPF_na']
+        });
+
+        $('#ckEst_ni').niCheck({
+            'id': ['educando_sel_est','educando_sel_mun','ckMun_ni'],
+            'oncheck': function(){
+                $("#educando_sel_mun").html("<option value='0'>Selecione o Município</option>");
+            }
+        });
+        
+        $("#ckNome_terr_ni").niCheck({
+            'id': ['educando_nome_terr']
+        });
+        
+        $("#ckTipo_terr_ni").niCheck({
+            'id': ['educando_tipo_terr'],
+            'niValue' : [""]
         });
 
         $('#ckCPF_na').niCheck({
@@ -338,16 +354,19 @@ endif;
                     },
                     {
                         'id': 'educando_tipo_terr',
+                        'ni': $('#ckTipo_terr_ni').prop('checked'),
                         'message': 'Informe o tipo de território onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                         'extra': null
                     },
                     {
                         'id': 'educando_nome_terr',
+                        'ni': $('#ckNome_terr_ni').prop('checked'),
                         'message': 'Informe o nome do território onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                         'extra': null
                     },
                     {
                         'id': 'educando_sel_est',
+                        'ni': $('#ckEst_ni').prop('checked'),
                         'message': 'Informe o nome o Estado onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                         'extra': null
                     },
@@ -358,7 +377,15 @@ endif;
                         'extra': null
                     }
             );
-
+    
+            if(!$('#ckEst_ni').prop('checked') && $('#educando_sel_est').val()!==0){
+                form.push({
+                    'id': 'educando_sel_mun',
+                    'message': 'Informe o Município de Origem do Educando',
+                    'extra': null
+                });
+            }
+                
             if (isFormComplete(form)) {
                 var formData = {
                     id: id,
@@ -375,7 +402,9 @@ endif;
                     educando_data_nasc: $('#educando_data_nasc').val(),
                     ckEducando_idade: $('#ckEducando_idade').prop('checked'),
                     educando_idade: $('#educando_idade').val(),
+                    ckEducando_tipo_terr: $('#ckTipo_terr_ni').prop('checked'),
                     educando_tipo_terr: $('#educando_tipo_terr').val(),
+                    ckEducando_nome_terr: $('#ckNome_terr_ni').prop('checked'),
                     educando_nome_terr: $('#educando_nome_terr').val().toUpperCase(),
                     terr_sipra_code: null,
                     ckEducandoConcluinte_ni: $('#ckEducandoConcluinte_ni').prop('checked'),
@@ -389,7 +418,6 @@ endif;
                     formData.educando_nome_terr = $('#educando_nome_terr option:selected').attr('title').toUpperCase();
                     formData.terr_sipra_code = $('#educando_nome_terr').val().toUpperCase();
                 }
-                console.log(formData);
 
                 var urlRequest = "<?php
 if ($operacao == 'add')
@@ -521,14 +549,20 @@ if ($operacao == 'update')
             </div>
         </div>
         <div class="form-group interno">
-            <label>b. Município do educando</label>
+            <label class="negacao">b. Município do educando</label>
+            <div class="checkbox">
+                <label class="negacao-sm"> <input <?= ($retrivial && $dados[0]->id_cidade == null ? "checked" : "") ?>  type="checkbox" name="ckEst_ni" id="ckEst_ni"> N&atilde;o informado </label>
+            </div>
             <div>
                 <select class="form-control select_municipio" id="educando_sel_mun" name="educando_sel_mun"></select>
                 <p class="text-danger select municipio"><label for="educando_sel_mun"></label></p>
             </div>
         </div>
         <div class="form-group interno">
-            <label>c. Tipo do territ&oacute;rio</label>
+            <label class="negacao">c. Tipo do territ&oacute;rio</label>
+            <div class="checkbox">
+                <label class="negacao-sm"> <input <?= ($retrivial && strlen($dados[0]->tipo_territorio) == 0 ? "checked" : "") ?> type="checkbox" name="ckTipo_terr_ni" id="ckTipo_terr_ni"> N&atilde;o informado </label>
+            </div>
             <div>
                 <select class="form-control" name="educando_tipo_terr" id="educando_tipo_terr">
                     <option selected disabled value="">Selecione</option>
@@ -548,7 +582,10 @@ if ($operacao == 'update')
         </div>
 
         <div class="form-group interno">
-            <label>d. Nome do territ&oacute;rio</label>
+            <label class="negacao">d. Nome do territ&oacute;rio</label>
+            <div class="checkbox">
+                <label class="negacao-sm"> <input <?= ($retrivial && strlen($dados[0]->nome_territorio) == 0 ? "checked" : "") ?> type="checkbox" name="ckNome_terr_ni" id="ckNome_terr_ni"> N&atilde;o informado </label>
+            </div>
             <div id="educando_territorio">
                 <input type="text" class="form-control tamanho-n" id="educando_nome_terr" name="educando_nome_terr" value="<?php if ($retrivial) echo $dados[0]->nome_territorio; ?>">
                 <label class="control-label form" for="educando_nome_terr"></label>

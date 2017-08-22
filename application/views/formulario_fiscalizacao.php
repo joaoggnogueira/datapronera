@@ -238,10 +238,10 @@ $countBoxMembers = 97;
             </div>
         </div>
         <div class="form-group">
-            <label><?= ++$countInput; ?>. Data da fiscalização<br><small>dd/mm/aaaa</small></label>
+            <label><?= ++$countInput; ?>. Data do Acompanhamento/Fiscaliza&ccedil;&atilde;o</label>
             <div class="form-group">
                 <div>
-                    <input type="date" name="data" id="data" class="form-control" value="<?php if ($retrivial) echo $dados[0]->data; ?>"/>
+                    <input type="date" name="data" id="data" class="form-control" style="width: 100px" value="<?php if ($retrivial) echo $dados[0]->data; ?>"/>
                     <p class="text-danger select"><label for="data"><label></label></label></p>
                 </div>
             </div>

@@ -52,6 +52,7 @@
         });
         
         $('#modalidades-select').css("width","300px").select2();
+        $('#status_curso').css("width","300px").select2();
         /* MUNICIPIOS */
 
         $.get("<?php echo site_url('requisicao/get_estados_rel'); ?>", function(data) {
@@ -76,12 +77,19 @@
         });
 
         $('#gerar').click(function(){
+            // CAST(RIGHT(termino_realizado, 4) as SIGNED) BETWEEN 2005 AND 2010
+ 
             /** FILTROS DOS CURSOS **/
             var superintendencia = $('#superintendencias-select').val();
             var curso            = $('#cursos-select').val();
             var status_curso     = $('#status_curso').val();
             var modalidade       = $('#modalidades-select').val();
             var municipio        = $('#municipios-select').val();
+
+            var inicio0_realizado = $('#inicio0-realizado').val();
+            var inicio1_realizado = $('#inicio1-realizado').val();
+            var termino0_realizado = $('#termino0-realizado').val();
+            var termino1_realizado = $('#termino1-realizado').val();
 
             /** FILTROS EDUCANDOS **/
             var genero_educando = $('#genero_educando').val();
@@ -138,6 +146,40 @@
                 where_parceiros             += ' AND p.id_curso ='+curso;
                 where_cidades_parceiros     += ' AND cp.id ='+curso;
                 where_tipos_parceiros       += ' AND c.id ='+curso;
+            }
+
+            /* WHERE CAMPO PERIODO INICIO */
+            if(inicio0_realizado != null && inicio0_realizado != 0 && inicio1_realizado != null && inicio1_realizado != 0){
+                where_curso                 += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_cidade_cursos         += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_educandos             += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_cidade_educandos      += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_professores           += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_disciplinas           += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_ie                    += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_cidades_ie            += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_org_demandantes       += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_coord_org_demandantes += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_parceiros             += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_cidades_parceiros     += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+                where_tipos_parceiros       += ' AND CAST(RIGHT(cr.inicio_realizado, 4) as SIGNED) BETWEEN '+inicio0_realizado+' AND '+inicio1_realizado;
+            }
+
+            /* WHERE CAMPO PERIODO TÉRMINO */
+            if(termino0_realizado != null && termino0_realizado != 0 && termino1_realizado != null && termino1_realizado != 0){
+                where_curso                 += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_cidade_cursos         += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_educandos             += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_cidade_educandos      += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_professores           += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_disciplinas           += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_ie                    += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_cidades_ie            += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_org_demandantes       += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_coord_org_demandantes += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_parceiros             += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_cidades_parceiros     += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
+                where_tipos_parceiros       += ' AND CAST(RIGHT(cr.termino_realizado, 4) as SIGNED) BETWEEN '+termino0_realizado+' AND '+termino1_realizado;
             }
 
             /* WHERE CAMPO MODALIDADE */
@@ -270,6 +312,14 @@
             <option value="AN">Em andamento</option>
             <option value="2P">2 PNERA</option>
         </select>
+
+        <h3>Período de Início Realizado (Ano)</h3>
+        <div class="alert alert-info" role="alert"><b>Informação!</b> Para esse filtro funcionar é  necessário preencher os dois campos.</div>
+        <p><input type="text" id="inicio0-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"> à <input type="text" id="inicio1-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"></p>
+        <h3>Período de Término Realizado (Ano)</h3>
+        <div class="alert alert-info" role="alert"><b>Informação!</b> Para esse filtro funcionar é  necessário preencher os dois campos.</div>
+        <p><input type="text" id="termino0-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"> à <input type="text" id="termino1-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"></p>
+
 
         <div id="modalidades">
             <h3>Modalidade</h3>

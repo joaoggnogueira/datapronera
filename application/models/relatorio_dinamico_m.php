@@ -105,8 +105,8 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 'S' THEN 'SIM'
             WHEN 'N' THEN 'NÃO'
             END as CONCLUINTE
-            FROM `educando` e, `curso` c
-            WHERE e.id_curso = c.id AND c.ativo_inativo = 'A'
+            FROM `educando` e, `curso` c, `caracterizacao` cr
+            WHERE e.id_curso = c.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
 
@@ -118,8 +118,8 @@ class Relatorio_dinamico_m extends CI_Model {
 
         $query = $this->db->query("
             SELECT ed.id_curso as CURSO_VINCULADO, ec.id_educando as ID_EDUCANDO, c.nome as NOME_CIDADE, e.sigla as ESTADO 
-            FROM `educando`ed, `educando_cidade` ec, `cidade` c, `estado` e, `curso` cs
-            WHERE ed.id = ec.id_educando AND ec.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ed.id_curso
+            FROM `educando`ed, `educando_cidade` ec, `cidade` c, `estado` e, `curso` cs, `caracterizacao` cr
+            WHERE ed.id = ec.id_educando AND cr.id_curso = cs.id AND ec.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ed.id_curso
             $where
         ");
         return $query->result_array();
@@ -136,8 +136,8 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 'F' THEN 'FEMININO' 
             WHEN 'I' THEN 'NÃO INFORMADO' END as GÊNERO, 
             p.titulacao as TITULAÇÃO 
-            FROM `professor` p, `curso` c 
-            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A'
+            FROM `professor` p, `curso` c, `caracterizacao` cr
+            WHERE p.id_curso = c.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -147,8 +147,8 @@ class Relatorio_dinamico_m extends CI_Model {
 
         $query = $this->db->query("
             SELECT d.id_curso as CURSO_VINCULADO, d.id as ID, d.nome as NOME, d.id_professor as PROFESSOR_RESPONSÁVEL
-            FROM `disciplina` d, `curso`c
-            WHERE d.id_curso = c.id AND c.ativo_inativo = 'A'
+            FROM `disciplina` d, `curso`c, `caracterizacao` cr
+            WHERE d.id_curso = c.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -166,8 +166,8 @@ class Relatorio_dinamico_m extends CI_Model {
             ie.telefone1 as TELEFONE_1, ie.telefone2 as TELEFONE_2,
             if(ie.pagina_web='NI','NAO INFORMADO',ie.pagina_web) as PAGINA_WEB,
             ie.campus as CAMPUS, ie.natureza_instituicao as NATUREZA_INSTITUIÇÃO
-            FROM `instituicao_ensino` ie, `curso` c
-            WHERE ie.id_curso = c.id AND c.ativo_inativo = 'A'
+            FROM `instituicao_ensino` ie, `curso` c, `caracterizacao` cr
+            WHERE ie.id_curso = c.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -177,8 +177,8 @@ class Relatorio_dinamico_m extends CI_Model {
 
         $query = $this->db->query("
             SELECT DISTINCT ie.id_curso as CURSO_VINCULADO, ie.id as ID_INSTITUIÇÃO_ENSINO, c.nome as CIDADE, e.sigla as ESTADO 
-            FROM `instituicao_ensino` ie, `cidade`c, `estado`e, `curso` cs
-            WHERE ie.id_cidade IS NOT NULL AND ie.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ie.id_curso
+            FROM `instituicao_ensino` ie, `cidade`c, `estado`e, `curso` cs, `caracterizacao` cr
+            WHERE ie.id_cidade IS NOT NULL AND ie.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ie.id_curso AND cr.id_curso = cs.id
             $where
         ");
         return $query->result_array();
@@ -195,8 +195,8 @@ class Relatorio_dinamico_m extends CI_Model {
             if(od.numero_familias_assentadas=-1,'NAO INFORMADO',od.numero_familias_assentadas) as Nº_FAMÍLIAS_ASSENTADAS,
             if(od.numero_pessoas=-1,'NAO INFORMADO',od.numero_pessoas) as Nº_PESSOAS_ENVOLVIDAS_CURSO,
             od.fonte_informacao as FONTE_INFORMAÇÕES
-            FROM `organizacao_demandante` od, `curso` c 
-            WHERE od.id_curso = c.id AND c.ativo_inativo = 'A'
+            FROM `organizacao_demandante` od, `curso` c, `caracterizacao` cr
+            WHERE od.id_curso = c.id AND c.ativo_inativo = 'A' AND cr.id_curso = c.id
             $where
         ");
         return $query->result_array();
@@ -213,8 +213,8 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 'S' THEN 'SIM'
             WHEN 'N' THEN 'NÃO'
             END as ESTUDOU_CURSO_PRONERA
-            FROM `organizacao_demandante_coordenador` od, `organizacao_demandante` o, `curso` cs 
-            WHERE o.id = od.id_organizacao_demandante AND cs.id = o.id_curso
+            FROM `organizacao_demandante_coordenador` od, `organizacao_demandante` o, `curso` cs, `caracterizacao` cr
+            WHERE o.id = od.id_organizacao_demandante AND cs.id = o.id_curso AND cr.id_curso = cs.id
             $where
         ");
         return $query->result_array();
@@ -232,8 +232,8 @@ class Relatorio_dinamico_m extends CI_Model {
             if(p.pagina_web='NI','NAO INFORMADO',p.pagina_web) as PAGINA_WEB,
             p.natureza as NATUREZA_INSTITUIÇÃO,
             p.abrangencia as ABRANGÊNCIA
-            FROM `parceiro` p, `curso`c
-            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' 
+            FROM `parceiro` p, `curso`c, `caracterizacao` cr
+            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' AND cr.id_curso = c.id
             $where
         ");
 
@@ -244,8 +244,8 @@ class Relatorio_dinamico_m extends CI_Model {
 
         $query = $this->db->query("
             SELECT p.id as ID_PARCEIRO, c.nome as CIDADE, e.sigla as ESTADO 
-            FROM `parceiro` p, `cidade`c, `estado`e, `curso` cp
-            WHERE p.id_cidade IS NOT NULL AND p.id_cidade = c.id AND c.id_estado = e.id AND p.id_curso = cp.id
+            FROM `parceiro` p, `cidade`c, `estado`e, `curso` cp, `caracterizacao` cr
+            WHERE p.id_cidade IS NOT NULL AND p.id_cidade = c.id AND c.id_estado = e.id AND p.id_curso = cp.id AND cr.id_curso = cp.id
             $where
         ");
 
@@ -269,8 +269,8 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 1 THEN 'SIM' 
             WHEN 0 THEN 'NÃO' END as OUTRAS,
             pp.complemento as COMPLEMENTO
-            FROM `parceiro_parceria` pp, `parceiro` p, `curso` c
-            WHERE pp.id_parceiro = p.id AND p.id_curso = c.id AND c.ativo_inativo = 'A'
+            FROM `parceiro_parceria` pp, `parceiro` p, `curso` c, `caracterizacao` cr
+            WHERE pp.id_parceiro = p.id AND p.id_curso = c.id AND c.ativo_inativo = 'A' AND cr.id_curso = c.id
             $where
         ");
 

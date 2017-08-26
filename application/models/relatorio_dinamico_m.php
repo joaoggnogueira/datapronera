@@ -63,7 +63,7 @@ class Relatorio_dinamico_m extends CI_Model {
                 if(cr.numero_concluintes=-1,'NAO INFORMADO',cr.numero_concluintes) as NÚMERO_CONCLUINTES,
                 if(cr.numero_bolsistas=-1,'NAO INFORMADO',cr.numero_bolsistas) as NÚMERO_BOLSISTAS    
             FROM `curso` c, `curso_modalidade` cm, `caracterizacao` cr  
-            WHERE c.id_modalidade = cm.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE c.id_modalidade = cm.id AND cr.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
 
             ");
@@ -76,7 +76,7 @@ class Relatorio_dinamico_m extends CI_Model {
             SELECT cr.id_curso as ID_CURSO, ci.nome as CIDADE, e.sigla as ESTADO   
             FROM `caracterizacao_cidade` cc, `caracterizacao` cr, `cidade` ci, `estado` e, `curso` c 
             WHERE cr.id_curso = c.id AND cc.id_caracterizacao = cr.id AND cc.id_cidade = ci.id 
-            AND ci.id_estado = e.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            AND ci.id_estado = e.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -106,7 +106,7 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 'N' THEN 'NÃO'
             END as CONCLUINTE
             FROM `educando` e, `curso` c
-            WHERE e.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE e.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
 
@@ -137,7 +137,7 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 'I' THEN 'NÃO INFORMADO' END as GÊNERO, 
             p.titulacao as TITULAÇÃO 
             FROM `professor` p, `curso` c 
-            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -148,7 +148,7 @@ class Relatorio_dinamico_m extends CI_Model {
         $query = $this->db->query("
             SELECT d.id_curso as CURSO_VINCULADO, d.id as ID, d.nome as NOME, d.id_professor as PROFESSOR_RESPONSÁVEL
             FROM `disciplina` d, `curso`c
-            WHERE d.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE d.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -167,7 +167,7 @@ class Relatorio_dinamico_m extends CI_Model {
             if(ie.pagina_web='NI','NAO INFORMADO',ie.pagina_web) as PAGINA_WEB,
             ie.campus as CAMPUS, ie.natureza_instituicao as NATUREZA_INSTITUIÇÃO
             FROM `instituicao_ensino` ie, `curso` c
-            WHERE ie.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE ie.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -196,7 +196,7 @@ class Relatorio_dinamico_m extends CI_Model {
             if(od.numero_pessoas=-1,'NAO INFORMADO',od.numero_pessoas) as Nº_PESSOAS_ENVOLVIDAS_CURSO,
             od.fonte_informacao as FONTE_INFORMAÇÕES
             FROM `organizacao_demandante` od, `curso` c 
-            WHERE od.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE od.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
         return $query->result_array();
@@ -233,7 +233,7 @@ class Relatorio_dinamico_m extends CI_Model {
             p.natureza as NATUREZA_INSTITUIÇÃO,
             p.abrangencia as ABRANGÊNCIA
             FROM `parceiro` p, `curso`c
-            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P' 
+            WHERE p.id_curso = c.id AND c.ativo_inativo = 'A' 
             $where
         ");
 
@@ -270,7 +270,7 @@ class Relatorio_dinamico_m extends CI_Model {
             WHEN 0 THEN 'NÃO' END as OUTRAS,
             pp.complemento as COMPLEMENTO
             FROM `parceiro_parceria` pp, `parceiro` p, `curso` c
-            WHERE pp.id_parceiro = p.id AND p.id_curso = c.id AND c.ativo_inativo = 'A' AND c.status = '2P'
+            WHERE pp.id_parceiro = p.id AND p.id_curso = c.id AND c.ativo_inativo = 'A'
             $where
         ");
 

@@ -79,6 +79,7 @@
             /** FILTROS DOS CURSOS **/
             var superintendencia = $('#superintendencias-select').val();
             var curso            = $('#cursos-select').val();
+            var status_curso     = $('#status_curso').val();
             var modalidade       = $('#modalidades-select').val();
             var municipio        = $('#municipios-select').val();
 
@@ -196,8 +197,25 @@
                 });
 
                 where_tipos_parceiros   += where_aux;
-                where_parceiros         += ' AND p.id IN (SELECT a.id_parceiro FROM `parceiro_parceria` a, `parceiro` b, `curso` d WHERE a.id_parceiro = b.id AND b.id_curso = d.id AND d.ativo_inativo = "A" AND d.status = "2P" '+where_aux+')';
-                where_cidades_parceiros += ' AND p.id IN (SELECT a.id_parceiro FROM `parceiro_parceria` a, `parceiro` b, `curso` d WHERE a.id_parceiro = b.id AND b.id_curso = d.id AND d.ativo_inativo = "A" AND d.status = "2P" '+where_aux+')';
+                where_parceiros         += ' AND p.id IN (SELECT a.id_parceiro FROM `parceiro_parceria` a, `parceiro` b, `curso` d WHERE a.id_parceiro = b.id AND b.id_curso = d.id AND d.ativo_inativo = "A" '+where_aux+')';
+                where_cidades_parceiros += ' AND p.id IN (SELECT a.id_parceiro FROM `parceiro_parceria` a, `parceiro` b, `curso` d WHERE a.id_parceiro = b.id AND b.id_curso = d.id AND d.ativo_inativo = "A" '+where_aux+')';
+            }
+
+            /* WHERE CAMPO STATUS */
+            if(status_curso != null && status_curso != 0){
+                where_curso                 += ' AND c.status ="' + status_curso+'"';
+                where_cidade_cursos         += ' AND c.status ="'+status_curso+'"';
+                where_educandos             += ' AND c.status ="'+status_curso+'"';
+                where_cidade_educandos      += ' AND cs.status ="'+status_curso+'"';
+                where_professores           += ' AND c.status ="'+status_curso+'"';
+                where_disciplinas           += ' AND c.status ="'+status_curso+'"';
+                where_ie                    += ' AND c.status ="'+status_curso+'"';
+                where_cidades_ie            += ' AND cs.status ="'+status_curso+'"';
+                where_org_demandantes       += ' AND c.status ="'+status_curso+'"';
+                where_coord_org_demandantes += ' AND cs.status ="'+status_curso+'"';
+                where_parceiros             += ' AND c.status ="'+status_curso+'"';
+                where_cidades_parceiros     += ' AND cp.status ="'+status_curso+'"';
+                where_tipos_parceiros       += ' AND c.status ="'+status_curso+'"';
             }
 
             $('<form target="_blank" action="'+url+'gerarRelatorio" method="POST">' + 
@@ -244,6 +262,14 @@
         <h3>Curso</h3>
         <p><b>Superintendência:</b> <select id="superintendencias-select"></select></p>
         <p><b>Cursos:</b> <select id="cursos-select"><option value="0" selected>Todos os cursos</option></select></p>
+
+        <h3>Status</h3>
+        <select id="status_curso">
+            <option value="0" selected>Todos os status</option>
+            <option value="CC">Concluídos</option>
+            <option value="AN">Em andamento</option>
+            <option value="2P">2 PNERA</option>
+        </select>
 
         <div id="modalidades">
             <h3>Modalidade</h3>

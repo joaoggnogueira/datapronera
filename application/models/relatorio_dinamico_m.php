@@ -43,6 +43,7 @@ class Relatorio_dinamico_m extends CI_Model {
                 WHEN 'MESTRADO' THEN 'ENSINO SUPERIOR'
                 WHEN 'DOUTORADO' THEN 'ENSINO SUPERIOR'
               END AS NIVEL_CURSO,
+                cm.nome as MODALIDADE,
                 c.obs as OBSERVAÇÃO_CURSO,
                 cr.area_conhecimento as AREA_CONHECIMENTO,
                 cr.nome_coordenador_geral as COORDENADOR_GERAL,

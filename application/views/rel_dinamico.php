@@ -310,7 +310,7 @@
             <option value="0" selected>Todos os status</option>
             <option value="CC">Concluídos</option>
             <option value="AN">Em andamento</option>
-            <option value="2P">2 PNERA</option>
+            <option value="2P">II PNERA</option>
         </select>
 
         <h3>Período de Início Realizado (Ano)</h3>

@@ -57,7 +57,7 @@ else
         var url = "<?php echo site_url('request/get_educando_mun') . '/'; ?>" + id;
 
         var appendSelectorToASSENTAMENTO = function () {
-            if ($('#educando_sel_est option:selected').val() !== "0" && !$("#ckNome_terr_ni").prop("checked")) {
+            if (!$("#ckNome_terr_ni").prop("checked")) {
                 var urlAssentamentos = "<?php echo site_url('requisicao/get_assentamentos') . '/'; ?>" + $('#educando_sel_est option:selected').val();
                 $.get(urlAssentamentos, function (assentamentos) {
                     try { $("#educando_nome_terr").select2('destroy'); } catch (e) {}
@@ -130,13 +130,15 @@ else
             'id': ['educando_sel_est','educando_sel_mun','ckMun_ni'],
             'oncheck': function(){
                 $("#educando_sel_mun").html("<option value='0'>Selecione o Município</option>");
+                if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
+                    appendSelectorToASSENTAMENTO();
+                }
             }
         });
         
         $("#ckNome_terr_ni").niCheck({
             'id': ['educando_nome_terr'],
             'onuncheck': function(){
-                console.log("passou");
                 if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
                     appendSelectorToASSENTAMENTO();
                 }
@@ -151,7 +153,12 @@ else
         
         $("#ckTipo_terr_ni").niCheck({
             'id': ['educando_tipo_terr'],
-            'niValue' : [""]
+            'niValue' : [""],
+            'beforeoncheck': function(){
+                if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
+                    removeSelectorToASSENTAMENTO();
+                }
+            }
         });
 
         $('#ckCPF_na').niCheck({

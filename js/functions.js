@@ -719,7 +719,15 @@ $.fn.niCheck = function (_obj) {
     var $checkbox = $(this);
 
     $checkbox.change(function () {
-
+        if ($checkbox.is(':checked')) {
+            if (_obj.beforeoncheck) {
+                _obj.beforeoncheck();
+            }
+        } else {
+            if (_obj.beforeonuncheck) {
+                _obj.beforeonuncheck();
+            }
+        }
         $.each(_obj, function (key, value) {
 
             for (var i = 0; i < value.length; i++) {

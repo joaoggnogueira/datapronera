@@ -47,6 +47,23 @@
             }
         });
 
+        //niveis e modalidades
+        $('#niveis-select').change(function(){
+            if($('#niveis-select option:selected').val() == 0){
+                $('#modalidades').css('display', 'block');
+            }else{
+                $('#modalidades').css('display', 'none');
+            }
+        });
+
+        $('#modalidades-select').change(function(){
+            if($('#modalidades-select option:selected').val() == 0){
+                $('#niveis').css('display', 'block');
+            }else{
+                $('#niveis').css('display', 'none');
+            }
+        });
+
         $.get("<?php echo site_url('requisicao/get_modalidades_rel'); ?>", function(modalidades) {
             $('#modalidades-select').html(modalidades);
         });
@@ -86,6 +103,8 @@
             var modalidade       = $('#modalidades-select').val();
             var municipio        = $('#municipios-select').val();
 
+            var nivel            = $('#niveis-select').val();
+
             var inicio0_realizado = $('#inicio0-realizado').val();
             var inicio1_realizado = $('#inicio1-realizado').val();
             var termino0_realizado = $('#termino0-realizado').val();
@@ -113,6 +132,57 @@
             var where_parceiros = '';
             var where_cidades_parceiros = '';
             var where_tipos_parceiros = '';
+
+            /* WHERE NIVEIS */
+            if(nivel != null && nivel != 0){
+                if(nivel == 'EJA'){
+                    where_curso                 += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_cidade_cursos         += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_educandos             += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_cidade_educandos      += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_professores           += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_disciplinas           += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_ie                    += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_cidades_ie            += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_org_demandantes       += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_coord_org_demandantes += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_parceiros             += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_cidades_parceiros     += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                    where_tipos_parceiros       += ' AND (cm.nome = "EJA ALFABETIZACAO" OR cm.nome = "EJA ANOS INICIAIS" OR cm.nome = "EJA ANOS FINAIS")';
+                }
+
+                if(nivel == "EM"){
+                    where_curso                 += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_cidade_cursos         += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_educandos             += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_cidade_educandos      += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_professores           += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_disciplinas           += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_ie                    += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_cidades_ie            += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_org_demandantes       += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_coord_org_demandantes += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_parceiros             += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_cidades_parceiros     += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                    where_tipos_parceiros       += ' AND (cm.nome = "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)" OR cm.nome = "EJA NIVEL MEDIO (NORMAL)" OR cm.nome = "NIVEL MEDIO/TECNICO (CONCOMITANTE)" OR cm.nome = "NIVEL MEDIO/TECNICO (INTEGRADO)" OR cm.nome = "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)")';
+                }
+
+                if(nivel == 'ES'){
+                    where_curso                 += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_cidade_cursos         += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_educandos             += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_cidade_educandos      += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_professores           += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_disciplinas           += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_ie                    += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_cidades_ie            += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_org_demandantes       += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_coord_org_demandantes += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_parceiros             += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_cidades_parceiros     += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                    where_tipos_parceiros       += ' AND (cm.nome = "GRADUACAO" OR cm.nome = "ESPECIALIZACAO" OR cm.nome = "RESIDENCIA AGRARIA" OR cm.nome = "MESTRADO" OR cm.nome = "DOUTORADO")';
+                }
+            }
 
             /* WHERE SUPERINTENDENCIA */
             if(superintendencia != null && superintendencia != 0){
@@ -305,7 +375,7 @@
         <p><b>Superintendência:</b> <select id="superintendencias-select"></select></p>
         <p><b>Cursos:</b> <select id="cursos-select"><option value="0" selected>Todos os cursos</option></select></p>
 
-        <h3>Status</h3>
+        <h3>Status do Cadastro do Curso</h3>
         <select id="status_curso">
             <option value="0" selected>Todos os status</option>
             <option value="CC">Concluídos</option>
@@ -324,6 +394,18 @@
         <div id="modalidades">
             <h3>Modalidade</h3>
             <p><b>Modalidades:</b> <select id="modalidades-select"><option value="0" selected>Todas as modalidades</option></select></p>
+        </div>
+
+        <div id="niveis">
+            <h3>Nível</h3>
+            <p><b>Nível:</b> 
+            <select id="niveis-select">
+                <option value="0" selected>Todos os Níveis</option>
+                <option value="EJA">EJA FUNDAMENTAL</option>
+                <option value="EM">ENSINO MÉDIO</option>
+                <option value="ES">ENSINO SUPERIOR</option>
+            </select>
+            </p>
         </div>
 
         <div id="municipios">

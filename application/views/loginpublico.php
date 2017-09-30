@@ -114,7 +114,8 @@ if (!defined('BASEPATH'))
                             nome: $("#name-up").val().toUpperCase(),
                             email: $("#email-up").val().toUpperCase(),
                             senha: $("#senha-up").val(),
-                            municipio: $("#municipio-up").val()
+                            municipio: $("#municipio-up").val(),
+                            captcha: $("#g-recaptcha-response").val()
                         };
 
                         var urlResquest = "<?= site_url('acesso_publico/signup/') ?>";
@@ -142,6 +143,8 @@ if (!defined('BASEPATH'))
 </script>
 <h2><strong>Acesso Público</strong></h2>
 <hr/>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="https://apis.google.com/js/api:client.js"></script>
 
 <div class="row">
     <div class="col-md-7">
@@ -287,6 +290,10 @@ if (!defined('BASEPATH'))
                             <input autocomplete="off" type="password" class="form-control center" id="senha-up-repeat" name="senha"/>
                         </div>
                         <label class="control-label center" for="senha-up-repeat"></label>
+                    </div>
+                    <hr/>
+                    <div class="col-lg-12">
+                        <div style="margin-left: -25px;" class="g-recaptcha" data-sitekey="6LfMWCMTAAAAAKosa3Kly65fvko_BmibtrRraAvS"></div>
                     </div>
                 </div>
                 <button class="btn btn-lg btn-primary btn-block" id="signup-confirm-btn" type="button">Confirmar</button>

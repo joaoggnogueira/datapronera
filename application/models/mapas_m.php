@@ -255,15 +255,14 @@ class Mapas_m extends CI_Model {
         $this->db->join('curso c', 'c.id = e.id_curso');
         $this->db->where('ec.id_cidade', $id_municipio);
         $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where("c.status IN $status");
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
-                $this->db->where("c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL");
+                $this->db->where("c.status IN $status && (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL)");
             } else {
-                $this->db->where("c.id_modalidade IN $modalidade_ids");
+                $this->db->where("c.status IN $status && c.id_modalidade IN $modalidade_ids");
             }
         } else if ($modalidade_nil != 'false') {
-            $this->db->where("c.id_modalidade IS NULL");
+            $this->db->where("c.status IN $status && c.id_modalidade IS NULL");
         }
 
         return $this->get_table($this->db->get());

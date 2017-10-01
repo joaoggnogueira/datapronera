@@ -9,13 +9,19 @@ class Mapas_m extends CI_Model {
         $this->load->library('session'); // Loading Session
         $this->load->helper('url');  // Loading Helper
     }
+    
+    function stringfy($array){
+        $array = json_encode($array);
+        $array = str_replace("[", "(", $array);
+        $array = str_replace("]", ")", $array);
+        return $array;
+    }
 
     //mapas
     function get_municipios_cursos($filtros) {
-
-        $status = json_encode($filtros['status']);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
+        
+        $status = $this->stringfy($filtros['status']);
+        $sr =  $this->stringfy($filtros['sr']);
 
         $modalidade = $filtros['modalidade'];
 
@@ -35,7 +41,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN cidade m ON m.id = ccr.id_cidade
             INNER JOIN estado est ON est.id = m.id_estado 
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
-            WHERE c.ativo_inativo = 'A' AND c.status in $status
+            WHERE c.ativo_inativo = 'A' AND c.status in $status AND c.id_superintendencia in $sr
             ";
 
 
@@ -58,10 +64,9 @@ class Mapas_m extends CI_Model {
 
     function get_municipios_educandos($filtros) {
 
-        $status = json_encode($filtros['status']);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
-
+        $status = $this->stringfy($filtros['status']);
+        $sr =  $this->stringfy($filtros['sr']);
+        
         $modalidade = $filtros['modalidade'];
 
         $modalidade_nil = $modalidade['nil'];
@@ -80,7 +85,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN estado est ON est.id = m.id_estado  
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
             INNER JOIN curso c ON c.id = e.id_curso 
-            WHERE c.ativo_inativo = 'A' AND c.status in $status
+            WHERE c.ativo_inativo = 'A' AND c.status in $status AND c.id_superintendencia in $sr
         ";
 
         if ($modalidade_ids) {
@@ -103,9 +108,7 @@ class Mapas_m extends CI_Model {
     //desabilitado
     function get_municipios_instituicoes($filtros) {
 
-        $status = json_encode($filtros['status']);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
+        $status = $this->stringfy($filtros['status']);
 
         $query = $this->db->query("
             SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng 
@@ -122,10 +125,8 @@ class Mapas_m extends CI_Model {
     //tabelas
     //Lista Cursos do mapa Educando
     function get_cursos_educandos($id_municipio, $filtros) {
-
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
+        $status = $this->stringfy($filtros->status);
+        $sr =  $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
 
         $modalidade_nil = $modalidade['nil'];
@@ -143,7 +144,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN `educando_cidade` ec ON `ec`.`id_educando` = `e`.`id` 
             INNER JOIN `curso` c ON `c`.`id` = `e`.`id_curso` 
             INNER JOIN `curso_modalidade` m ON `m`.`id` = `c`.`id_modalidade` 
-            WHERE `ec`.`id_cidade` = '" . $id_municipio . "'  AND `c`.`ativo_inativo` = 'A' AND `c`.`status` IN $status
+            WHERE c.id_superintendencia IN $sr AND `ec`.`id_cidade` = '" . $id_municipio . "'  AND `c`.`ativo_inativo` = 'A' AND `c`.`status` IN $status
         ";
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
@@ -184,10 +185,8 @@ class Mapas_m extends CI_Model {
     //Lista Educandos do mapa Curso
     function get_educandos_cursos($id_municipio, $filtros) {
 
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
-
+        $status = $this->stringfy($filtros->status);
+        $sr =  $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
 
         $modalidade_nil = $modalidade['nil'];
@@ -214,7 +213,7 @@ class Mapas_m extends CI_Model {
             LEFT JOIN educando_cidade ec ON ec.id_educando = e.id 
             LEFT JOIN cidade m ON m.id = ec.id_cidade 
             LEFT JOIN estado est ON est.id = m.id_estado 
-            WHERE c.ativo_inativo = 'A' AND ccr.id_cidade = $id AND `c`.`status` IN $status";
+            WHERE c.id_superintendencia IN $sr AND c.ativo_inativo = 'A' AND ccr.id_cidade = $id AND `c`.`status` IN $status";
 
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
@@ -234,10 +233,8 @@ class Mapas_m extends CI_Model {
     }
 
     function get_educandos($id_municipio, $filtros) {
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
-
+        $status = $this->stringfy($filtros->status);
+        $sr =  $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
 
         $modalidade_nil = $modalidade['nil'];
@@ -257,21 +254,19 @@ class Mapas_m extends CI_Model {
         $this->db->where('c.ativo_inativo', 'A');
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
-                $this->db->where("c.status IN $status && (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL)");
+                $this->db->where("c.id_superintendencia IN $sr AND c.status IN $status AND (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL)");
             } else {
-                $this->db->where("c.status IN $status && c.id_modalidade IN $modalidade_ids");
+                $this->db->where("c.id_superintendencia IN $sr AND c.status IN $status AND c.id_modalidade IN $modalidade_ids");
             }
         } else if ($modalidade_nil != 'false') {
-            $this->db->where("c.status IN $status && c.id_modalidade IS NULL");
+            $this->db->where("c.id_superintendencia IN $sr AND c.status IN $status && c.id_modalidade IS NULL");
         }
 
         return $this->get_table($this->db->get());
     }
 
     function get_instituicoes($id_municipio, $filtros) {
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
+        $status = $this->stringfy($filtros->status);
 
         $this->db->select('ie.id,ie.nome,ie.sigla,ie.unidade,c.nome as curso');
         $this->db->from('instituicao_ensino ie');
@@ -283,9 +278,8 @@ class Mapas_m extends CI_Model {
 
     function get_cursos($id_municipio, $filtros) {
 
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
+        $status = $this->stringfy($filtros->status);
+        $sr =  $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
 
         $modalidade_nil = $modalidade['nil'];
@@ -312,7 +306,7 @@ class Mapas_m extends CI_Model {
             INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
             INNER JOIN `curso_modalidade` modal ON `modal`.`id` = `c`.`id_modalidade` 
             INNER JOIN instituicao_ensino ie ON ie.id_curso = c.id 
-            WHERE c.ativo_inativo = 'A' AND c.status IN $status AND m.id = $id";
+            WHERE c.id_superintendencia IN $sr AND c.ativo_inativo = 'A' AND c.status IN $status AND m.id = $id";
 
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
@@ -347,10 +341,8 @@ class Mapas_m extends CI_Model {
 
     //Buscas
     function search_educando($search, $filtros) {
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
-
+        $status = $this->stringfy($filtros->status);
+        $sr =  $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
 
         $modalidade_nil = $modalidade['nil'];
@@ -369,6 +361,7 @@ class Mapas_m extends CI_Model {
         $this->db->like('e.nome', "$search");
         $this->db->where('c.ativo_inativo', "A");
         $this->db->where("c.status IN $status");
+        $this->db->where("c.id_superintendencia IN $sr");
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
                 $this->db->where("c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL");
@@ -382,10 +375,8 @@ class Mapas_m extends CI_Model {
     }
 
     function search_curso($search, $filtros) {
-        $status = json_encode($filtros->status);
-        $status = str_replace("[", "(", $status);
-        $status = str_replace("]", ")", $status);
-
+        $status = $this->stringfy($filtros->status);
+        $sr =  $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
 
         $modalidade_nil = $modalidade['nil'];
@@ -405,6 +396,7 @@ class Mapas_m extends CI_Model {
         $this->db->like('c.nome', "$search");
         $this->db->where('c.ativo_inativo', "A");
         $this->db->where("c.status IN $status");
+        $this->db->where("c.id_superintendencia IN $sr");
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
                 $this->db->where("c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL");

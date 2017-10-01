@@ -202,7 +202,7 @@ class Acesso_publico extends CI_Controller {
 
         $captcha = $this->input->post('captcha');
 
-        require('.\vendor\google\recaptcha\src\autoload.php');
+        require(dirname(__FILE__).'/../../vendor/google/recaptcha/src/autoload.php');
 
         $secret = "6LfMWCMTAAAAAOWQFgfqw9pToMzC-qOxm4tPGW7g";
 

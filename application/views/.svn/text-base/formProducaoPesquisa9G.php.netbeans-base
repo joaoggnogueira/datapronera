@@ -275,10 +275,6 @@
 
             request(urlRequest, null, 'hide');
         });
-        
-        $("#participante").keypress(function (e) {
-            preventChar(e);
-        });
 
     });
 
@@ -419,7 +415,7 @@
         <div class="form-group">
             <label>1.7. N&uacute;mero de participantes</label>
             <div>
-                <input type="text" class="form-control tamanho-smaller" id="participante" name="participante" maxlength="6"
+                <input type="text" class="form-control tamanho-smaller" id="participante" name="participante" onkeypress="return preventChar()" maxlength="6"
                     value="<?php if ($operacao != 'add') echo $dados[0]->participantes; ?>" >
                 <label class="control-label form bold" for="participante"></label>
             </div>

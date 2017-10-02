@@ -1126,19 +1126,21 @@ function getCheckedRadio(radio_group) {
  *
  *	@return	Char 	Caracter válido
  */
-function preventChar(_type, _evt) {
-    _type = _type || 'A';
-    _evt = _evt || window.event;
-
-    var keyCode = _evt.keyCode || _evt.which;
-    var num = parseInt(String.fromCharCode(keyCode));
-
-    if (_type == 'A') {
-        return !isNaN(num);
-
+function preventChar(event) {
+    console.log(event);
+    if ((event.key >= "0" && event.key <= "9") || event.key === "Backspace") {
     } else {
-        return isNaN(num);
+        event.preventDefault();
     }
+//
+//    var keyCode = _evt.keyCode || _evt.which;
+//    var num = parseInt(String.fromCharCode(keyCode));
+//
+//    if (_type === 'A') {
+//        return !isNaN(num);
+//    } else {
+//        return isNaN(num);
+//    }
 }
 
 /**

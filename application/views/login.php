@@ -66,6 +66,8 @@ if (!defined('BASEPATH'))
                 }
             });
         });
+        
+        $("#cpf").keypress(function(e){preventChar(e);});
 
     });
 </script>
@@ -77,7 +79,7 @@ if (!defined('BASEPATH'))
         <div class="form-group">
             <div class="col-lg-12">
                 <label>CPF</label>
-                <input type="text" class="form-control center" id="cpf" name="cpf" maxlength="11" onkeypress="return preventChar();" autofocus>
+                <input type="text" class="form-control center" id="cpf" name="cpf" maxlength="11" autofocus>
                 <label class="control-label center" for="cpf"></label>
             </div>
         </div>

@@ -364,6 +364,10 @@ else
             // Faz requisição de login ao servidor (retorna um objeto JSON)
             request(urlRequest, null, 'hide');
         });
+        
+        $("#educando_cpf").keypress(function (e) {
+            preventChar(e);
+        });
 
     });
 
@@ -412,7 +416,7 @@ else
             <label class="negacao-sm"> <input type="checkbox" name="ckCPF_na" id="ckCPF_na"  value="NAOAPLICA" <?php if ($retrivial && $dados[0]->cpf == "NAOAPLICA") echo "checked"; ?>> Não se aplica </label>
         </div>
         <div>
-            <input type="text" class="form-control tamanho-small" id="educando_cpf" name="educando_cpf" onkeypress="return preventChar('A')" maxlength="11"
+            <input type="text" class="form-control tamanho-small" id="educando_cpf" name="educando_cpf" maxlength="11"
                    value="<?php if ($retrivial && $dados[0]->cpf != "NAOAPLICA" && $dados[0]->cpf != "NAOINFORMADO") echo $dados[0]->cpf; ?>">
             <label class="control-label form" for="educando_cpf"></label>
         </div>

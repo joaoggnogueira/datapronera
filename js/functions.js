@@ -1,3 +1,7 @@
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
 /**
  *	Carrega HTML por AJAX.
  *
@@ -1127,20 +1131,14 @@ function getCheckedRadio(radio_group) {
  *	@return	Char 	Caracter válido
  */
 function preventChar(event) {
-    console.log(event);
-    if ((event.key >= "0" && event.key <= "9") || event.key === "Backspace") {
+    if ((event.key >= "0" && event.key <= "9") 
+            || event.key === "Backspace" 
+            || (event.keyCode >= 37 && event.keyCode <= 40)
+            || event.ctrlKey) {
     } else {
         event.preventDefault();
     }
-//
-//    var keyCode = _evt.keyCode || _evt.which;
-//    var num = parseInt(String.fromCharCode(keyCode));
-//
-//    if (_type === 'A') {
-//        return !isNaN(num);
-//    } else {
-//        return isNaN(num);
-//    }
+
 }
 
 /**

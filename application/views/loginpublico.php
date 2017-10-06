@@ -138,9 +138,10 @@ if (!defined('BASEPATH'))
             $("#uf-up").find("option[value='0']").remove();
             $("#uf-up").val(1).change().select2();
         });
-
+        $("#back-btn").appendTo($(".overflow-menu"));
     });
 </script>
+<a style="margin-top: 25px !important;position: absolute;font-size: 15px" href="<?php echo index_page(); ?>" type="button" class="btn center" id="back-btn"><i class="fa fa-chevron-left"></i> VOLTAR AO ACESSO RESTRITO</a>
 <h2><strong>Acesso Público</strong></h2>
 <hr/>
 <script src='https://www.google.com/recaptcha/api.js'></script>
@@ -152,7 +153,7 @@ if (!defined('BASEPATH'))
             <li class="active"><a data-toggle="tab" href="#login">Entrar</a></li>
             <li><a data-toggle="tab" href="#signup">Cadastrar-se</a></li>
         </ul>
-
+        
         <div class="tab-content">
             <div id="login" class="tab-pane fade in active">
                 <div class="col-md-2"></div>
@@ -244,6 +245,7 @@ if (!defined('BASEPATH'))
                 </form>
             </div>
         </div>
+        <hr/>
     </div>
     <div class="col-md-5">
         <div class="logo">

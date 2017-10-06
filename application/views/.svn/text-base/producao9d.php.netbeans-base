@@ -1,9 +1,9 @@
-<script type="text/javascript">
+<script type="text/javascript"> 
 
     $(document).ready(function() {
 
         var tableRunning = new Table({
-            url      : "<?php echo site_url('request/get_pesquisa_capitulo_livro/AN'); ?>",
+            url      : "<?php echo site_url('request/get_pesquisa_artigo/AN'); ?>",
             table    : $('#running-table'),
             controls : $('#running-controls')
         });
@@ -16,11 +16,11 @@
             $('#running-add').click(function () {
 
                 var formData = {
-                   id_producao9c : null,
+                   id_producao9d : null,
                    operacao : 'add'
                 };
                 
-                var urlRequest = "<?php echo site_url('producao9c/index_add'); ?>";
+                var urlRequest = "<?php echo site_url('producao9d/index_add'); ?>";
 
                 request(urlRequest, formData, 'hide');
             });
@@ -31,11 +31,11 @@
                 var codigo = tableRunning.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao9c :  codigo,
+                   id_producao9d :  codigo,
                    operacao : 'update'
                 };
 
-                var urlRequest = "<?php echo site_url('producao9c/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao9d/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -48,10 +48,10 @@
                     var codigo = tableRunning.getSelectedByIndex(0);
 
                     var formData = {
-                       id_producao9c : codigo
+                       id_producao9d : codigo
                     };
 
-                    var urlRequest = "<?php echo site_url('producao9c/remove/'); ?>";
+                    var urlRequest = "<?php echo site_url('producao9d/remove/'); ?>";
 
                     request(urlRequest, formData);
 
@@ -65,11 +65,11 @@
                 var codigo = tableRunning.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao9c : codigo,
+                   id_producao9d : codigo,
                    operacao : 'view'
                 };
 
-                var urlRequest = "<?php echo site_url('producao9c/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao9d/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -77,7 +77,7 @@
         // END OF TABLE CONTROLS
 
         var tableIIPnera = new Table({
-            url      : "<?php echo site_url('request/get_pesquisa_capitulo_livro/2P'); ?>",
+            url      : "<?php echo site_url('request/get_pesquisa_artigo/2P'); ?>",
             table    : $('#ii-pnera-table'),
             controls : $('#ii-pnera-controls')
         });
@@ -90,11 +90,11 @@
             $('#ii-pnera-add').click(function () {
 
                 var formData = {
-                   id_producao9c : null,
+                   id_producao9d : null,
                    operacao : 'add'
                 };
                 
-                var urlRequest = "<?php echo site_url('producao9c/index_add'); ?>";
+                var urlRequest = "<?php echo site_url('producao9d/index_add'); ?>";
 
                 request(urlRequest, formData, 'hide');
             });
@@ -105,11 +105,11 @@
                 var codigo = tableIIPnera.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao9c :  codigo,
+                   id_producao9d :  codigo,
                    operacao : 'update'
                 };
 
-                var urlRequest = "<?php echo site_url('producao9c/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao9d/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -122,10 +122,10 @@
                     var codigo = tableIIPnera.getSelectedByIndex(0);
 
                     var formData = {
-                       id_producao9c : codigo
+                       id_producao9d : codigo
                     };
 
-                    var urlRequest = "<?php echo site_url('producao9c/remove/'); ?>";
+                    var urlRequest = "<?php echo site_url('producao9d/remove/'); ?>";
 
                     request(urlRequest, formData);
 
@@ -139,11 +139,11 @@
                 var codigo = tableIIPnera.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao9c : codigo,
+                   id_producao9d : codigo,
                    operacao : 'view'
                 };
 
-                var urlRequest = "<?php echo site_url('producao9c/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao9d/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -159,8 +159,7 @@
     });
 
 </script>
-<h2>Produções/Pesquisas sobre o Pronera</h2>
-<h4>Capítulo de Livro</h4>
+
 <ul class="nav nav-tabs" id="paper-tab">
     <li class="active"><a href="#running">Em andamento</a></li>
     <li><a href="#ii-pnera">II PNERA</a></li>
@@ -182,7 +181,6 @@
                     <tr>
                         <th width=" 10px;"> CÓDIGO </th>
                         <th width="620px;"> TÍTULO </th>
-                        <th width="150px;"> EDITORA </th>
                         <th width=" 60px;"> ANO </th>
                     </tr>
                 </thead>
@@ -214,7 +212,6 @@
                     <tr>
                         <th width=" 10px;"> CÓDIGO </th>
                         <th width="620px;"> TÍTULO </th>
-                        <th width="150px;"> EDITORA </th>
                         <th width=" 60px;"> ANO </th>
                     </tr>
                 </thead>
@@ -230,4 +227,4 @@
         </div>
 
     </div>
-</div>
+</div> 

@@ -8,7 +8,6 @@ if (!defined('BASEPATH'))
 
         // Botão de login
         $('#login').click(function () {
-
             // Dados para verificação do formulário
             var form = Array(
                     {
@@ -33,11 +32,11 @@ if (!defined('BASEPATH'))
                     cpf: $('#cpf').val(),
                     senha: $('#senha').val()
                 };
-
                 urlResquest = "<?php echo site_url('ctrl_login/sign_in'); ?>";
 
                 request(urlResquest, formData, 'hide');
             }
+
         });
 
         $('#esqueci-senha').click(function () {
@@ -73,7 +72,7 @@ if (!defined('BASEPATH'))
 </script>
 
 <div class="box-control">
-    <h2><strong>Acesso ao Sistema</strong></h2>
+    <h2><strong>Acesso Restrito</strong></h2>
 
     <form class="form-horizontal">
         <div class="form-group">
@@ -90,7 +89,7 @@ if (!defined('BASEPATH'))
                 <input type="password" class="form-control center" id="senha" name="senha"/>
                 <label class="control-label center" for="senha"></label>
                 <label class="center" id="label-esqueci-senha"><a href="#" id="esqueci-senha">Esqueci minha senha</a></label>
-                <label class="center" id="label-acesso-publico"><a href="#" id="acesso-publico">Ou ir para o Acesso Público</a></label>
+                <label class="center" id="label-acesso-publico"><a href="#" id="acesso-publico">Ou ir para o Acesso Público <i class="fa fa-globe"></i></a></label>
             </div>
         </div>
         <div class="form-group">

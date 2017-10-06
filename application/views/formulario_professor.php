@@ -177,7 +177,7 @@
     </div>
 
     <div class="form-group">
-        <label>1. Nome do(a) professor(a) / educador(a)</label>
+        <label>1. Nome Completo do(a) professor(a) / educador(a)</label>
         <div>
             <input type="text" class="form-control tamanho-lg" id="professor_nome" name="professor_nome" value="<?php if ($retrivial) echo $dados[0]->nome; ?>">
             <label class="control-label form" for="professor_nome"></label>

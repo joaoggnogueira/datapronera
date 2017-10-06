@@ -4,7 +4,7 @@
     $(document).ready(function() {
 
         var table = new Table({
-            url      : "<?php echo site_url('request/get_producao8d'); ?>",
+            url      : "<?php echo site_url('request/get_producao8b'); ?>",
             table    : $('#paper_table'),
             controls : $('#paper_controls')
         });
@@ -18,7 +18,7 @@
         oTable = $('#producao_table').dataTable( {
                 "bProcessing": true,
                 "sPaginationType": "bootstrap",
-                "sAjaxSource": url  + "/request/get_producao8d/"
+                "sAjaxSource": url  + "/request/get_producao8b/"
             } );
 
 
@@ -36,11 +36,11 @@
             $('#inserir').click(function () {
 
                 var formData = {
-                   id_producao8d : null,
+                   id_producao8b : null,
                    operacao : 'add'
                 };
                 
-                var urlRequest = "<?php echo site_url('producao8d/index_add'); ?>";
+                var urlRequest = "<?php echo site_url('producao8b/index_add'); ?>";
 
                 request(urlRequest, formData, 'hide');
             });
@@ -51,11 +51,11 @@
                 codigo = table.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao8d :  codigo,
+                   id_producao8b :  codigo,
                    operacao : 'update'
                 };
 
-                var urlRequest = "<?php echo site_url('producao8d/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao8b/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -68,10 +68,10 @@
                     var codigo = table.getSelectedByIndex(0);
 
                     var formData = {
-                       id_producao8d : codigo
+                       id_producao8b : codigo
                     };
 
-                    var urlRequest = "<?php echo site_url('producao8d/remove/'); ?>";
+                    var urlRequest = "<?php echo site_url('producao8b/remove/'); ?>";
 
                     request(urlRequest, formData);
 
@@ -85,11 +85,11 @@
                 codigo = table.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao8d : codigo,
+                   id_producao8b : codigo,
                    operacao : 'view'
                 };
 
-                var urlRequest = "<?php echo site_url('producao8d/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao8b/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -122,8 +122,7 @@
     }*/
 
 </script>
-<h2>Produções/Pesquisas sobre o Pronera</h2>
-<h4>8D - Memória</h4>
+
 <div id="grid">
     <ul id="paper_controls" class="nav nav-pills buttons">        
     <?php if ($this->session->userdata('status_curso') != '2P' && $this->session->userdata('status_curso') != 'CC') { ?>

@@ -275,7 +275,7 @@ $countBoxMembers = 97;
         </div>
 
         <div class="form-group">
-            <label><?= ++$countInput; ?>. Nome da Organiza&ccedil;&atilde;o</label>
+            <label><?= ++$countInput; ?>. Nome completo da Organiza&ccedil;&atilde;o</label>
             <div>
                 <input type="text" class="form-control tamanho-lg" id="movimento_nome" name="movimento_nome"
                        value="<?php if ($retrivial) echo $dados[0]->nome; ?>">
@@ -311,21 +311,21 @@ $countBoxMembers = 97;
         <div class="table-box table-box-lg">
             <label><?= ++$countInput; ?>. Membros envolvidos</label>
             <div class="form-group interno">
-                <label> <?= chr($countBoxMembers++) ?>. Nome do membro envolvido no curso (Coordenador(a)) </label>
+                <label> <?= chr($countBoxMembers++) ?>. Nome completo do membro envolvido no curso (Coordenador(a)) </label>
                 <div>
                     <input type="text" class="form-control tamanho-n" id="movimento_nome_membro" name="movimento_nome_membro">
                     <label class="control-label form" for="movimento_nome_membro"></label>
                 </div>
             </div>
             <div class="form-group interno">
-                <label> <?= chr($countBoxMembers++) ?>. Grau de escolaridade na &eacute;poca da realiza&ccedil;&atilde;o do curso </label>
+                <label> <?= chr($countBoxMembers++) ?>. Grau de escolaridade do membro na &eacute;poca da realiza&ccedil;&atilde;o do curso (Ex: Ensino M&eacute;dio, Superior, Completo ou Incompleto, ...) </label>
                 <div>
                     <input type="text" class="form-control" id="movimento_grau_membro" name="movimento_grau_membro">
                     <label class="control-label form" for="movimento_grau_membro"></label>
                 </div>
             </div>
             <div class="form-group interno">
-                <label> <?= chr($countBoxMembers++) ?>. Estudou/estuda em curso do PRONERA ? </label>
+                <label> <?= chr($countBoxMembers++) ?>. O Membro estudou/estuda em curso do PRONERA ? </label>
                 <div class="radio interno">
                     <div class="radio"> <label> <input type="radio" name="rmovimento_estudo" id="rmovimento_estudo_01" value="SIM"> Sim </label> </div>
                     <div class="radio"> <label> <input type="radio" name="rmovimento_estudo" id="rmovimento_estudo_02" value="NAO"> N&atilde;o  </label> </div>

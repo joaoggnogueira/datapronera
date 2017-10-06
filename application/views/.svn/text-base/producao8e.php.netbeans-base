@@ -1,14 +1,14 @@
-<script type="text/javascript">
+<script type="text/javascript">    
+
     //var oTable;
 
     $(document).ready(function() {
 
         var table = new Table({
-            url      : "<?php echo site_url('request/get_producao8d'); ?>",
+            url      : "<?php echo site_url('request/get_producao8e'); ?>",
             table    : $('#paper_table'),
             controls : $('#paper_controls')
         });
-
         table.hideColumns([0]);
 
         //$('#producao_table').tableInit(url);
@@ -18,7 +18,7 @@
         oTable = $('#producao_table').dataTable( {
                 "bProcessing": true,
                 "sPaginationType": "bootstrap",
-                "sAjaxSource": url  + "/request/get_producao8d/"
+                "sAjaxSource": url  + "/request/get_producao8e/"
             } );
 
 
@@ -36,11 +36,11 @@
             $('#inserir').click(function () {
 
                 var formData = {
-                   id_producao8d : null,
+                   id_producao8e : null,
                    operacao : 'add'
                 };
                 
-                var urlRequest = "<?php echo site_url('producao8d/index_add'); ?>";
+                var urlRequest = "<?php echo site_url('producao8e/index_add'); ?>";
 
                 request(urlRequest, formData, 'hide');
             });
@@ -51,11 +51,11 @@
                 codigo = table.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao8d :  codigo,
+                   id_producao8e :  codigo,
                    operacao : 'update'
                 };
 
-                var urlRequest = "<?php echo site_url('producao8d/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao8e/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -68,10 +68,10 @@
                     var codigo = table.getSelectedByIndex(0);
 
                     var formData = {
-                       id_producao8d : codigo
+                       id_producao8e : codigo
                     };
 
-                    var urlRequest = "<?php echo site_url('producao8d/remove/'); ?>";
+                    var urlRequest = "<?php echo site_url('producao8e/remove/'); ?>";
 
                     request(urlRequest, formData);
 
@@ -85,11 +85,11 @@
                 codigo = table.getSelectedByIndex(0);//get_code();
 
                 var formData = {
-                   id_producao8d : codigo,
+                   id_producao8e : codigo,
                    operacao : 'view'
                 };
 
-                var urlRequest = "<?php echo site_url('producao8d/index_update'); ?>";
+                var urlRequest = "<?php echo site_url('producao8e/index_update'); ?>";
 
                 request(urlRequest, formData, 'hide');   
             });
@@ -99,8 +99,7 @@
         //oTable.fnSetColumnVis( 0, false );
     });
 
-    /*
-    function get_code(){      
+    /*function get_code(){      
         var anSelected = fnGetSelected( oTable );
         var data = oTable.fnGetData( anSelected[0]);
         return data[0];
@@ -120,10 +119,8 @@
         }
         return aReturn;
     }*/
-
 </script>
-<h2>Produções/Pesquisas sobre o Pronera</h2>
-<h4>8D - Memória</h4>
+
 <div id="grid">
     <ul id="paper_controls" class="nav nav-pills buttons">        
     <?php if ($this->session->userdata('status_curso') != '2P' && $this->session->userdata('status_curso') != 'CC') { ?>
@@ -138,15 +135,16 @@
         <thead>
             <tr>
                 <th width="10px; " > CÓDIGO </th>
-                <th width="650px"> TÍTULO </th>
-                <th width="60px">  ANO </th>
+                <th width="450px"> TÍTULO </th>
+                <th width="250px"> TIPO </th>
+                <th width="130px"> ANO </th>
             </tr>
         </thead>
 
         <tbody>
         </tbody>
     </table>
-    
+
     <div id="dialog" name="dialog" class="dialog" title="Confirmar remo&ccedil;&atilde;o">
         <br />
         <h4>Deseja remover o registro selecionado?</h4>

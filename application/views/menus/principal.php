@@ -136,7 +136,7 @@
 	?>
 ">
 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-		Produ&ccedil;&otilde;es
+		Pesquisas
 		<b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu drop">

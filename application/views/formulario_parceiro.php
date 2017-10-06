@@ -247,7 +247,7 @@ else
         </div>
 
         <div class="form-group">
-            <label>1. Nome do Parceiro</label>
+            <label>1. Nome Completo do Parceiro</label>
             <div>
                 <input type="text" class="form-control tamanho-lg" id="parceiro_nome" name="parceiro_nome"
                        value="<?php if ($retrivial) echo $dados[0]->nome; ?>"> 

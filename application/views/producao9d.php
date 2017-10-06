@@ -159,7 +159,8 @@
     });
 
 </script>
-
+<h2>Produções/Pesquisas sobre o Pronera</h2>
+<h4>Artigo</h4>
 <ul class="nav nav-tabs" id="paper-tab">
     <li class="active"><a href="#running">Em andamento</a></li>
     <li><a href="#ii-pnera">II PNERA</a></li>

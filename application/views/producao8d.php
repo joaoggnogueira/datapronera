@@ -122,7 +122,8 @@
     }*/
 
 </script>
-
+<h2>Produções/Pesquisas sobre o Pronera</h2>
+<h4>8D - Memória</h4>
 <div id="grid">
     <ul id="paper_controls" class="nav nav-pills buttons">        
     <?php if ($this->session->userdata('status_curso') != '2P' && $this->session->userdata('status_curso') != 'CC') { ?>

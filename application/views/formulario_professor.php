@@ -149,7 +149,9 @@
             // Faz requisição de login ao servidor (retorna um objeto JSON)
             request(urlRequest, null, 'hide');
         });
-
+        $("#professor_cpf").keypress(function (e) {
+            preventChar(e);
+        });
     });
 
 </script>
@@ -175,7 +177,7 @@
     </div>
 
     <div class="form-group">
-        <label>1. Nome do(a) professor(a) / educador(a)</label>
+        <label>1. Nome Completo do(a) professor(a) / educador(a)</label>
         <div>
             <input type="text" class="form-control tamanho-lg" id="professor_nome" name="professor_nome" value="<?php if ($retrivial) echo $dados[0]->nome; ?>">
             <label class="control-label form" for="professor_nome"></label>
@@ -231,7 +233,7 @@
             <label class="negacao-sm"> <input type="checkbox" name="ckCPF_na" id="ckCPF_na"  value="NAOAPLICA" <?php if ($retrivial && $dados[0]->cpf == "NAOAPLICA") echo "checked"; ?>> Não se aplica </label>
         </div>
         <div>
-            <input type="text" class="form-control tamanho-small" id="professor_cpf" name="professor_cpf" onkeypress="return preventChar('A')" maxlength="11"
+            <input type="text" class="form-control tamanho-small" id="professor_cpf" name="professor_cpf" maxlength="11"
                 value="<?php if ($retrivial &&  $dados[0]->cpf != "NAOAPLICA" && $dados[0]->cpf != "NAOINFORMADO") echo $dados[0]->cpf; ?>">
             <label class="control-label form" for="professor_cpf"></label>
         </div>

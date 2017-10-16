@@ -3,12 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/controllers/educando.php</file>
-            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/relatorio/mapas/index.php</file>
-            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/formulario_educando.php</file>
-            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/models/requisicao_m.php</file>
-            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/js/functions.js</file>
-            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/models/educando_m.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/controllers/parceiro.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/controllers/ctrl_curso.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/models/parceiro_m.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/controllers/curso.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/formulario_parceiro.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/formulario_cad_superintendencia.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/formulario_organizacao.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/config/database.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/organizacao.php</file>
+            <file>file:/C:/Users/joaog/Documents/BCC/Datapronera/aplicacao/dprnra/application/views/formulario_professor.php</file>
         </group>
     </open-files>
 </project-private>

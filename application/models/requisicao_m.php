@@ -70,6 +70,23 @@ class Requisicao_m extends CI_Model {
 
         return $saida;
     }
+    function list_superintendencias() {
+        $this->db->where(
+                array(
+                    'id <>' => '31',
+                )
+        );
+        $this->db->order_by('id');
+        $query = $this->db->get('superintendencia');
+
+        $saida = array();
+
+        foreach ($query->result() as $row) {
+            $saida[] = $row;
+        }
+        
+        return $saida;
+    }
 
     function get_modalidades() {
         $this->db->where(

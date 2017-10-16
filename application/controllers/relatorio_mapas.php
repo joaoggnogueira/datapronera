@@ -32,7 +32,8 @@ class Relatorio_mapas extends CI_Controller {
 
         $data['content'] = $this->session->userdata('curr_content');
         $modalidades = $this->requisicao_m->list_modalidades();
-        $valores = array('modalidades' => $modalidades);
+        $superintendencias = $this->requisicao_m->list_superintendencias();
+        $valores = array('modalidades' => $modalidades, 'superintendencias' => $superintendencias);
 
         $this->session->set_userdata('curr_data', $valores);
 

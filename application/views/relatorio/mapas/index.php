@@ -248,7 +248,39 @@ endif;
         font-weight: bold;
         cursor: pointer;
     }
-
+    .filter{
+        margin-left: 5px;
+    }
+    #filters .checkbox.selected{
+        color: #000 !important;
+        font-weight: bold;
+    }
+    #filters .checkbox:hover{
+        color: #66D !important;
+    }
+    #filters .checkbox{
+        color: #666 !important;
+        padding: 5px;
+        margin: 0px;
+    }
+    #filters .checkbox .fa{
+        font-size: 16px;
+    }
+    #filters .checkbox.selected .fa-check-square-o{
+        display: inline-block;
+    }
+    #filters .checkbox.selected .fa-square-o{
+        display: none;
+    }
+    #filters .checkbox .fa-check-square-o{
+        display: none;
+    }
+    #filters .checkbox .fa-square-o{
+        display: inline-block;
+    }
+    #filters .checkbox.disabled{
+        color: #aaa !important;
+    }
 </style>
 <details id="options">
     <summary><span class="fa fa-cogs"> Opções</span></summary>
@@ -276,14 +308,27 @@ endif;
                     <span><a class="btn btn-default all control-chk">Selecionar tudo</a></span>
                     <span><a class="btn btn-default one control-chk">Selecionar um</a></span>
                     <hr/>
-                    <div class="checkbox">
-                        <label><input class='filter option status-filter' checked value="AN" type="checkbox"/>ANDAMENTO</label>
+                    <div class="checkbox selected">
+                        
+                        <label>
+                            <i class="fa fa-check-square-o"></i>
+                            <i class="fa fa-square-o"></i>
+                            <input class='filter option status-filter' checked value="AN" type="checkbox"/>ANDAMENTO
+                        </label>
                     </div>
-                    <div class="checkbox">
-                        <label><input class='filter option status-filter' checked value="CC" type="checkbox"/>CONCLUIDO</label>
+                    <div class="checkbox selected">
+                        <label>
+                            <i class="fa fa-check-square-o"></i>
+                            <i class="fa fa-square-o"></i>
+                            <input class='filter option status-filter' checked value="CC" type="checkbox"/>CONCLUIDO
+                        </label>
                     </div>
-                    <div class="checkbox">
-                        <label><input class='filter option status-filter' checked value="2P" type="checkbox"/>PNERA II</label>
+                    <div class="checkbox selected">
+                        <label>
+                            <i class="fa fa-check-square-o"></i>
+                            <i class="fa fa-square-o"></i>
+                            <input class='filter option status-filter' checked value="2P" type="checkbox"/>PNERA II
+                        </label>
                     </div>
                 </details>
             </li>
@@ -295,8 +340,30 @@ endif;
                     <span><a class="btn btn-default one control-chk">Selecionar um</a></span>
                     <hr/>
                     <?PHP foreach ($modalidades as $modalidade): ?>
-                        <div class="checkbox">
-                            <label><input class='filter option modalidade-filter' checked value="<?= $modalidade->id ?>" type="checkbox"/><?= $modalidade->nome ?></label>
+                        <div class="checkbox selected">
+                            <label>
+                                <i class="fa fa-check-square-o"></i>
+                                <i class="fa fa-square-o"></i>
+                                <input class='filter option modalidade-filter' checked value="<?= $modalidade->id ?>" type="checkbox"/><?= $modalidade->nome ?>
+                            </label>
+                        </div>
+                    <?PHP endforeach; ?>
+                </details>
+            </li>
+            <li>
+                <details class='filter-option'>
+                    <summary>Superintedencia</summary>
+                    <hr/>
+                    <span><a class="btn btn-default all control-chk">Selecionar tudo</a></span>
+                    <span><a class="btn btn-default one control-chk">Selecionar um</a></span>
+                    <hr/>
+                    <?PHP foreach ($superintendencias as $sr): ?>
+                        <div class="checkbox selected">
+                            <label>
+                                <i class="fa fa-check-square-o"></i>
+                                <i class="fa fa-square-o"></i>
+                                <input class='filter option superintendencia-filter' checked value="<?= $sr->id ?>" type="checkbox"/><?= 'SR'.str_pad($sr->id, 2, "0", STR_PAD_LEFT).' - '.$sr->nome ?>
+                            </label>
                         </div>
                     <?PHP endforeach; ?>
                 </details>
@@ -393,8 +460,9 @@ endif;
         }, 1000);
 
         $(config).find("#tipo_marker").change(updateTypeMarker);
-        $(config).find("input[type='checkbox']").change(updateFilters);
-
+        $(config).find(".checkbox").click(function(){$(this).find("input[type='checkbox']").click();});
+        $(config).find("input[type='checkbox']").change(updateFilters).hide();
+        
         $(config).find(".control-chk.all").click(checkAll);
         $(config).find(".control-chk.one").click(checkOne);
 
@@ -450,8 +518,9 @@ endif;
     }
 
     function checkAll(event) {
-        console.log(event);
         $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function () {
+            var parent = $(this).parents(".checkbox").eq(0);
+            parent.addClass("selected");
             this.checked = true;
         });
         updateMap();
@@ -459,9 +528,13 @@ endif;
 
     function checkOne(event) {
         $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").each(function () {
+            var parent = $(this).parents(".checkbox").eq(0);
+            parent.removeClass("selected");
             this.checked = false;
         });
         $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").get(0).checked = true;
+        var parent = $(event.target).parents(".filter-option").eq(0).find("input[type='checkbox']").eq(0).parents(".checkbox").eq(0);
+        parent.addClass("selected");
         updateMap();
     }
 
@@ -478,20 +551,25 @@ endif;
     }
 
     function updateFilters(event) {
-
         if ($(event.target).parents(".filter-option").eq(0).find(".filter:checked").length === 0) {
             event.target.checked = true;
         } else {
             updateMap();
         }
-
+        var parent = $(event.target).parents(".checkbox").eq(0);
+        if(event.target.checked){
+            parent.addClass("selected");
+        } else {
+            parent.removeClass("selected");
+        }
     }
 
     function getFilter() {
 
         var data = {
             "status": [],
-            "modalidade": {"ids": [], "nil": false}
+            "modalidade": {"ids": [], "nil": false},
+            "sr": []
         };
 
         $("#filters").find(".status-filter:checked").each(function () {
@@ -503,6 +581,9 @@ endif;
             } else {
                 data.modalidade.nil = true;
             }
+        });
+        $("#filters").find(".superintendencia-filter:checked").each(function () {
+            data.sr.push(this.value);
         });
         return data;
     }
@@ -529,9 +610,12 @@ endif;
                 var searchCursoBtn = document.getElementById('search-curso');
                 searchCursoBtn.style.display = "none";
                 $("#options .input").attr('disabled', 'disabled');
+                $("#filters .filter").attr("disabled",true);
+                $("#filters .checkbox").addClass("disabled");
                 $("#loadingmarkers").show();
             }
         }
+        
         switch ($("#mapa-select").val()) {
             case "educando":
                 prepareMapaEducando();
@@ -723,9 +807,9 @@ endif;
                         var data = [
                             {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
                         ];
-<?PHP if (!$publico): ?>
+                        <?PHP if (!$publico): ?>
                             data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
-<?PHP endif; ?>
+                        <?PHP endif; ?>
                         openWindow(data, marker, curso);
 
                     });
@@ -737,6 +821,8 @@ endif;
             }
             $("#loadingmarkers").hide();
             $("#options .input").removeAttr('disabled');
+            $("#filters .filter").removeAttr("disabled");
+            $("#filters .checkbox").removeClass("disabled");
             var searchCursoBtn = document.getElementById('search-curso');
             searchCursoBtn.style.display = "inline-block";
 
@@ -753,7 +839,7 @@ endif;
                     var marker = createMarker(educando);
 
                     hashMarkers[educando.id] = marker;
-<?PHP if (!$publico): ?>
+                    <?PHP if (!$publico): ?>
                         marker.addListener('click', function () {
 
                             openWindow([
@@ -761,7 +847,7 @@ endif;
                                 {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
                             ], marker, educando);
                         });
-<?PHP endif; ?>
+                    <?PHP endif; ?>
 
                 }
                 return marker;
@@ -771,10 +857,12 @@ endif;
             }
             $("#loadingmarkers").hide();
             $("#options .input").removeAttr('disabled');
-<?PHP if (!$publico): ?>
+            $("#filters .filter").removeAttr("disabled");
+            $("#filters .checkbox").removeClass("disabled");
+            <?PHP if (!$publico): ?>
                 var searchEducandoBtn = document.getElementById('search-educando');
                 searchEducandoBtn.style.display = "inline-block";
-<?PHP endif; ?>
+            <?PHP endif; ?>
         }, "json");
         console.log(get);
     }

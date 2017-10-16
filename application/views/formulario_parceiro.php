@@ -219,6 +219,9 @@ if ($operacao == 'update')
 
             request(urlRequest, null, 'hide');
         });
+        $("#parceiro_numero").keypress(function (e) {
+            preventChar(e);
+        });
     });
 
 </script>
@@ -244,7 +247,7 @@ else
         </div>
 
         <div class="form-group">
-            <label>1. Nome do Parceiro</label>
+            <label>1. Nome Completo do Parceiro</label>
             <div>
                 <input type="text" class="form-control tamanho-lg" id="parceiro_nome" name="parceiro_nome"
                        value="<?php if ($retrivial) echo $dados[0]->nome; ?>"> 
@@ -282,7 +285,7 @@ else
                 <div class="form-group">
                     <div>
                         <input type="text" class="form-control tamanho-smaller" id="parceiro_numero" name="parceiro_numero"
-                               value="<?php if ($retrivial) echo $dados[0]->numero; ?>" onKeyPress="return preventChar();" maxLength="5">
+                               value="<?php if ($retrivial) echo $dados[0]->numero; ?>" maxLength="5">
                         <label class="control-label form" for="parceiro_numero"></label>
                     </div>
                 </div>

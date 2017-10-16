@@ -85,7 +85,7 @@
 	    </div>
 
 	    <div class="form-group">
-	        <label>2. Nome do Responsável</label>
+	        <label>2. Nome completo do Responsável</label>
             <div>
                 <input type="text" class="form-control tamanho-lg" id="responsavel" name="responsavel"
                     value="<?php if ($operacao != 'add') echo $dados[0]->nome_responsavel; ?>">

@@ -563,6 +563,22 @@ if (empty($dados)) {
 
             request(urlRequest, null, 'hide');
         });
+        
+        $("#duracao").keypress(function (e) {
+            preventChar(e);
+        });
+        $("#numero_turmas").keypress(function (e) {
+            preventChar(e);
+        });
+        $("#num_aluno_ingre").keypress(function (e) {
+            preventChar(e);
+        });
+        $("#num_aluno_concl").keypress(function (e) {
+            preventChar(e);
+        });
+        $("#num_bolsistas").keypress(function (e) {
+            preventChar(e);
+        });
 
     });
 
@@ -786,7 +802,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-smaller" id="duracao" name="duracao" onKeyPress="return preventChar()" maxlength="2"
+                    <input type="text" class="form-control tamanho-smaller" id="duracao" name="duracao" maxlength="2"
                            value="<?php if ($dados[0]->duracao_curso != "-1") echo $dados[0]->duracao_curso; ?>">
                     <label class="control-label form" for="duracao"></label>
                 </div>
@@ -877,7 +893,7 @@ if (empty($dados)) {
                 </div>
                 <div class="form-group">
                     <div>
-                        <input type="text" class="form-control  tamanho-smaller" id="numero_turmas" name="numero_turmas" onKeyPress="return preventChar()" maxlength="6"
+                        <input type="text" class="form-control  tamanho-smaller" id="numero_turmas" name="numero_turmas" maxlength="6"
                                value="<?php if ($dados[0]->numero_turmas != "-1") echo $dados[0]->numero_turmas; ?>">
                         <label class="control-label form" for="numero_turmas"></label>
                     </div>
@@ -894,7 +910,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-smaller" id="num_aluno_ingre" name="num_aluno_ingre" onKeyPress="return preventChar()" maxlength="6"
+                    <input type="text" class="form-control tamanho-smaller" id="num_aluno_ingre" name="num_aluno_ingre" maxlength="6"
                            value="<?php if ($dados[0]->numero_ingressantes != "-1") echo $dados[0]->numero_ingressantes; ?>">
                     <label class="control-label form" for="num_aluno_ingre"></label>
                 </div>
@@ -911,7 +927,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-smaller" id="num_aluno_concl" name="num_aluno_concl" onKeyPress="return preventChar()" maxlength="6"
+                    <input type="text" class="form-control tamanho-smaller" id="num_aluno_concl" name="num_aluno_concl" maxlength="6"
                            value="<?php if ($dados[0]->numero_concluintes != "-1") echo $dados[0]->numero_concluintes; ?>">
                     <label class="control-label form" for="num_aluno_concl"></label>
                 </div>
@@ -1092,7 +1108,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-smaller" id="num_bolsistas" name="num_bolsistas" onKeyPress="return preventChar()" maxlength="6"
+                    <input type="text" class="form-control tamanho-smaller" id="num_bolsistas" name="num_bolsistas" maxlength="6"
                            value="<?php if ($dados[0]->numero_bolsistas != -1) echo $dados[0]->numero_bolsistas; ?>">
                     <label class="control-label form" for="num_bolsistas"></label>
                 </div>

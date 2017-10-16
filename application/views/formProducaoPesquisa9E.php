@@ -109,6 +109,10 @@
 
             request(urlRequest, null, 'hide');
         });
+                
+        $("#duracao").keypress(function (e) {
+            preventChar(e);
+        });
     });
 
 </script>
@@ -183,7 +187,7 @@
         <div class="form-group">
             <label>1.5. Dura&ccedil;&atilde;o (em minutos)</label>
             <div>
-                <input type="text" class="form-control tamanho-smaller" id="duracao" name="duracao" onkeypress="return preventChar()" maxlength="5"
+                <input type="text" class="form-control tamanho-smaller" id="duracao" name="duracao" maxlength="5"
                     value="<?php if ($operacao != 'add') echo $dados[0]->duracao; ?>" >
                 <label class="control-label form bold" for="duracao"></label>
             </div>

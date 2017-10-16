@@ -114,7 +114,8 @@ if (!defined('BASEPATH'))
                             nome: $("#name-up").val().toUpperCase(),
                             email: $("#email-up").val().toUpperCase(),
                             senha: $("#senha-up").val(),
-                            municipio: $("#municipio-up").val()
+                            municipio: $("#municipio-up").val(),
+                            captcha: $("#g-recaptcha-response").val()
                         };
 
                         var urlResquest = "<?= site_url('acesso_publico/signup/') ?>";
@@ -137,11 +138,14 @@ if (!defined('BASEPATH'))
             $("#uf-up").find("option[value='0']").remove();
             $("#uf-up").val(1).change().select2();
         });
-
+        $("#back-btn").appendTo($(".overflow-menu"));
     });
 </script>
+<a style="margin-top: 25px !important;position: absolute;font-size: 15px" href="<?php echo index_page(); ?>" type="button" class="btn center" id="back-btn"><i class="fa fa-chevron-left"></i> VOLTAR AO ACESSO RESTRITO</a>
 <h2><strong>Acesso Público</strong></h2>
 <hr/>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="https://apis.google.com/js/api:client.js"></script>
 
 <div class="row">
     <div class="col-md-7">
@@ -149,7 +153,7 @@ if (!defined('BASEPATH'))
             <li class="active"><a data-toggle="tab" href="#login">Entrar</a></li>
             <li><a data-toggle="tab" href="#signup">Cadastrar-se</a></li>
         </ul>
-
+        
         <div class="tab-content">
             <div id="login" class="tab-pane fade in active">
                 <div class="col-md-2"></div>
@@ -241,6 +245,7 @@ if (!defined('BASEPATH'))
                 </form>
             </div>
         </div>
+        <hr/>
     </div>
     <div class="col-md-5">
         <div class="logo">
@@ -287,6 +292,10 @@ if (!defined('BASEPATH'))
                             <input autocomplete="off" type="password" class="form-control center" id="senha-up-repeat" name="senha"/>
                         </div>
                         <label class="control-label center" for="senha-up-repeat"></label>
+                    </div>
+                    <hr/>
+                    <div class="col-lg-12">
+                        <div style="margin-left: -25px;" class="g-recaptcha" data-sitekey="6LfMWCMTAAAAAKosa3Kly65fvko_BmibtrRraAvS"></div>
                     </div>
                 </div>
                 <button class="btn btn-lg btn-primary btn-block" id="signup-confirm-btn" type="button">Confirmar</button>

@@ -200,58 +200,87 @@ class Acesso_publico extends CI_Controller {
 
     function signup() {
 
-        $senha = $this->input->post('senha');
+        $captcha = $this->input->post('captcha');
 
-        if (strlen($senha) < 5) {
-            echo json_encode(array(
-                'success' => false,
-                'message' => 'A senha deve ter no minimo 5 caracteres'
-            ));
-            return;
-        }
+        require(dirname(__FILE__).'/../../vendor/google/recaptcha/src/autoload.php');
 
-        $pessoa = array(
-            'nome' => trim($this->input->post('nome')),
-            'id_cidade' => trim($this->input->post('municipio')),
-            'email' => trim($this->input->post('email')),
-            'senha' => md5($senha),
-            'data_criacao' => date('Y-m-d H:i:s')
-        );
+        $secret = "6LfMWCMTAAAAAOWQFgfqw9pToMzC-qOxm4tPGW7g";
 
-        // Starts transaction
-        $this->db->trans_begin();
+        $response = null;
 
-        if (($inserted_id = $this->acesso_publico_m->signup($pessoa))) {
+        $reCaptcha = new \ReCaptcha\ReCaptcha($secret);
+        if ($captcha) {
+            $response = $reCaptcha->verify($captcha);
+            if ($response != null && $response->isSuccess()) {
 
-            $this->log->save("USUÁRIO COM ACESSO PÚBLICO CADASTRADO: ID '" . $inserted_id . "'");
+                $senha = $this->input->post('senha');
 
-            $this->db->trans_commit();
+                if (strlen($senha) < 5) {
+                    echo json_encode(array(
+                        'success' => false,
+                        'message' => 'A senha deve ter no minimo 5 caracteres'
+                    ));
+                    return;
+                }
 
-            $html = array(
-                'content' => $this->load->view('loginpublico.php', '', true)
-            );
+                $pessoa = array(
+                    'nome' => trim($this->input->post('nome')),
+                    'id_cidade' => trim($this->input->post('municipio')),
+                    'email' => trim($this->input->post('email')),
+                    'senha' => md5($senha),
+                    'data_criacao' => date('Y-m-d H:i:s')
+                );
 
-            $response = array(
-                'success' => true,
-                'html' => $html,
-                'message' => 'Cadastro efetuado'
-            );
+                // Starts transaction
+                $this->db->trans_begin();
 
-            // Duplicate entry for EMAIL key
-        } else if ($this->db->_error_number() == 1062) {
+                if (($inserted_id = $this->acesso_publico_m->signup($pessoa))) {
 
-            $this->db->trans_rollback();
+                    $this->log->save("USUÁRIO COM ACESSO PÚBLICO CADASTRADO: ID '" . $inserted_id . "'");
 
-            $response = array(
-                'success' => false,
-                'message' => 'E-mail informado já cadastrado'
-            );
+                    $this->db->trans_commit();
+
+                    $html = array(
+                        'content' => $this->load->view('loginpublico.php', '', true)
+                    );
+
+                    $response = array(
+                        'success' => true,
+                        'html' => $html,
+                        'message' => 'Cadastro efetuado'
+                    );
+
+                    // Duplicate entry for EMAIL key
+                } else if ($this->db->_error_number() == 1062) {
+
+                    $this->db->trans_rollback();
+
+                    $response = array(
+                        'success' => false,
+                        'message' => 'E-mail informado já cadastrado'
+                    );
+                } else {
+                    $this->db->trans_rollback();
+
+                    $response = array(
+                        'success' => false,
+                        'message' => 'Falha ao efetuar cadastro da sua conta'
+                    );
+                }
+            } else {
+                $this->db->trans_rollback();
+
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha na requisição do Recaptcha'
+                );                
+            }
         } else {
             $this->db->trans_rollback();
 
             $response = array(
                 'success' => false,
-                'message' => 'Falha ao efetuar cadastro da sua conta'
+                'message' => 'Por favor, valide o captcha!'
             );
         }
 

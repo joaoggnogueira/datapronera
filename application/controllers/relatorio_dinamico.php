@@ -73,7 +73,7 @@ class Relatorio_dinamico extends CI_Controller {
 
         /** CIDADES_CURSOS **/
         array_push($array, $this->relatorio_dinamico_m->abaCidadeCursos($this->input->post('where_cidade_cursos')));
-        array_unshift($array[2], array('ID_CURSO', 'CIDADE', 'ESTADO'));
+        array_unshift($array[2], array('ID_CURSO', 'GEOCODE', 'CIDADE', 'ESTADO'));
 
         /** EDUCANDOS **/
         array_push($array, $this->relatorio_dinamico_m->abaEducandos($this->input->post('where_educandos')));

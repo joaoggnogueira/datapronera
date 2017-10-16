@@ -74,7 +74,7 @@ class Relatorio_dinamico_m extends CI_Model {
     public function abaCidadeCursos($where = ""){
 
         $query = $this->db->query("
-            SELECT cr.id_curso as ID_CURSO, ci.cod_municipio as GEOCODE, ci.nome as CIDADE, e.sigla as ESTADO   
+            SELECT DISTINCT cr.id_curso as ID_CURSO, ci.cod_municipio as GEOCODE, ci.nome as CIDADE, e.sigla as ESTADO   
             FROM `caracterizacao_cidade` cc, `caracterizacao` cr, `cidade` ci, `estado` e, `curso` c, `curso_modalidade` cm
             WHERE cr.id_curso = c.id AND cc.id_caracterizacao = cr.id AND cc.id_cidade = ci.id 
             AND ci.id_estado = e.id AND c.ativo_inativo = 'A'
@@ -118,7 +118,7 @@ class Relatorio_dinamico_m extends CI_Model {
     public function abaCidadeEducandos($where = ""){
 
         $query = $this->db->query("
-            SELECT DISTINCT ed.id_curso as CURSO_VINCULADO, ec.id_educando as ID_EDUCANDO, c.nome as NOME_CIDADE, e.sigla as ESTADO 
+            SELECT DISTINCT ed.id_curso as CURSO_VINCULADO, ec.id_educando as ID_EDUCANDO, c.cod_municipio as GEOCODE, c.nome as NOME_CIDADE, e.sigla as ESTADO 
             FROM `educando`ed, `educando_cidade` ec, `cidade` c, `estado` e, `curso` cs, `caracterizacao` cr, `curso_modalidade` cm
             WHERE ed.id = ec.id_educando AND cr.id_curso = cs.id AND ec.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ed.id_curso
             $where
@@ -177,7 +177,7 @@ class Relatorio_dinamico_m extends CI_Model {
     public function abaCidadesInstituicoesEnsino($where = ""){
 
         $query = $this->db->query("
-            SELECT DISTINCT ie.id_curso as CURSO_VINCULADO, ie.id as ID_INSTITUIÇÃO_ENSINO, c.nome as CIDADE, e.sigla as ESTADO 
+            SELECT DISTINCT ie.id_curso as CURSO_VINCULADO, ie.id as ID_INSTITUIÇÃO_ENSINO, c.cod_municipio as GEOCODE, c.nome as CIDADE, e.sigla as ESTADO 
             FROM `instituicao_ensino` ie, `cidade`c, `estado`e, `curso` cs, `caracterizacao` cr, `curso_modalidade` cm
             WHERE ie.id_cidade IS NOT NULL AND ie.id_cidade = c.id AND c.id_estado = e.id AND cs.id = ie.id_curso AND cr.id_curso = cs.id
             $where
@@ -244,7 +244,7 @@ class Relatorio_dinamico_m extends CI_Model {
     public function abaCidadesParceiros($where = ""){
 
         $query = $this->db->query("
-            SELECT p.id as ID_PARCEIRO, c.nome as CIDADE, e.sigla as ESTADO 
+            SELECT DISTINCT p.id as ID_PARCEIRO, c.cod_municipio as GEOCODE, c.nome as CIDADE, e.sigla as ESTADO 
             FROM `parceiro` p, `cidade`c, `estado`e, `curso` cp, `caracterizacao` cr, `curso_modalidade` cm
             WHERE p.id_cidade IS NOT NULL AND p.id_cidade = c.id AND c.id_estado = e.id AND p.id_curso = cp.id AND cr.id_curso = cp.id
             $where

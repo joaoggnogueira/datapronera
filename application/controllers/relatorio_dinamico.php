@@ -81,7 +81,7 @@ class Relatorio_dinamico extends CI_Controller {
 
         /** CIDADES_EDUCANDOS **/
         array_push($array, $this->relatorio_dinamico_m->abaCidadeEducandos($this->input->post('where_cidade_educandos')));
-        array_unshift($array[4], array('CURSO_VINCULADO', 'ID_EDUCANDO', 'NOME_CIDADE', 'ESTADO'));
+        array_unshift($array[4], array('CURSO_VINCULADO', 'ID_EDUCANDO', 'GEOCODE', 'NOME_CIDADE', 'ESTADO'));
 
         /** PROFESSORES **/
         array_push($array, $this->relatorio_dinamico_m->abaProfessores($this->input->post('where_professores')));
@@ -97,7 +97,7 @@ class Relatorio_dinamico extends CI_Controller {
 
         /** CIDADES_INSTITUICOES_DE_ENSINO **/
         array_push($array, $this->relatorio_dinamico_m->abaCidadesInstituicoesEnsino($this->input->post('where_cidades_ie')));
-        array_unshift($array[8], array('CURSO_VINCULADO', 'ID_INSTITUIÇÃO_ENSINO', 'CIDADE', 'ESTADO'));
+        array_unshift($array[8], array('CURSO_VINCULADO', 'ID_INSTITUIÇÃO_ENSINO', 'GEOCODE', 'CIDADE', 'ESTADO'));
 
         /** ORGANIZAÇÕES DEMANDANTES **/
         array_push($array, $this->relatorio_dinamico_m->abaOrganizacoesDemandantes($this->input->post('where_org_demandantes')));
@@ -113,7 +113,7 @@ class Relatorio_dinamico extends CI_Controller {
 
         /** CIDADES PARCEIROS **/
         array_push($array, $this->relatorio_dinamico_m->abaCidadesParceiros($this->input->post('where_cidades_parceiros')));
-        array_unshift($array[12], array('ID_PARCEIRO', 'CIDADE', 'ESTADO'));
+        array_unshift($array[12], array('ID_PARCEIRO', 'GEOCODE', 'CIDADE', 'ESTADO'));
 
         /** TIPOS DE PARCERIA **/
         array_push($array, $this->relatorio_dinamico_m->abaTiposParceiros($this->input->post('where_tipos_parceiros')));

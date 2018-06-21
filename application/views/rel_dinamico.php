@@ -350,7 +350,31 @@
         $("#estados-select").css("width","300px").select2();
         $("#municipios-select").css("width","300px").select2();
         $("#genero_educando").css("width","200px").select2();
-        $("#genero_professor").css("width","200px").select2();
+        $("#genero_professor").css("width","200px").select2();	
+		
+		$(".data-inicio").blur(function(){			
+			$(this).next(".data-fim").attr( "min", $(this).val() );
+			
+			if( $(this).val() < 1998 )
+				$(this).val( 1998 );
+				
+			if( $(this).val() > <?= date("Y") ?> )
+				$(this).val( <?= date("Y") ?> );
+			
+			if( $(this).val() > $(this).next(".data-fim").val() )
+				$(this).next(".data-fim").val( $(this).val() );
+		});
+		
+		$(".data-fim").blur(function(){
+			if( $(this).val() < $(this).prev(".data-inicio").val() )
+				$(this).val( $(this).prev(".data-inicio").val() );		
+			
+			if( $(this).val() < 1998 )
+				$(this).val( 1998 );
+				
+			if( $(this).val() > <?= date("Y") ?> )
+				$(this).val( <?= date("Y") ?> );			
+		});		
     });   
     
    
@@ -385,10 +409,10 @@
 
         <h3>Período de Início Realizado (Ano)</h3>
         <div class="alert alert-info" role="alert"><b>Informação!</b> Para esse filtro funcionar é  necessário preencher os dois campos.</div>
-        <p><input type="text" id="inicio0-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"> à <input type="text" id="inicio1-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"></p>
+        <p><input type="number" id="inicio0-realizado" class="form-control data-inicio" style="max-width: 102px; display: inline;" min = "1998" placeholder="Ex: 2010"> à <input type="number" min="1998" id="inicio1-realizado" class="form-control data-fim" style="max-width: 102px; display: inline;" placeholder="Ex: 2010"></p>
         <h3>Período de Término Realizado (Ano)</h3>
         <div class="alert alert-info" role="alert"><b>Informação!</b> Para esse filtro funcionar é  necessário preencher os dois campos.</div>
-        <p><input type="text" id="termino0-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"> à <input type="text" id="termino1-realizado" class="form-control" style="max-width: 82px; display: inline;" placeholder="Ex: 2010"></p>
+        <p><input type="number" id="termino0-realizado" class="form-control data-inicio" style="max-width: 102px; display: inline;" min = "1998" placeholder="Ex: 2010"> à <input type="number" min="1998" id="termino1-realizado" class="form-control data-fim" style="max-width: 102px; display: inline;" placeholder="Ex: 2010"></p>
 
 
         <div id="modalidades">

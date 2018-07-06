@@ -3,15 +3,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Pronera</title>
-
+        <meta name="theme-color" content="#5bb75b"/>
+        <meta name="Description" content="O Sistema Datapronera foi desenvolvido para a II Pesquisa Nacional sobre a Educação na Reforma Agrária, e teve como objetivo inicial armazenar todos os dados que foram encontrados nesta pesquisa. Após esta pesquisa, o Datapronera foi melhorado e uma nova versão, foi desenvolvida para que o levantamento destes dados pudesse ocorrer durante os anos seguintes a II Pesquisa Nacional."/>
+        <meta name="author" content="Incra/Pronera/Unesp FCT"/>
+        <meta name="keywords" content="Datapronera, Pronera, Pnera"/>
         <!-- CSS -->
         <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap.css" />
         <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/index.css" />
         <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/form.css" />
-        <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/jquery.dataTables.css" />	
-        <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/jquery-ui-1.10.3.custom.css"/>
-        <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/select2.min.css"/>
-        <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/fontawesome/font-awesome.min.css"/>
+        <link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/jquery.dataTables.css" />	
+        <link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/jquery-ui-1.10.3.custom.css"/>
+        <link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/select2.min.css"/>
+        <link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/fontawesome/font-awesome.min.css"/>
 
 
         <!-- JS -->

@@ -393,12 +393,10 @@
  <!-- Tab panes -->
  <div class="tab-content">
     <div role="tabpanel" class="tab-pane fade in active" id="cursos">
-        <div class="alert alert-warning" role="alert"><b>Cuidado!</b> Essa operação pode demorar para gerar o relatório. Portanto ao clicar em gerar, aguarde o tempo que for necessário.</div>
-        <p>Possíveis filtros dos cursos:</p>
         <h3>Curso</h3>
         <p><b>Superintendência:</b> <select id="superintendencias-select"></select></p>
         <p><b>Cursos:</b> <select id="cursos-select"><option value="0" selected>Todos os cursos</option></select></p>
-
+        <hr/>
         <h3>Status do Cadastro do Curso</h3>
         <select id="status_curso">
             <option value="0" selected>Todos os status</option>
@@ -406,20 +404,16 @@
             <option value="AN">Em andamento</option>
             <option value="2P">II PNERA</option>
         </select>
-
+        <hr/>
         <h3>Período de Início Realizado (Ano)</h3>
-        <div class="alert alert-info" role="alert"><b>Informação!</b> Para esse filtro funcionar é  necessário preencher os dois campos.</div>
         <p><input type="number" id="inicio0-realizado" class="form-control data-inicio" style="max-width: 102px; display: inline;" min = "1998" placeholder="Ex: 2010"> à <input type="number" min="1998" id="inicio1-realizado" class="form-control data-fim" style="max-width: 102px; display: inline;" placeholder="Ex: 2010"></p>
         <h3>Período de Término Realizado (Ano)</h3>
-        <div class="alert alert-info" role="alert"><b>Informação!</b> Para esse filtro funcionar é  necessário preencher os dois campos.</div>
         <p><input type="number" id="termino0-realizado" class="form-control data-inicio" style="max-width: 102px; display: inline;" min = "1998" placeholder="Ex: 2010"> à <input type="number" min="1998" id="termino1-realizado" class="form-control data-fim" style="max-width: 102px; display: inline;" placeholder="Ex: 2010"></p>
-
-
+        <hr/>
         <div id="modalidades">
             <h3>Modalidade</h3>
             <p><b>Modalidades:</b> <select id="modalidades-select"><option value="0" selected>Todas as modalidades</option></select></p>
         </div>
-
         <div id="niveis">
             <h3>Nível</h3>
             <p><b>Nível:</b> 
@@ -431,7 +425,7 @@
             </select>
             </p>
         </div>
-
+        <hr/>
         <div id="municipios">
             <h3>Município</h3>
             <p><b>Estados:</b> <select id="estados-select"><option>Selecione um Estado</option></select></p>
@@ -439,8 +433,6 @@
         </div>
     </div>
    <div role="tabpanel" class="tab-pane fade" id="educandos">
-       <div class="alert alert-warning" role="alert"><b>Cuidado!</b> Essa operação pode demorar para gerar o relatório. Portanto ao clicar em gerar, aguarde o tempo que for necessário.</div>
-       <p>Possíveis filtros dos educandos:</p>
        <h3>Gênero</h3>
        <select id="genero_educando">
            <option value="0" selected>Todos os gêneros</option>
@@ -452,8 +444,6 @@
        <input type="text" name="nascimento" id="nascimento" placeholder="Ex: 1990" class="form-control">
    </div>
    <div role="tabpanel" class="tab-pane fade" id="professores">
-       <div class="alert alert-warning" role="alert"><b>Cuidado!</b> Essa operação pode demorar para gerar o relatório. Portanto ao clicar em gerar, aguarde o tempo que for necessário.</div>
-       <p>Possíveis filtros dos professores:</p>
        <h3>Gênero</h3>
        <select id="genero_professor">
            <option value="0" selected>Todos os gêneros</option>
@@ -463,8 +453,6 @@
        </select>
    </div>
    <div role="tabpanel" class="tab-pane fade" id="parceiros">
-       <div class="alert alert-warning" role="alert"><b>Cuidado!</b> Essa operação pode demorar para gerar o relatório. Portanto ao clicar em gerar, aguarde o tempo que for necessário.</div>
-       <p>Possíveis filtros dos parceiros:</p>
        <h3>Tipo de Parceria:</h3>
        <input type="checkbox" id="tipo_parceria" value="1">
        <label for="tipo_parceria">Usar Filtro?</label>

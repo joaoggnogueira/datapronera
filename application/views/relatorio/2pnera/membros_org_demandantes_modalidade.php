@@ -4,6 +4,7 @@
 			<th style="text-align:left">MODALIDADE</th>
 			<th>% ESTUDARAM NO PRONERA</th>
 			<th>% NÃO ESTUDARAM NO PRONERA</th>
+			<th>% NÃO INFORMADO</th>
 		</tr>
 		<?php 
 			foreach ($result as $row) {
@@ -12,6 +13,7 @@
 				<td><?php echo $row['modalidade']; ?></td>
 				<td style="text-align:center"><?php echo $row['sim']; ?></td>
 				<td style="text-align:center"><?php echo $row['nao']; ?></td>
+				<td style="text-align:center"><?php echo $row['ni']; ?></td>
 			</tr>
 		<?php
 			}

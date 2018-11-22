@@ -203,7 +203,7 @@ class Requisicao_m extends CI_Model {
         $resultado = "<option value=\"0\" disabled selected> Selecione a Superintendência </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+            $resultado .= "<option value=" . $row->id . "> SR ".$row->id." - " . $row->nome . "</option>";
         }
 
         echo $resultado;

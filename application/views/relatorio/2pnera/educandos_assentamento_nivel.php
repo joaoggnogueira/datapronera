@@ -1,7 +1,7 @@
 <div>
 	<table style="width:100%; font-size: 13px;" border="1" cellspacing="0">
 		<tr>
-			<th style="text-align:left;">TERRITÓRIO</th>
+			<th style="text-align:left;">TERRITÓRIO / ASSENTAMENTO</th>
 			<th>EJA FUNDAMENTAL</th>
 			<th>ENSINO MÉDIO</th>
 			<th>ENSINO SUPERIOR</th>

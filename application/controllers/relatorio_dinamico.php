@@ -57,7 +57,7 @@ class Relatorio_dinamico extends CI_Controller {
         ini_set('memory_limit', '2048M'); // or you could use 1G
         ini_set('max_execution_time', 123456);
         date_default_timezone_set('Europe/London');
-
+        
         define('EOL',(PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
         /** CRIO ARRAYS PRIMERO **/

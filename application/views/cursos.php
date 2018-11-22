@@ -5,6 +5,28 @@ if (!defined('BASEPATH')) {
     echo index_page();
 }
 ?>
+<style>
+    .row_checkbox{
+        display: flex;
+        flex-direction: row;
+    }
+    .row_checkbox label{
+        margin-left: 10px;
+    }
+    .row_checkbox:hover label{
+        color: #003bb3;
+    }
+
+    .group_checkbox{
+        flex-direction: column;
+        justify-content: space-between;
+        display: flex;
+        padding: 0px 5px;
+        background: white;
+        width: 960px;
+        margin-bottom: 10px;
+    }
+</style>
 
 <script type="text/javascript">
 
@@ -26,6 +48,24 @@ if (!defined('BASEPATH')) {
 
     $(document).ready(function () {
 
+        function date_to_number(value, nullvalue) {
+            var string;
+            if (value && value != "###" && value != "NI" && value != "" && value != false && value != undefined) {
+                string = value;
+            } else {
+                string = nullvalue;
+            }
+            var array = string.split("/");
+            var mes = parseInt(array[0]);
+            var ano = parseInt(array[1]);
+            return (ano - 1900) * 12 + mes;
+        }
+
+        var dateObj = new Date();
+        var month = dateObj.getUTCMonth() + 1;
+        var year = dateObj.getUTCFullYear();
+
+        var atualdate = date_to_number(month + "/" + year);
         var tableRunning = new Table({
             url: "<?php echo site_url('request/get_curso/AN/CO'); ?>",
             table: $('#running-courses'),
@@ -44,8 +84,28 @@ if (!defined('BASEPATH')) {
             controls: $('#ii-pnera-controls')
         });
 
-        tableRunning.hideColumns([2]);
-        tableFinished.hideColumns([2]);
+        $(".check_vigencia").on('change', function () {
+            tableRunning.update();
+            tableFinished.update();
+            tableIIPnera.update();
+        });
+
+        $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+            if (['running-courses', 'finished-courses', 'ii-pnera-courses'].indexOf(oSettings.nTable.getAttribute('id')) !== -1) {
+                var ini = date_to_number(aData[3], "01/1950");
+                var fim = date_to_number(aData[4], "12/2028");
+
+                var result_inner = ((ini <= atualdate) && (atualdate <= fim)); //verifica se está dentro da vigência
+                var result_outset = ((atualdate <= ini) || (atualdate >= fim)); //verifica se está fora da vigência 
+
+                var checked_an = document.getElementById("vigencia_checkbox_an").checked;
+                var checked_cc = document.getElementById("vigencia_checkbox_cc").checked;
+
+                return (result_inner && checked_an) || (result_outset && checked_cc);
+            } else {
+                return true;
+            }
+        });
 
         /* Add a click handler to leave users able to access the courses (row) */
 
@@ -133,20 +193,31 @@ if (!defined('BASEPATH')) {
             e.preventDefault();
             $(this).tab('show');
         });
-
     });
-
 </script>
+
+<div class="group_checkbox" id="scrollingDiv">
+    <h4>Mostrar cursos:</h4>
+    <div class="row_checkbox form-check">
+        <input checked type="checkbox" name="status" class="check_vigencia" value="AN" id="vigencia_checkbox_an"/>
+        <label for="vigencia_checkbox_an"> Dentro da Vigência (Cursos que possivelmente estão ocorrendo neste momento)</label>
+    </div>
+    <div class="row_checkbox form-check">
+        <input checked type="checkbox" name="status" class="check_vigencia" value="CC" id="vigencia_checkbox_cc"/>
+        <label for="vigencia_checkbox_cc"> Fora da Vigência (Cursos que ainda não iniciaram ou já foram finalizados)</label>
+    </div>
+</div>
 
 <ul class="nav nav-tabs" id="course-tab">
     <li class="active"><a href="#running">Cadastro em andamento</a></li>
     <li><a href="#finished">Cadastro concluído</a></li>
-    <li><a href="#ii-pnera">II PNERA</a></li>
+    <li><a href="#ii-pnera">Cadastro do PNERA II</a></li>
 </ul>
 
 <div class="tab-content">
     <div class="tab-pane active" id="running">
         <div id="grid">
+
             <ul id="running-controls" class="nav nav-pills buttons">        
                 <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="running-access">Acessar Curso</button></li>                
                 <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="finalizar_cadastro">Finalizar Cadastro</button></li>
@@ -155,9 +226,10 @@ if (!defined('BASEPATH')) {
                 <thead>
                     <tr>
                         <th style="width:  50px"> CÓDIGO </th>
-                        <th style="width: 400px"> CURSO </th>
-                        <th style="width: 300px"> RESPONSÁVEL PELA INFORMAÇÃO </th>
-                        <th style="width: 150px"> INÍCIO CURSO </th>
+                        <th style="width: 300px"> CURSO </th>
+                        <th style="width: 150px"> SEI OU SICONV </th>
+                        <th style="width: 50px"> INÍCIO </th>
+                        <th style="width: 50px"> TERMINO </th>
                     </tr>
                 </thead>
 
@@ -191,9 +263,10 @@ if (!defined('BASEPATH')) {
                 <thead>
                     <tr>
                         <th style="width:  50px"> CÓDIGO </th>
-                        <th style="width: 400px"> CURSO </th>
-                        <th style="width: 300px"> RESPONSÁVEL PELA INFORMAÇÃO </th>
-                        <th style="width: 150px"> INÍCIO CURSO </th>
+                        <th style="width: 300px"> CURSO </th>
+                        <th style="width: 150px"> SEI OU SICONV </th>
+                        <th style="width: 50px"> INÍCIO </th>
+                        <th style="width: 50px"> TERMINO </th>
                     </tr>
                 </thead>
 
@@ -219,9 +292,10 @@ if (!defined('BASEPATH')) {
                 <thead>
                     <tr>
                         <th style="width:  50px"> CÓDIGO </th>
-                        <th style="width: 400px"> CURSO </th>
-                        <th style="width: 300px"> RESPONSÁVEL PELA INFORMAÇÃO </th>
-                        <th style="width: 150px"> INÍCIO CURSO </th>
+                        <th style="width: 300px"> CURSO </th>
+                        <th style="width: 150px"> SEI OU SICONV </th>
+                        <th style="width: 50px"> INÍCIO </th>
+                        <th style="width: 50px"> TERMINO </th>
                     </tr>
                 </thead>
 

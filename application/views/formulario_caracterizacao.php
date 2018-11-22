@@ -564,6 +564,18 @@ if (empty($dados)) {
             request(urlRequest, null, 'hide');
         });
         
+        $("#ckCoord_proj_nome").click(function(){
+            $("#ckTitulo_coord_na")[0].checked = this.checked;
+            $("#ckTitulo_coord_na").change();
+        });
+        $("#ckVice_naplica").click(function(){
+            $("#ckVice_titulo_naplica")[0].checked = this.checked;
+            $("#ckVice_titulo_naplica").change();
+        });
+        $("#ckCoord_ped_naplica").click(function(){
+            $("#ckTit_coord_pedag_naplica")[0].checked = this.checked;
+            $("#ckTit_coord_pedag_naplica").change();
+        });
         $("#duracao").keypress(function (e) {
             preventChar(e);
         });

@@ -11,12 +11,13 @@
 			<th>% ESPECIALISTA</th>
 			<th>% MESTRE(A)</th>
 			<th>% DOUTOR(A)</th>
+			<th>% N/A</th>
 		</tr>
 		<?php 
 			foreach ($result as $row) {
 		?>
 			<tr>
-				<td style="text-align:center">SR - <?php if($row['id'] < 10) echo '0'.$row['id']; else echo $row['id']; ?></td>
+				<td style="text-align:center"><?PHP echo $row['id']; ?></td>
 				<td><?php echo $row['nome']; ?></td>
 				<td style="text-align:center"><?php echo $row['ensino_fundamental_completo']; ?></td>
 				<td style="text-align:center"><?php echo $row['ensino_fundamental_incompleto']; ?></td>
@@ -26,6 +27,7 @@
 				<td style="text-align:center"><?php echo $row['especialista']; ?></td>
 				<td style="text-align:center"><?php echo $row['mestre']; ?></td>
 				<td style="text-align:center"><?php echo $row['doutor']; ?></td>
+				<td style="text-align:center"><?php echo $row['undefined']; ?></td>
 			</tr>
 		<?php
 			}

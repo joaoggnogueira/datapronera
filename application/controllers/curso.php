@@ -202,51 +202,46 @@ class Curso extends CI_Controller {
                             $response = array(
                                 'success' => true,
                                 'html' => $html,
-                                'message' => 'Cadastro efetuado com sucesso!'
+                                'message' => 'Cadastro efetuado com sucesso! 0x6'
                             );
                         } else {
-
                             $this->db->trans_rollback();
 
                             $response = array(
                                 'success' => false,
-                                'message' => 'Falha ao efetuar cadastro'
+                                'message' => 'Falha ao efetuar cadastro 0x5'
                             );
                         }
                     } else {
-
                         $this->db->trans_rollback();
 
                         $response = array(
                             'success' => false,
-                            'message' => 'Falha ao efetuar cadastro'
+                            'message' => 'Falha ao efetuar cadastro 0x4'
                         );
                     }
                 } else {
-
                     $this->db->trans_rollback();
 
                     $response = array(
                         'success' => false,
-                        'message' => 'Falha ao efetuar cadastro'
+                        'message' => 'Falha ao efetuar cadastro 0x3'
                     );
                 }
             } else {
-
                 $this->db->trans_rollback();
 
                 $response = array(
                     'success' => false,
-                    'message' => 'Falha ao efetuar cadastro'
+                    'message' => 'Falha ao efetuar cadastro 0x2'
                 );
             }
         } else {
-
             $this->db->trans_rollback();
-
+            
             $response = array(
                 'success' => false,
-                'message' => 'Falha ao efetuar cadastro'
+                'message' => 'Falha ao efetuar cadastro 0x1'
             );
         }
 

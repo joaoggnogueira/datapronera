@@ -296,7 +296,6 @@ class Caracterizacao extends CI_Controller {
                 'id_modalidade' => $id_modalidade,
                 'data'          => $this->input->post('data')
             );
-
             if ($this->curso_m->update_record($curso, $this->session->userdata('id_curso'))) {
 
                 // Algoritmo BURRO!
@@ -360,7 +359,7 @@ class Caracterizacao extends CI_Controller {
 
                     $response = array(
                         'success' => false,
-                        'message' => 'Falha ao atualizar cadastro'
+                        'message' => 'Falha ao atualizar cadastro 0x3'
                     );
                 }
             } else {
@@ -369,7 +368,7 @@ class Caracterizacao extends CI_Controller {
 
                 $response = array(
                     'success' => false,
-                    'message' => 'Falha ao atualizar cadastro'
+                    'message' => 'Falha ao atualizar cadastro 0x2'
                 );
             }
         } else {
@@ -378,7 +377,7 @@ class Caracterizacao extends CI_Controller {
 
             $response = array(
                 'success' => false,
-                'message' => 'Falha ao atualizar cadastro'
+                'message' => 'Falha ao atualizar cadastro 0x1'
             );
         }
 

@@ -16,7 +16,119 @@ class Mapas_m extends CI_Model {
         $array = str_replace("]", ")", $array);
         return $array;
     }
+    
+    function relacao_sr_curso($sr){
+        
+        $sr_id = (int)$sr;
+        
+        $stmt = "SELECT 
+                c.`id` AS 'id',
+                CONCAT(LPAD(sr.`id`,2,0),'.',LPAD(c.`id`,3,0)) AS 'cod',
+                IF(c.`nprocesso`='' or c.`nprocesso` is null,'N/D',c.`nprocesso`) as 'SEI',
+                c.`nome` as 'nome',
+                IFNULL(m.`nome`,'NÃO INFORMADO') as 'Modalidade',
+                IFNULL(IF(
+                ca.`inicio_realizado` IS NULL or ca.`inicio_realizado` = 'NI',
+                CONCAT(ca.`inicio_previsto`,' - ',ca.`termino_previsto`,' (PREVISTO)'),
+                CONCAT(ca.`inicio_realizado`,' - ',ca.`termino_realizado`)
+                ),'N/D') as 'vigencia',
+                IF(ci.id IS NOT NULL, GROUP_CONCAT(ci.nome,' (',e.sigla,')'), 'N/D') as 'municípios'
+            FROM `curso` c
+            INNER JOIN `superintendencia` sr ON c.`id_superintendencia` = sr.`id` 
+            INNER JOIN `curso_modalidade` m ON m.`id` = c.`id_modalidade`
+            INNER JOIN `caracterizacao` ca ON ca.`id_curso` = c.`id` 
+            LEFT JOIN `caracterizacao_cidade` cc ON cc.`id_caracterizacao` = ca.`id` 
+            LEFT JOIN `cidade` ci ON ci.`id` = cc.`id_cidade`
+            LEFT JOIN `estado` e ON e.`id` = ci.`id_estado`
+            WHERE sr.`id` = $sr_id AND c.`ativo_inativo` = 'A'
+            GROUP BY c.id";
+        $query = $this->db->query($stmt);
+        $result = $this->get_table($query);
+        $table = $result['aaData'];
 
+        return $result;
+    }
+    
+    function get_curso_details($id_curso){
+        $sr_id = (int)$id_curso;
+        
+        $stmt = "SELECT "
+                . "c.nome as 'nome', "
+                . "sr.nome as 'sr', "
+                . "IF(c.nprocesso LIKE '' OR c.nprocesso IS NULL,'<i>Não informado</i>',c.nprocesso) as 'sei', "
+                . "CONCAT(IF(c.ninstrumento IS NULL OR cti.`id` = 8,'',CONCAT(c.ninstrumento,' - ')),IF(cti.`id` = 8,'<i>Não informado</i>',cti.nome)) as 'instrumento', "
+                . "cm.nome as 'modalidade', "
+                . "IFNULL(IF(
+                    ca.`inicio_realizado` IS NULL OR ca.`inicio_realizado` = 'NI',
+                    CONCAT(ca.`inicio_previsto`,' - ',ca.`termino_previsto`,' (PREVISTO)'),
+                    CONCAT(ca.`inicio_realizado`,' - ',ca.`termino_realizado`, ' (REALIZADO)')
+                    ),'<i>Não informado</i>') as 'vigencia', "
+                . "IF(ci.id IS NOT NULL, GROUP_CONCAT(' ',ci.nome,' (',e.sigla,')'), '<i>Não informado</i>') as 'municipios', "
+                . "CONCAT(CASE ca.`titulacao_coordenador_geral`
+                            WHEN 'ESPECIALISTA' THEN 'Esp. '
+                            WHEN 'MESTRE(A)' THEN 'Mr(a). '
+                            WHEN 'DOUTOR(A)' THEN 'Dr(a). '
+                            WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
+                            ELSE ''
+                          END,IF(ca.`nome_coordenador_geral` = '' OR ca.`nome_coordenador_geral` IS NULL,'<i>Não informado</i>',ca.`nome_coordenador_geral`)) as 'c_geral', "
+                . "CONCAT(CASE ca.`titulacao_coordenador`
+                            WHEN 'ESPECIALISTA' THEN 'Esp. '
+                            WHEN 'MESTRE(A)' THEN 'Mr(a). '
+                            WHEN 'DOUTOR(A)' THEN 'Dr(a). '
+                            WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
+                            ELSE ''
+                          END,IF(ca.`nome_coordenador` = '' OR ca.`nome_coordenador` IS NULL,'<i>Não informado</i>',ca.`nome_coordenador`)) as 'c_curso', "
+                . "CONCAT(CASE ca.`titulacao_vice_coordenador`
+                            WHEN 'ESPECIALISTA' THEN 'Esp. '
+                            WHEN 'MESTRE(A)' THEN 'Mr(a). '
+                            WHEN 'DOUTOR(A)' THEN 'Dr(a). '
+                            WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
+                            ELSE ''
+                          END,IF(ca.`nome_vice_coordenador` = '' OR ca.`nome_vice_coordenador` IS NULL,'<i>Não informado</i>',ca.`nome_vice_coordenador`)) as 'vc_curso', "
+                . "CONCAT(CASE ca.`titulacao_coordenador_pedagogico`
+                            WHEN 'ESPECIALISTA' THEN 'Esp. '
+                            WHEN 'MESTRE(A)' THEN 'Mr(a). '
+                            WHEN 'DOUTOR(A)' THEN 'Dr(a). '
+                            WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
+                            ELSE ''
+                          END,IF(ca.`nome_coordenador_pedagogico` = '' OR ca.`nome_coordenador_pedagogico` IS NULL,'<i>Não informado</i>',ca.`nome_coordenador_pedagogico`)) as 'cp_curso' "
+                . "FROM `curso` c "
+                . "INNER JOIN `superintendencia` sr ON sr.id = c.id_superintendencia "
+                . "INNER JOIN `curso_tipo_instrumento` cti ON cti.id = c.id_superintendencia "
+                . "INNER JOIN `curso_modalidade` cm ON cm.id = c.id_modalidade "
+                . "INNER JOIN `caracterizacao` ca ON ca.id_curso = c.id "
+                . "LEFT JOIN `caracterizacao_cidade` cc ON cc.`id_caracterizacao` = ca.`id` " 
+                . "LEFT JOIN `cidade` ci ON ci.`id` = cc.`id_cidade` "
+                . "LEFT JOIN `estado` e ON e.`id` = ci.`id_estado` "
+                . "WHERE c.id = $id_curso";
+        
+        $query = $this->db->query($stmt);
+        $result = $query->result();
+        return $result[0];
+    }
+    
+    function list_educandos($id_curso){
+        $sr_id = (int)$id_curso;
+        
+        $stmt = "SELECT 
+            e.`nome`,
+            IFNULL(e.`cpf`,'<i>Não Informado</i>'),
+            IFNULL(e.`rg`,'<i>Não Informado</i>'),
+            IF(e.`nome_territorio` IS NULL OR e.`nome_territorio` LIKE '' OR e.`nome_territorio` LIKE 'NÃO INFORMADO','<i>Não Informado</i>',e.`nome_territorio`),
+            IFNULL(CONCAT(m.`nome`,' (',est.`sigla`,')'),'<i>Não Informado</i>')
+            FROM `educando` e 
+            LEFT JOIN `educando_cidade` ec ON ec.id_educando = e.id 
+            LEFT JOIN `cidade` m ON m.id = ec.id_cidade 
+            LEFT JOIN `estado` est ON est.id = m.`id_estado` 
+            WHERE e.id_curso = $sr_id";
+        
+        $query = $this->db->query($stmt);
+        $result = $this->get_table($query);
+        $table = $result['aaData'];
+
+        return $result;
+    }
+    
     //mapas
     function get_municipios_cursos($filtros) {
         
@@ -34,14 +146,25 @@ class Mapas_m extends CI_Model {
             $modalidade_ids = false;
         }
         $stmt = "
-            SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng 
+            SELECT 
+                m.id as id,
+                COUNT(m.id) as total,
+                m.nome as municipio,
+                est.nome as estado,
+                lg.latitude as lat, 
+                lg.longitude as lng,
+                cr.inicio_realizado as inicio,
+                cr.termino_realizado as termino
             FROM `curso` c
-            INNER JOIN caracterizacao cr ON c.id = cr.id_curso
-            INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
-            INNER JOIN cidade m ON m.id = ccr.id_cidade
-            INNER JOIN estado est ON est.id = m.id_estado 
-            INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
-            WHERE c.ativo_inativo = 'A' AND c.status in $status AND c.id_superintendencia in $sr
+                INNER JOIN caracterizacao cr ON c.id = cr.id_curso
+                INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
+                INNER JOIN cidade m ON m.id = ccr.id_cidade
+                INNER JOIN estado est ON est.id = m.id_estado 
+                INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio
+            WHERE 
+                c.ativo_inativo = 'A' 
+                AND c.status in $status 
+                AND c.id_superintendencia in $sr
             ";
 
 
@@ -79,13 +202,26 @@ class Mapas_m extends CI_Model {
         }
 
         $stmt = "
-            SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng FROM `educando` e
-            INNER JOIN educando_cidade ec ON ec.id_educando = e.id
-            INNER JOIN cidade m ON m.id = ec.id_cidade
-            INNER JOIN estado est ON est.id = m.id_estado  
-            INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
-            INNER JOIN curso c ON c.id = e.id_curso 
-            WHERE c.ativo_inativo = 'A' AND c.status in $status AND c.id_superintendencia in $sr
+            SELECT 
+                m.id as id,
+                COUNT(m.id) as total,
+                m.nome as municipio,
+                est.nome as estado,
+                lg.latitude as lat, 
+                lg.longitude as lng,
+                ca.inicio_realizado as inicio,
+                ca.termino_realizado as termino 
+            FROM `educando` e
+                INNER JOIN educando_cidade ec ON ec.id_educando = e.id
+                INNER JOIN cidade m ON m.id = ec.id_cidade
+                INNER JOIN estado est ON est.id = m.id_estado  
+                INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
+                INNER JOIN curso c ON c.id = e.id_curso 
+                INNER JOIN caracterizacao ca ON ca.id_curso = c.id 
+            WHERE 
+                c.ativo_inativo = 'A' AND 
+                c.status in $status AND 
+                c.id_superintendencia in $sr
         ";
 
         if ($modalidade_ids) {

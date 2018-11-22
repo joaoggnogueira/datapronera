@@ -55,17 +55,18 @@ $this->session->set_userdata('curr_content', 'parceiro');
          });*/
 
         /* Máscara para inputs */
-        $('#parceiro_cep').mask("99.999-999");
-        $('#parceiro_tel1').mask("(99)9999-9999");
-        $('#parceiro_tel2').mask("(99)9999-9999");
-
+//        $('#parceiro_cep').mask("99.999-999");
+//        $('#parceiro_tel1').mask("(99)9999-9999");
+//        $('#parceiro_tel2').mask("(99)9999-9999");
+        
+        
         /* Não informados */
         $('#ckParceiro_numero').niCheck({
             'id': ['parceiro_numero']
         });
 
         $('#ckParceiro_tel2').niCheck({
-            'id': ['parceiro_tel2']
+            'id': ['parceiro_tel2','radioTel21','radioTel22','radioTel23']
         });
 
         $('#ckParceiro_site').niCheck({
@@ -203,7 +204,8 @@ $this->session->set_userdata('curr_content', 'parceiro');
                     parceiro_tipo_outros: $('#parceiro_tipo_outros').val().toUpperCase()
                 };
 
-                var urlRequest = "<?php if ($operacao == 'add')
+                var urlRequest = "<?php
+if ($operacao == 'add')
     echo site_url('parceiro/add/');
 if ($operacao == 'update')
     echo site_url('parceiro/update/');
@@ -279,7 +281,7 @@ else
 
                 <div class="checkbox negacao-sm"> 
                     <label> <input type="checkbox" name="ckParceiro_numero" id="ckParceiro_numero" 
-<?php if ($retrivial && $dados[0]->numero == 0) echo 'checked'; ?> > S/N </label>		      
+                                   <?php if ($retrivial && $dados[0]->numero == 0) echo 'checked'; ?> > S/N </label>		      
                 </div>
 
                 <div class="form-group">
@@ -336,22 +338,18 @@ else
             <div class="form-group interno">
                 <label> a. Telefone 1 </label>
                 <div>
-                    <input type="text" class="form-control tamanho-small" id="parceiro_tel1" name="parceiro_tel1"
-                           value="<?php if ($retrivial) echo $dados[0]->telefone1; ?>">
+                    <input type="text" class="form-control tamanho-small" id="parceiro_tel1" maxlength="13" name="parceiro_tel1" value="<?php if ($retrivial) echo $dados[0]->telefone1; ?>">
                     <label class="control-label form" for="parceiro_tel1"></label>
                 </div>
             </div> 
             <div class="form-group interno">
                 <label class="negacao"> b. Telefone 2 </label>
-
                 <div class="checkbox negacao-sm"> 
                     <label> <input type="checkbox" name="ckParceiro_tel2" id="ckParceiro_tel2" <?php if ($retrivial && $dados[0]->telefone2 == 'NAOAPLICA') echo "checked" ?>> Não se aplica </label>		      
                 </div>
-
                 <div class="form-group">
                     <div>
-                        <input type="text" class="form-control tamanho-small" id="parceiro_tel2" name="parceiro_tel2"
-                               value="<?php if ($retrivial && $dados[0] != 'NAOAPLICA') echo $dados[0]->telefone2; ?>">
+                        <input type="text" class="form-control tamanho-small" id="parceiro_tel2" name="parceiro_tel2" maxlength="13" value="<?php if ($retrivial && $dados[0] != 'NAOAPLICA') echo $dados[0]->telefone2; ?>">
                         <label class="control-label form" for="parceiro_tel2"></label>
                     </div>
                 </div>
@@ -463,4 +461,4 @@ else
         </div>
     </fieldset>
 
-<?php echo form_close(); ?>
+    <?php echo form_close(); ?>

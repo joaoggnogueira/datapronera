@@ -21,7 +21,7 @@
 			foreach ($result as $row) {
 		?>
 			<tr>
-				<td style="text-align:center">SR - <?php if($row['id'] < 10) echo '0'.$row['id']; else echo $row['id']; ?></td>
+				<td style="text-align:center"><?PHP echo $row['id']; ?></td>
 				<td><?php echo $row['nome']; ?></td>
 				<td style="text-align:center"><?php echo $row['acampamento']; ?></td>
 				<td style="text-align:center"><?php echo $row['assentamento']; ?></td>

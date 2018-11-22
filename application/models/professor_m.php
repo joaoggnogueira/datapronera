@@ -78,7 +78,7 @@
 			$this->db->where('id_professor', $id_professor);
 			$this->db->where('id', $disc_id);
 			$this->db->delete('disciplina');
-			return;
+			return $this->db->affected_rows() != 0;
 		}
 	} 
 

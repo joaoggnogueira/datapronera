@@ -275,17 +275,10 @@ class Educando extends CI_Controller {
             $concluinte = $this->input->post('reducando_concluinte');
         }
 
-        $cpf = ($this->input->post('ckCPF_ni') == 'true') ? 'NAOINFORMADO' :
-                trim($this->input->post('educando_cpf'));
-
-        $cpf = ($this->input->post('ckCPF_na') == 'true') ? 'NAOAPLICA' :
-                $cpf;
-
-        $rg = ($this->input->post('ckRg_ni') == 'true') ? 'NAOINFORMADO' :
-                trim($this->input->post('educando_rg'));
-
-        $rg = ($this->input->post('ckRg_na') == 'true') ? 'NAOAPLICA' :
-                $rg;
+        $cpf = ($this->input->post('ckCPF_ni') == 'true') ? 'NAOINFORMADO' : trim($this->input->post('educando_cpf'));
+        $cpf = ($this->input->post('ckCPF_na') == 'true') ? 'NAOAPLICA' : $cpf;
+        $rg = ($this->input->post('ckRg_ni') == 'true') ? 'NAOINFORMADO' : trim($this->input->post('educando_rg'));
+        $rg = ($this->input->post('ckRg_na') == 'true') ? 'NAOAPLICA' : $rg;
 
         $data = array(
             'nome' => trim($this->input->post('educando_nome')),
@@ -320,8 +313,9 @@ class Educando extends CI_Controller {
                     $data_mun = array(
                         'id_cidade' => $municipios
                     );
-
-                    if (!$this->educando_m->update_record_municipio($data_mun, $this->input->post('id'))) {
+                    
+                    $record_total = $this->educando_m->get_educando_cidade($this->input->post('id'));
+                    if(count($record_total) == 0){
                         $data_mun['id_educando'] = $this->input->post('id');
                         if (!$this->educando_m->add_record_municipio($data_mun)) {
                             $response = array(
@@ -331,7 +325,17 @@ class Educando extends CI_Controller {
                             echo json_encode($response);
                             return;
                         }
+                    } else {
+                        if (!$this->educando_m->update_record_municipio($data_mun, $this->input->post('id'))) {
+                            $response = array(
+                                'success' => false,
+                                'message' => 'Falha ao alterar municipio',
+                            );
+                            echo json_encode($response);
+                            return;
+                        }
                     }
+                    
 
                     $this->log->save("MUNICÍPIO '" . $data_mun['id_cidade'] . "' ADICIONADO: EDUCANDO ID '" . $this->input->post('id') . "'");
                 }

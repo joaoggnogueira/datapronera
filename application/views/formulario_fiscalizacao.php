@@ -36,17 +36,15 @@ $retrivial = ($operacao != 'add');
 
         $('#botao_add_memb').click(function () {
 
-            var form = Array(
-                    {
-                        'id': 'superintendencia',
-                        'message': 'Selecione a superintendência',
-                        'extra': null
-                    },
-                    {
-                        'id': 'fiscalizacao_sel_pessoa_equipe',
-                        'message': 'Selecione o pesquisador',
-                        'extra': null
-                    }
+            var form = Array({
+                    'id': 'superintendencia',
+                    'message': 'Selecione a superintendência',
+                    'extra': null
+                },{
+                    'id': 'fiscalizacao_sel_pessoa_equipe',
+                    'message': 'Selecione o pesquisador',
+                    'extra': null
+                }
             );
 
             if (isFormComplete(form)) {
@@ -92,76 +90,26 @@ $retrivial = ($operacao != 'add');
             }
         });
 
-
-
-        contador = 0;
-        $('#botao_movim_coord').click(function () {
-
-            var form = Array(
-                    {
-                        'id': 'movimento_nome_membro',
-                        'message': 'Informe o nome do membro envolvido no curso',
-                        'extra': null
-                    },
-                    {
-                        'id': 'movimento_grau_membro',
-                        'message': 'Informe o grau de escolaridade do membro na época do curso',
-                        'extra': null
-                    },
-                    {
-                        'name': 'rmovimento_estudo',
-                        'message': 'Informe se o membro estudou/estuda em curso do PRONERA',
-                        'extra': null
-                    }
-            );
-
-            if (isFormComplete(form)) {
-
-                var cod_pesquisador = $('#fiscalizacao_sel_pessoa_equipe').val();
-                var pesquisador = $('#fiscalizacao_sel_pessoa_equipe option:selected').text();
-                var superintendencia = $('#superintendencia').val();
-                $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function (superintendencia) {
-
-                });
-                var node = ['N', cod_pesquisador, "SR - " + superintendencia, pesquisador, "Carregando"];
-
-                if (!table.nodeExistsById(node, 1)) {
-
-                    table.addData(node);
-
-                    $('#fiscalizacao_sel_pessoa_equipe').val(0);
-                    $('#funcao').val("");
-
-                } else {
-                    $('#fiscalizacao_sel_pessoa_equipe').showErrorMessage('Pesquisador já adicionado!');
-                }
-            }
-        });
-
         $('#salvar').click(function () {
 
-            var form = Array(
-                    {
-                        'id': 'tipo',
-                        'message': 'Informe o tipo da fiscalização',
-                        'extra': null
-                    },
-                    {
-                        'id': 'tipo_descricao',
-                        'ni': (($('#tipo').val() == 'OUTRO') ? false : true),
-                        'message': 'Especifique o tipo da fiscalização',
-                        'extra': null
-                    },
-                    {
-                        'id': 'resumo',
-                        'message': 'Descreva detalhes sobre a fiscalização',
-                        'extra': null
-                    },
-                    {
-                        'id': 'data',
-                        'message': 'Informe a abrangência da organização demandante',
-                        'extra': null
-                    }
+            var form = Array({
+                    'id': 'tipo',
+                    'message': 'Informe o tipo da fiscalização',
+                    'extra': null
+                }, {
+                    'id': 'tipo_descricao',
+                    'ni': (($('#tipo').val() == 'OUTRO') ? false : true),
+                    'message': 'Especifique o tipo da fiscalização',
+                    'extra': null
+                }, {
+                    'id': 'resumo',
+                    'message': 'Descreva detalhes sobre a fiscalização',
+                    'extra': null
+                }, {
+                    'id': 'data',
+                    'message': 'Informe a abrangência da organização demandante',
+                    'extra': null
+                }
             );
             var fileinput = $("input#file").get(0);
             if (fileinput.files.length != 0 && !fileinput.validate) {
@@ -171,13 +119,12 @@ $retrivial = ($operacao != 'add');
             if (isFormComplete(form)) {
 
                 var urlRequest = "<?php
-if ($operacao == 'add')
-    echo site_url('fiscalizacao/add/');
-if ($operacao == 'update')
-    echo site_url('fiscalizacao/update/');
-?>";
-
-                requestMultipart(urlRequest, "form");
+                    if ($operacao == 'add')
+                        echo site_url('fiscalizacao/add/');
+                    if ($operacao == 'update')
+                        echo site_url('fiscalizacao/update/');
+                ?>";
+                requestMultipart(urlRequest, "form",undefined,{membros: JSON.stringify(table.getAll()),membros_excluidos: JSON.stringify(table.getDeletedRows(1))});
             }
         });
 
@@ -199,7 +146,7 @@ $countBoxMembers = 97;
 
 <form id="form"	method="post" enctype="multipart/form-data">
     <fieldset>
-        <legend>Caracteriza&ccedil;&atilde;o de Acompanhamento/Fiscalização</legend>
+        <legend>Caracteriza&ccedil;&atilde;o de Acompanhamento/Fiscaliza&ccedil;&atilde;o</legend>
         <?PHP if ($operacao == "update"): ?>
             <input type="hidden" name="id" value="<?php echo $fiscalizacao['id']; ?>"/>
         <?PHP endif; ?>
@@ -213,7 +160,7 @@ $countBoxMembers = 97;
             <input type="button" id="reset" class="btn btn-default" value="Voltar">
         </div>
         <div class="form-group">
-            <label><?= ++$countInput; ?>. Tipo do Acompanhamento/Fiscalização</label>
+            <label><?= ++$countInput; ?>. Tipo do Acompanhamento/Fiscaliza&ccedil;&atilde;o</label>
             <div class="form-group">
                 <div>
                     <select class="form-control" id="tipo" name="tipo"></select>
@@ -241,7 +188,7 @@ $countBoxMembers = 97;
             <label><?= ++$countInput; ?>. Data do Acompanhamento/Fiscaliza&ccedil;&atilde;o</label>
             <div class="form-group">
                 <div>
-                    <input type="date" name="data" id="data" class="form-control" style="width: 100px" value="<?php if ($retrivial) echo $dados[0]->data; ?>"/>
+                    <input type="text" name="data" id="data" class="form-control" style="width: 100px" value="<?php if ($retrivial) echo $dados[0]->data; ?>"/>
                     <p class="text-danger select"><label for="data"><label></label></label></p>
                 </div>
             </div>
@@ -250,7 +197,7 @@ $countBoxMembers = 97;
         <div class="table-box table-box-lg">
             <label><?= ++$countInput; ?>. Membros envolvidos</label>
             <div class="form-group interno">
-                <label> <?= chr($countBoxMembers++) ?>. Superintendência do membro </label>
+                <label> <?= chr($countBoxMembers++) ?>. Superintend&ecirc;ncia do membro </label>
                 <div>
                     <select class="form-control select_equipe_superintendencia negacao" id="superintendencia" name="superintendencia"></select>
                     <p class="text-danger select equipe_superintendencia"><label for="superintendencia"></label></p>

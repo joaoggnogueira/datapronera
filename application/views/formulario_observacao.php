@@ -9,7 +9,7 @@
 
  	$(document).ready(function() {
 
-        var id = "<?php echo $curso['id']; ?>";
+        var id = "<?php echo $this->session->userdata('id_curso'); ?>";
 
         $('#salvar').click(function () {
 

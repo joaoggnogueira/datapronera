@@ -1,61 +1,53 @@
 <?php
 $this->session->set_userdata('curr_content', 'educando');
-if ($operacao == 'add')
-    $retrivial = false;
-else
-    $retrivial = true;
+$retrivial = ($operacao != 'add');
 ?>
 <script type="text/javascript">
     var id = "<?php echo $educando['id']; ?>";
     var urlEstados = "<?php echo site_url('requisicao/get_estados'); ?>";
     var urlAcampamentos = "<?php echo site_url('educando/get_tipo_acamp') . '/'; ?>" + id;
 
-    //var oTable;
     $(document).ready(function () {
-
-        // recupera estados e municipios selecionando oque está no banco de dados
+        
+        //ATUALIZA ASSENTAMENTOS CONFORME ESTADO
+        $("#educando_sel_est").change(function () {
+            console.log($("#educando_tipo_terr").val());
+            console.log($("#educando_tipo_terr").val());
+            if ($("#educando_tipo_terr").val() == "ASSENTAMENTO") {
+                appendSelectorToASSENTAMENTO();
+            }
+        });
+        
+        //ESTADOS E MUNICIPIOS
         $.get(urlEstados, function (estados) {
             $('#educando_sel_est').html(estados);
             $('#educando_sel_mun').html('<option> Selecione o Estado </option>');
         }).done(function () {
-            //Deixa selecionado o estado atual se caso for update
-            var idEstado = <?php
-            if (array_key_exists(0, $municipio_estado))
-                echo $municipio_estado[0]->estado;
-            else
-                echo 0;
-            ?>;
+            var idEstado = <?= (array_key_exists(0, $municipio_estado)?$municipio_estado[0]->estado:0);?>;
             if (idEstado > 0) {
                 $('#educando_sel_est option[value="' + idEstado + '"]').attr('selected', true);
-                appendSelectorToASSENTAMENTO();
+                //INICIALIZA RETREVIAL SIPRA
+                <?PHP if ($retrivial && $dados[0]->tipo_territorio == "ASSENTAMENTO" && $dados[0]->code_sipra_assentamento): ?>
+                    appendSelectorToASSENTAMENTO();
+                <?PHP endif; ?>
 
                 var urlMunicipios = "<?php echo site_url('requisicao/get_municipios'); ?>";
-                //função adaptada do listCities(); localizado em functions.js
                 $('#educando_sel_est').change(function () {
                     var idEstado = $('#educando_sel_est').val();
                     $('#educando_sel_mun').html("<option>Aguarde...</option>");
                     $.get(urlMunicipios + '/' + idEstado, function (cities) {
                         $('#educando_sel_mun').html(cities);
                     }).done(function () {
-                        var idMunicipio = <?php
-                        if (array_key_exists(0, $municipio_estado))
-                            echo $municipio_estado[0]->cidade;
-                        else
-                            echo 0;
-                        ?>;
+                        var idMunicipio = <?= (array_key_exists(0, $municipio_estado)?$municipio_estado[0]->cidade:0); ?>;
                         $('#educando_sel_mun option[value="' + idMunicipio + '"]').attr('selected', true);
                     });
                 }).change();
-
             } else {
-                var urlMunicipios = "<?php echo site_url('requisicao/get_municipios'); ?>";
-                $("#educando_sel_est").listCities(urlMunicipios, 'educando_sel_mun');
+                $("#educando_sel_est").listCities("<?= site_url('requisicao/get_municipios'); ?>", 'educando_sel_mun');
             }
         });
-
-
-        var url = "<?php echo site_url('request/get_educando_mun') . '/'; ?>" + id;
-
+        
+        //SELECTBOX EVENTS
         var appendSelectorToASSENTAMENTO = function () {
             if (!$("#ckNome_terr_ni").prop("checked")) {
                 var urlAssentamentos = "<?php echo site_url('requisicao/get_assentamentos') . '/'; ?>" + $('#educando_sel_est option:selected').val();
@@ -74,20 +66,10 @@ else
         };
 
         var removeSelectorToASSENTAMENTO = function () {
-            try {
-                $("#educando_nome_terr").select2('destroy');
-            } catch (e) {
-            }
+            try { $("#educando_nome_terr").select2('destroy'); } catch (e) { }
             $("#educando_nome_terr").remove();
             $("#educando_territorio").append('<input type="text" class="form-control tamanho-n" id="educando_nome_terr" name="educando_nome_terr">');
         };
-
-        //ATUALIZA ASSENTAMENTOS CONFORME ESTADO
-        $("#educando_sel_est").change(function () {
-            if ($("#educando_tipo_terr").val() == "ASSENTAMENTO") {
-                appendSelectorToASSENTAMENTO();
-            }
-        });
 
         //CASO FOR ASSENTAMENTO, CRIA SELECTBOX
         $("#educando_tipo_terr").change(function () {
@@ -99,33 +81,36 @@ else
             }
         });
 
-        //Lista Municipios
+        //RECUPERA O TIPO DE TERRITÓRIO DO EDUCANDO
         $.get(urlAcampamentos, function (response) {
             $('#educando_tipo_terr option[value="' + response + '"]').attr("selected", true);
         });
 
-        //INICIALIZA RETREVIAL SIPRA
-        <?PHP
-        if ($retrivial):
-            if ($dados[0]->tipo_territorio == "ASSENTAMENTO"):
-                ?>
-                <?PHP
-                if (!$dados[0]->code_sipra_assentamento):
-                    ?>
-                            appendSelectorToASSENTAMENTO();
-                    <?PHP
-                endif;
-            endif;
-        endif;
-        ?>
-
-        /* Masking Inputs */
+        /* MASCARAS */
         $('#educando_data_nasc').mask('99/99/9999');
         $('#inicio_curso').mask('99/9999');
+        $("#educando_cpf").keypress(preventChar);
 
-        // Não informados
-
-
+        /* NÃO APLICAVEL */
+        $('#ckCPF_na').niCheck({'id': ['educando_cpf', 'ckCPF_ni']});
+        $('#ckRg_na').niCheck({'id': ['educando_rg', 'ckRg_ni']});
+        
+        /* NÃO INFROMADOS */
+        $('#ckRg_ni').niCheck({'id': ['educando_rg', 'ckRg_na']});
+        $('#ckCPF_ni').niCheck({'id': ['educando_cpf', 'ckCPF_na']});
+        $('#ckSexo_ni').niCheck({'name': ['reducando_sexo']});
+        $('#ckEducando_data_nasc').niCheck({'id': ['educando_data_nasc']});
+        $('#ckEducando_idade').niCheck({ 'id': ['educando_idade']});
+        $('#ckEducandoConcluinte_ni').niCheck({'name': ['reducando_concluinte']});
+        $("#ckTipo_terr_ni").niCheck({
+            'id': ['educando_tipo_terr'],
+            'niValue' : [""],
+            'beforeoncheck': function(){
+                if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
+                    removeSelectorToASSENTAMENTO();
+                }
+            }
+        });
         $('#ckEst_ni').niCheck({
             'id': ['educando_sel_est','educando_sel_mun','ckMun_ni'],
             'oncheck': function(){
@@ -135,7 +120,6 @@ else
                 }
             }
         });
-        
         $("#ckNome_terr_ni").niCheck({
             'id': ['educando_nome_terr'],
             'onuncheck': function(){
@@ -151,116 +135,60 @@ else
             }
         });
         
-        $("#ckTipo_terr_ni").niCheck({
-            'id': ['educando_tipo_terr'],
-            'niValue' : [""],
-            'beforeoncheck': function(){
-                if ($("#educando_tipo_terr").val() === "ASSENTAMENTO") {
-                    removeSelectorToASSENTAMENTO();
-                }
-            }
-        });
-
-        $('#ckCPF_na').niCheck({
-            'id': ['educando_cpf', 'ckCPF_ni']
-        });
-
-        $('#ckRg_na').niCheck({
-            'id': ['educando_rg', 'ckRg_ni']
-        });
-        
-        $('#ckRg_ni').niCheck({
-            'id': ['educando_rg', 'ckRg_na']
-        });
-        
-        $('#ckCPF_ni').niCheck({
-            'id': ['educando_cpf', 'ckCPF_na']
-        });
-        
+        //RECUPERAR IDADE POR ANO DE NASCIMENTO
         $('#educando_data_nasc').focusout(function () {
-
             var date1 = $(this).val();
             var date2 = $('#inicio_curso_hidden').val();
 
             if (date2.length > 0) {
-
                 if (dif = subtrDate(date1, date2)) {
                     $('#educando_idade').val(dif);
                     $('#ckEducando_idade').prop('checked', false);
                 }
-
             } else {
-
                 $('#dialog_inicio_curso').dialogInit(function () {
-                    var form = Array(
-                            {
-                                'id': 'inicio_curso',
-                                'message': 'Informe mês e ano do início da realização do curso',
-                                'extra': {
-                                    'operation': 'date',
-                                    'message': 'A data informada é inválida'
-                                }
-                            }
-                    );
-
+                    var form = Array({
+                        'id': 'inicio_curso',
+                        'message': 'Informe mês e ano do início da realização do curso',
+                        'extra': {
+                            'operation': 'date',
+                            'message': 'A data informada é inválida'
+                        }
+                    });
                     if (isFormComplete(form)) {
                         $('#atualizar_ic').val(1);
                         $('#inicio_curso_hidden').val($('#inicio_curso').val());
                         $('#educando_data_nasc').focusout();
-
                         return true;
                     }
-
                 }, [370, 550]);
             }
         });
-
-        /* NÃO INFROMADOS */
-        $('#ckSexo_ni').niCheck({
-            'name': ['reducando_sexo']
-        });
-
-        $('#ckEducando_data_nasc').niCheck({
-            'id': ['educando_data_nasc']
-        });
-
-        $('#ckEducando_idade').niCheck({
-            'id': ['educando_idade']
-        });
-
-        $('#ckEducandoConcluinte_ni').niCheck({
-            'name': ['reducando_concluinte']
-        });
-
-        $('#salvar').click(function () {
-
-            var form = Array(
-                    {
+        
+        //SUBMIT
+        $('#salvar').click(function () { 
+            var form = Array({
                         'id': 'educando_nome',
                         'message': 'Informe o nome do(a) educando(a)',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'name': 'reducando_sexo',
                         'ni': $('#ckSexo_ni').prop('checked'),
                         'message': 'Informe o sexo do(a) educando(a)',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'id': 'educando_cpf',
                         'ni': ($('#ckCPF_ni').prop('checked') ||
                                 $('#ckCPF_na').prop('checked')),
                         'message': 'Informe o CPF do(a) educando(a)',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'id': 'educando_rg',
                         'ni': ($('#ckRg_ni').prop('checked') ||
                                 $('#ckRg_na').prop('checked')),
                         'message': 'Informe o RG do(a) educando(a)',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'id': 'educando_data_nasc',
                         'ni': $('#ckEducando_data_nasc').prop('checked'),
                         'message': 'Informe a data de nascimento do(a) educando(a)',
@@ -268,34 +196,29 @@ else
                             'operation': 'date',
                             'message': 'A data informada é inválida'
                         }
-                    },
-                    {
+                    }, {
                         'id': 'educando_idade',
                         'ni': $('#ckEducando_idade').prop('checked'),
                         'message': 'A idade do(a) educando(a) é calculada automaticamente a partir da informação preenchida <br />' +
                                 'no campo 14.A (inicío da realização do curso) do formulário de Caracterização do curso. <br />' +
                                 'Caso não possua tal informação selecione a opção "Não informado".',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'id': 'educando_tipo_terr',
                         'ni': $('#ckTipo_terr_ni').prop('checked'),
                         'message': 'Informe o tipo de território onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'id': 'educando_nome_terr',
                         'ni': $('#ckNome_terr_ni').prop('checked'),
                         'message': 'Informe o nome do território onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'id': 'educando_sel_est',
                         'ni': $('#ckEst_ni').prop('checked'),
                         'message': 'Informe o nome o Estado onde o(a) educando(a) vivia e/ou trabalhava quando ingressou no curso',
                         'extra': null
-                    },
-                    {
+                    }, {
                         'name': 'reducando_concluinte',
                         'ni': $('#ckEducandoConcluinte_ni').prop('checked'),
                         'message': 'Informe se o(a) educando(a) concluiu o curso',
@@ -336,7 +259,6 @@ else
                     reducando_concluinte: $("input:radio[name=reducando_concluinte]:checked").val(),
                     ckEst_ni: $("#ckEst_ni").prop('checked'),
                     municipios: $('#educando_sel_mun').val(),
-                    //mun_excluidos: table.getDeletedRows(1),
                     inicio_curso: $('#inicio_curso_hidden').val(),
                     atualizar_ic: $('#atualizar_ic').val()
                 };
@@ -351,26 +273,16 @@ else
                 if ($operacao == 'update')
                     echo site_url('educando/update/');
                 ?>";
-//                console.log(formData);
-//                 Faz requisição de login ao servidor (retorna um objeto JSON)
                 request(urlRequest, formData);
             }
         });
-
+        
+        //VOLTAR
         $('#reset').click(function () {
-
             var urlRequest = "<?php echo site_url('educando/index/'); ?>";
-
-            // Faz requisição de login ao servidor (retorna um objeto JSON)
             request(urlRequest, null, 'hide');
         });
-        
-        $("#educando_cpf").keypress(function (e) {
-            preventChar(e);
-        });
-
     });
-
 </script>
 
 <fieldset>
@@ -426,8 +338,8 @@ else
         <label class="negacao">4. R.G.</label>
 
         <div class="checkbox">
-            <label class="negacao-sm"> <input type="checkbox" name="ckRg_ni" id="ckRg_ni"  value="NAOINFORMADO" <?php if ($retrivial && ($dados[0]->rg == "NAOINFORMADO" || strlen($dados[0]->rg) == 0)) echo "checked"; ?>> N&atilde;o encontrado </label>
-            <label class="negacao-sm"> <input type="checkbox" name="ckRg_na" id="ckRg_na"  value="NAOAPLICA" <?php if ($retrivial && $dados[0]->rg == "NAOAPLICA") echo "checked"; ?>> Não se aplica </label>
+            <label class="negacao-sm"> <input type="checkbox" name="ckRg_ni" id="ckRg_ni" value="NAOINFORMADO" <?php if ($retrivial && ($dados[0]->rg == "NAOINFORMADO" || strlen($dados[0]->rg) == 0)) echo "checked"; ?>> N&atilde;o encontrado </label>
+            <label class="negacao-sm"> <input type="checkbox" name="ckRg_na" id="ckRg_na" value="NAOAPLICA" <?php if ($retrivial && $dados[0]->rg == "NAOAPLICA") echo "checked"; ?>> Não se aplica </label>
         </div>
         <div>
             <input type="text" class="form-control tamanho-small" id="educando_rg" name="educando_rg"  maxlength="25"

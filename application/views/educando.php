@@ -136,9 +136,8 @@
             <tr>
                 <th width="  0px;"> CÓDIGO </th>
                 <th width="250px;"> EDUCANDO </th>
-                <th width="120px;"> GÊNERO </th>
+                <th width="120px;"> MUNICÍPIO </th>
                 <th width="120px;"> DATA NASC. </th>
-                <th width="120px;"> IDADE </th>
                 <th width="200px;"> NOME DO TERRITÓRIO </th>
             </tr>
         </thead>

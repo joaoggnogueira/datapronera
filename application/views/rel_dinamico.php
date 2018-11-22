@@ -352,6 +352,14 @@
         $("#genero_educando").css("width","200px").select2();
         $("#genero_professor").css("width","200px").select2();	
 		
+                
+                $("#nascimento").blur(function(){
+                    var value = $(this).val();
+                    if( value < 1998 )
+                        $(this).val( 1998 );
+                    else if(value > <?= date("Y") ?> - 10)
+                        $(this).val( <?= date("Y") ?> - 10 );
+                });
 		$(".data-inicio").blur(function(){			
 			$(this).next(".data-fim").attr( "min", $(this).val() );
 			
@@ -441,7 +449,7 @@
            <option value="N">Não Informado</option>
        </select>
        <h3>Ano de nascimento</h3>
-       <input type="text" name="nascimento" id="nascimento" placeholder="Ex: 1990" class="form-control">
+        <input type="number" name="nascimento" id="nascimento" placeholder="Ex: 1990" min="1900" max="<?= date("Y") - 10 ?>" class="form-control">
    </div>
    <div role="tabpanel" class="tab-pane fade" id="professores">
        <h3>Gênero</h3>

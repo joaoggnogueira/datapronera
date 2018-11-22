@@ -1,7 +1,7 @@
 <div>
 	<table style="width:100%; font-size: 13px;" border="1" cellspacing="0">
 		<tr>
-			<th style="text-align:left">TERRITORIO</th>
+			<th style="text-align:left">TERRITORIO / ASSENTAMENTO</th>
 			<th>EJA ALFABETIZACAO</th>
 			<th>EJA ANOS INICIAIS</th>
 			<th>EJA ANOS FINAIS</th>
@@ -32,8 +32,8 @@
 				<td style="text-align:center"><?php echo $row['graduacao']; ?></td>
 				<td style="text-align:center"><?php echo $row['especializacao']; ?></td>
 				<td style="text-align:center"><?php echo $row['res_agraria']; ?></td>
-				<td style="text-align:center"><?php echo $row['mestrado']; ?></td>
-				<td style="text-align:center"><?php echo $row['doutorado']; ?></td>
+				<td style="text-align:center"><?php echo $row['mestrado']?></td>
+				<td style="text-align:center"><?php echo $row['doutorado'] ?></td>
 			</tr>
 		<?php
 			}

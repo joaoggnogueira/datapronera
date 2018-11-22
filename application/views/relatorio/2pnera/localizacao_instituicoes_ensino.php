@@ -12,7 +12,7 @@
 			<tr>
 				<td style="text-align:center"><?php echo $row['estado']; ?></td>
 				<td style="text-align:center"><?php echo $row['cod_municipio']; ?></td>
-				<td><?php echo $row['cidade']; ?></td>
+				<td><?php echo $row['municipio']; ?></td>
 				<td style="text-align:center"><?php echo $row['instituicao']; ?></td>
 			</tr>
 		<?php

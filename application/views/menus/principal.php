@@ -103,17 +103,17 @@
 			request('<?php echo site_url('relatorio_estatistico/index'); ?>', null, 'hide');
 		">Estat&iacute;sticos</a></li>-->
 		
-		<li><a href="#" onclick="
+<!--		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_andamento/index'); ?>', null, 'hide');
 		">Relatórios Gerais - Cadastro em Andamento</a></li>
 		
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_concluido/index'); ?>', null, 'hide');
 		">Relatórios Gerais - Cadastro Concluídos</a></li>
-		
+		-->
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_geral_pnera2/index'); ?>', null, 'hide');
-		">Relatórios Gerais - II PNERA</a></li>
+		">Relatórios Gerais</a></li>
                 <li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_producoes/index'); ?>', null, 'hide');
 		">Relatórios de Produções do Pronera</a></li>
@@ -125,7 +125,7 @@
 		">Relatório Dinâmico</a></li>
 		<li><a href="#" onclick="
 			request('<?php echo site_url('relatorio_mapas/index'); ?>', null, 'hide');
-		">Mapas</a></li>
+		">Relatórios em Mapas</a></li>
 	</ul>
 </li>
 <li class="dropdown

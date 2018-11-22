@@ -12,6 +12,7 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
 
         if (modalidade_curso != 0) {
             $('#modalidade option[value="' + modalidade_curso + '"]').attr("selected", true);
+            $('#modalidade').change();
         }
     });
 
@@ -23,6 +24,7 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
 
             if (instrumento_curso != 0) {
                 $('#instrumento option[value="' + instrumento_curso + '"]').attr("selected", true);
+                $('#instrumento').change();
             }
         <?PHP endif; ?>
     });
@@ -31,16 +33,16 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
         // Superintendências
         $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function (superintendencia) {
             $('#superintendencia').html(superintendencia);
-
+        
             var super_curso = "<?php echo ($operacao != 'add') ? $dados[0]->id_superintendencia : 0; ?>";
-            var urlPesquisadores = "<?php echo site_url('requisicao/get_pesquisadores'); ?>";
-            // Lista de Pesquisadores (Reutilizaram listCities para pesquisadores)
-            $('#superintendencia').listCities(urlPesquisadores, 'curso_sel_pessoa_equipe');
-
             if (super_curso != 0) {
                 $('#superintendencia option[value="' + super_curso + '"]').attr("selected", true);
                 $('#superintendencia').change();
             }
+
+            var urlPesquisadores = "<?php echo site_url('requisicao/get_pesquisadores'); ?>";
+            $('#superintendencia').listCities(urlPesquisadores, 'curso_sel_pessoa_equipe');
+
         });
         var id = "<?php echo $curso['id']; ?>";
         $('#data').mask('99/99/9999');
@@ -81,7 +83,6 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                 $('#modalidade_descricao').hideErrorMessage();
             }
         });
-
 
         $("#instrumento").change(function (e) {
             if (e.target.value == "OUTRO") {
@@ -135,39 +136,29 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
 
         $('#salvar').click(function () {
 
-            var form = Array(
-                    {
-                        'id': 'nome',
-                        'message': 'Informe o nome do curso',
-                        'extra': null
-                    },
-                    {
-                        'id': 'modalidade',
-                        'message': 'Informe a modalidade do curso',
-                        'extra': null
-                    },
-                    {
-                        'id': 'modalidade_descricao',
-                        'ni': (($('#modalidade').val() == 'OUTRA') ? false : true),
-                        'message': 'Especifique a modalidade do curso',
-                        'extra': null
-                    },
-                    {
-                        'id': 'superintendencia',
-                        'message': 'Informe a superintendência a qual o curso pertence',
-                        'extra': null
-                    },
-                    {
-                        'id': 'data',
-                        'message': 'Informe a data no qual o curso foi criado',
-                        'extra': {operation: "pattern", message: "Padrão não corresponde com uma data"}
-                    },
-                    {
-                        'id': 'instrumento',
-                        'ni': (($('#instrumento').val() == 'OUTRO') ? false : true),
-                        'message': 'Especifique a modalidade do curso',
-                        'extra': null
-                    }
+            var form = Array({
+                    'id': 'nome',
+                    'message': 'Informe o nome do curso',
+                    'extra': null
+                }, {
+                    'id': 'modalidade',
+                    'message': 'Informe a modalidade do curso',
+                    'extra': null
+                }, {
+                    'id': 'modalidade_descricao',
+                    'ni': (($('#modalidade').val() == 'OUTRA') ? false : true),
+                    'message': 'Especifique a modalidade do curso',
+                    'extra': null
+                }, {
+                    'id': 'superintendencia',
+                    'message': 'Informe a superintendência a qual o curso pertence',
+                    'extra': null
+                }, {
+                    'id': 'instrumento',
+                    'ni': (($('#instrumento').val() == 'OUTRO') ? false : true),
+                    'message': 'Especifique a modalidade do curso',
+                    'extra': null
+                }
 
             /*{
              'id'      : 'pesquisador',
@@ -184,7 +175,6 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                 });
             } else {
                 $("#nprocesso").hideErrorMessage();
-
             }
             if (!document.getElementById("ck_ninstrumento").checked) {
                 form.push({
@@ -195,6 +185,15 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
             } else {
                 $("#ninstrumento").hideErrorMessage();
             }
+            if (!$('#ck_doa')[0].checked) {
+                form.push({
+                    'id': 'data',
+                    'message': 'Informe a data no qual o curso foi criado',
+                    'extra': {operation: "pattern", message: "Padrão não corresponde com uma data"}
+                });
+            } else {
+                $("#data").hideErrorMessage();
+            }
 
             if (isFormComplete(form)) {
 
@@ -204,7 +203,7 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                     modalidade: $('#modalidade').val(),
                     modalidade_descricao: $('#modalidade_descricao').val().toUpperCase(),
                     superintendencia: $('#superintendencia').val(),
-                    data: $('#data').val(),
+                    data: ($('#ck_doa')[0].checked ? "01/01/1900" : $('#data').val()), //DOA
                     nprocesso: $('#nprocesso').val(),
                     ninstrumento: $('#ninstrumento').val(),
                     instrumento: $('#instrumento').val(),
@@ -213,7 +212,6 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
                     pesquisadores_excluidos: table.getDeletedRows(1)
 //                    pesquisador: $('#pesquisador').val() || null
                 };
-
 
                 urlRequest = "<?php
                     if ($operacao == 'add') {
@@ -227,20 +225,34 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
         });
 
         $('#reset').click(function () {
-
             var urlRequest = "<?php echo site_url('curso/index/'); ?>";
-
             request(urlRequest, null, 'hide');
         });
 
-        $('#ck_nprocesso').niCheck({
-            'id': ['nprocesso']
-        });
-    
-        $('#ck_ninstrumento').niCheck({
-            'id': ['ninstrumento']
-        });
-    
+        $('#ck_nprocesso').niCheck({'id': ['nprocesso']});
+        $('#ck_ninstrumento').niCheck({'id': ['ninstrumento']});
+        $('#ck_doa').niCheck({'id': ['data']});
+        <?PHP if($operacao == 'view'): ?>
+            function preventAll(e){
+                e.preventDefault();
+            }
+            $("input").on('keydown',preventAll).on('keyup',preventAll);
+            $("textarea").on('keydown',preventAll).on('keyup',preventAll);
+            $("select").each(function(key, object){
+                const select = $(object);
+                var atual_value = select.val();
+                select.change(function(event) {
+                    console.log(event);
+                    if(atual_value !== null) {
+                        $(event.target).val(atual_value);
+                    } else {
+                        atual_value = $(event.target).val();
+                    }
+                });
+            });
+            $("#equipe_superintendencia_controls").hide();
+            $("input[type='checkbox']").click(preventAll);
+        <?PHP endif; ?>
     });
 </script>
 
@@ -252,6 +264,8 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
             <?php
             if ($operacao != 'view') {
                 echo "<input type=\"button\" id=\"salvar\" class=\"btn btn-success\" value=\"Salvar\"> <hr/>";
+            } else {
+                echo "<h4>Visualizando<h4/>";
             }
             ?>
             <input type="button" id="reset" class="btn btn-default" value="Voltar">
@@ -365,6 +379,11 @@ $this->session->set_userdata('curr_content', 'cadastro_curso');
         </div>
         <div class="form-group">
             <label>7. Data da publica&ccedil;&abreve;o no di&aacute;rio oficial (DOA)</label>
+            <div class="checkbox" style="display: inline-block; margin-left: 30px;">
+                <label>
+                    <input type="checkbox" name="ck_doa" id="ck_doa" <?php if ($operacao != 'add' && ($dados[0]->data=="00/00/0000" || $dados[0]->data=="01/01/1900" || $dados[0]->data=="")) echo "checked" ?>/> N&atilde;o Informado 
+                </label>
+            </div>
             <div class="form-group">
                 <div>
                     <input pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="DD/MM/AAAA" name="data" id="data" class="form-control tamanho-sm2" value="<?php if ($operacao != 'add') echo $dados[0]->data; ?>"/>

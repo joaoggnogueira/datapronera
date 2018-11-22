@@ -4,38 +4,38 @@ $this->session->set_userdata('curr_content', 'cadastro_pessoa');
 
 <script type="text/javascript">
 
-    var id = "<?php echo $pessoa['id']; ?>";
-
-    $.get("<?php echo site_url('requisicao/get_estados'); ?>", function (estados) {
-        $('#estado').html(estados);
-
-        var estado = "<?php if ($operacao != 'add') echo $dados[0]->id_estado; ?>";
-        $('#estado option[value="' + estado + '"]').attr("selected", true);
-
-        $.get("<?php echo site_url('requisicao/get_municipios/') . '/'; ?>" + estado, function (cidades) {
-            $('#municipio').html(cidades);
-
-            var cidade = "<?php if ($operacao != 'add') echo $dados[0]->id_cidade; ?>";
-            $('#municipio option[value="' + cidade + '"]').attr("selected", true);
-        });
-    });
-
-    $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function (superintendencias) {
-        $('#superintendencia').html(superintendencias);
-
-        var superintendencia = "<?php if ($operacao != 'add') echo $dados[0]->id_superintendencia; ?>";
-        $('#superintendencia option[value="' + superintendencia + '"]').attr("selected", true);
-    });
-
-    $.get("<?php echo site_url('requisicao/get_funcoes'); ?>", function (funcoes) {
-        $('#funcao').html(funcoes);
-
-        var funcao = "<?php if ($operacao != 'add') echo $dados[0]->id_funcao; ?>";
-        $('#funcao option[value="' + funcao + '"]').attr("selected", true);
-    });
-
     $(document).ready(function () {
+        var id = "<?php echo $pessoa['id']; ?>";
 
+        $.get("<?php echo site_url('requisicao/get_estados'); ?>", function (estados) {
+            $('#estado').html(estados);
+
+            var estado = "<?php if ($operacao != 'add') echo $dados[0]->id_estado; ?>";
+            $('#estado option[value="' + estado + '"]').attr("selected", true);
+
+            $.get("<?php echo site_url('requisicao/get_municipios/') . '/'; ?>" + estado, function (cidades) {
+                $('#municipio').html(cidades);
+
+                var cidade = "<?php if ($operacao != 'add') echo $dados[0]->id_cidade; ?>";
+                $('#municipio option[value="' + cidade + '"]').attr("selected", true);
+            });
+        });
+
+        $.get("<?php echo site_url('requisicao/get_superintendencias'); ?>", function (superintendencias) {
+            $('#superintendencia').html(superintendencias);
+
+            var superintendencia = "<?php if ($operacao != 'add') echo $dados[0]->id_superintendencia; ?>";
+            $('#superintendencia option[value="' + superintendencia + '"]').attr("selected", true);
+            $("#superintendencia").change();
+        });
+
+        $.get("<?php echo site_url('requisicao/get_funcoes'); ?>", function (funcoes) {
+            $('#funcao').html(funcoes);
+            var funcao = "<?php if ($operacao != 'add') echo $dados[0]->id_funcao; ?>";
+            $('#funcao option[value="' + funcao + '"]').attr("selected", true);
+            $("#funcao").change();
+        });
+    
         var urlMunicipios = "<?php echo site_url('requisicao/get_municipios'); ?>";
 
         $('#estado').listCities(urlMunicipios, 'municipio');
@@ -59,13 +59,8 @@ $this->session->set_userdata('curr_content', 'cadastro_pessoa');
         $('#cep').mask("99.999-999");
 
         /* Não informados */
-        $('#ckNumero').niCheck({
-            'id': ['numero']
-        });
-
-        $('#ckPessoa_tel2').niCheck({
-            'id': ['telefone2']
-        });
+        $('#ckNumero').niCheck({'id': ['numero']});
+        $('#ckPessoa_tel2').niCheck({'id': ['telefone2']});
 
         $('#salvar').click(function () {
 
@@ -194,8 +189,11 @@ $this->session->set_userdata('curr_content', 'cadastro_pessoa');
                     superintendencia: $('#superintendencia').val()
                 };
 
-                var urlRequest = "<?php if ($operacao == 'add') echo site_url('pessoa/add/');
-else if ($operacao == 'update') echo site_url('pessoa/update'); ?>";
+                var urlRequest = "<?php if ($operacao == 'add')
+                    echo site_url('pessoa/add/');
+                else if ($operacao == 'update')
+                    echo site_url('pessoa/update');
+                ?>";
 
                 request(urlRequest, formData);
             }
@@ -207,14 +205,34 @@ else if ($operacao == 'update') echo site_url('pessoa/update'); ?>";
 
             request(urlRequest, null, 'hide');
         });
-        
+
         $("#cpf").keypress(function (e) {
             preventChar(e);
         });
         $("#numero").keypress(function (e) {
             preventChar(e);
         });
-
+<?PHP if ($operacao == 'view'): ?>
+            function preventAll(e) {
+                e.preventDefault();
+            }
+            $("input").on('keydown', preventAll).on('keyup', preventAll);
+            $("textarea").on('keydown', preventAll).on('keyup', preventAll);
+            $("select").each(function (key, object) {
+                const select = $(object);
+                var atual_value = select.val();
+                select.change(function (event) {
+                    console.log(event);
+                    if (atual_value !== null) {
+                        $(event.target).val(atual_value);
+                    } else {
+                        atual_value = $(event.target).val();
+                    }
+                });
+            });
+            $("#equipe_superintendencia_controls").hide();
+            $("input").click(preventAll);
+<?PHP endif; ?>
     });
 </script>
 
@@ -223,11 +241,13 @@ else if ($operacao == 'update') echo site_url('pessoa/update'); ?>";
         <legend> Cadastro de Usu&aacute;rio </legend>
 
         <div class="form-group controles">
-<?php
-if ($operacao != 'view') {
-    echo "<input type=\"button\" id=\"salvar\" class=\"btn btn-success\" value=\"Salvar\"> <hr/>";
-}
-?>
+            <?php
+            if ($operacao != 'view') {
+                echo "<input type=\"button\" id=\"salvar\" class=\"btn btn-success\" value=\"Salvar\"> <hr/>";
+            } else {
+                echo "<h4>Visualizando<h4/>";
+            }
+            ?>
             <input type="button" id="reset" class="btn btn-default" value="Voltar">
         </div>
 

@@ -1,4 +1,4 @@
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
 };
@@ -240,7 +240,7 @@ function request(_url, _data, _fn) {
     });
 }
 
-function requestMultipart(_url, _idform, _fn) {
+function requestMultipart(_url, _idform, _fn, _append) {
 
     _fn = _fn || 'show';
 
@@ -248,6 +248,15 @@ function requestMultipart(_url, _idform, _fn) {
 
     // Exibe mensagem de processamento
     processMessage('status');
+    if (_append) {
+        for (var key in _append) {
+            var value = _append[key];
+            console.log(key);
+            console.log(value);
+            _data.append(key, value);
+        }
+    }
+    console.log(_data);
 
     // Faz requisição de login ao servidor (retorna um objeto JSON)
     $.ajax({
@@ -1131,8 +1140,8 @@ function getCheckedRadio(radio_group) {
  *	@return	Char 	Caracter válido
  */
 function preventChar(event) {
-    if ((event.key >= "0" && event.key <= "9") 
-            || event.key === "Backspace" 
+    if ((event.key >= "0" && event.key <= "9")
+            || event.key === "Backspace"
             || (event.keyCode >= 37 && event.keyCode <= 40)
             || event.ctrlKey) {
     } else {

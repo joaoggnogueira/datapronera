@@ -33,7 +33,14 @@ class Relatorio_mapas extends CI_Controller {
         $data['content'] = $this->session->userdata('curr_content');
         $modalidades = $this->requisicao_m->list_modalidades();
         $superintendencias = $this->requisicao_m->list_superintendencias();
-        $valores = array('modalidades' => $modalidades, 'superintendencias' => $superintendencias);
+        $valores = array('modalidades' => $modalidades, 'superintendencias' => $superintendencias, 'sr' => $this->input->get("sr"), 'levantamento' => $this->input->get("levantamento"));
+        $valores['sr'] = false;
+        if ($this->session->userdata('permissao_publica')) {
+            $token = $this->session->userdata('token');
+            if (isset($token->mapa)) {
+                $valores['sr'] = $token->mapa->sr;
+            }
+        }
 
         $this->session->set_userdata('curr_data', $valores);
 
@@ -48,17 +55,33 @@ class Relatorio_mapas extends CI_Controller {
 
         echo json_encode($response);
     }
+    
+    //RELACOES
+    function relacao_sr_curso(){
+        echo json_encode($this->mapas_m->relacao_sr_curso($this->input->get("sr")));
+    }
+    
+    function get_curso_details($id){
+        echo json_encode($this->mapas_m->get_curso_details($id));
+    }
 
+    function get_educandos_details($id){
+        echo json_encode($this->mapas_m->list_educandos($id));
+    }
+    
     //MAPAS
     function get_municipios_cursos() {
+        ob_start("ob_gzhandler");
         echo json_encode($this->mapas_m->get_municipios_cursos($this->input->get("filters")));
     }
 
     function get_municipios_educandos() {
+        ob_start("ob_gzhandler");
         echo json_encode($this->mapas_m->get_municipios_educandos($this->input->get("filters")));
     }
 
     function get_municipios_instituicoes() {
+        ob_start("ob_gzhandler");
         echo json_encode($this->mapas_m->get_municipios_instituicoes($this->input->get("filters")));
     }
 

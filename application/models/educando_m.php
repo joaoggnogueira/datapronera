@@ -16,6 +16,15 @@ class Educando_m extends CI_Model {
             return false;
         }
     }
+    
+    function get_educando_cidade($id){
+        $this->db->select('ec.*');
+        $this->db->from('educando_cidade ec');
+        $this->db->where('ec.id_educando', $id);
+
+        $query = $this->db->get();
+        return $query->result();
+    }
 
     function get_course_record($id_curso) {
 
@@ -67,8 +76,7 @@ class Educando_m extends CI_Model {
 
     function update_record_municipio($municipio, $id) {
         $this->db->where('id_educando', $id);
-        $this->db->update('educando_cidade', $municipio);
-        return;
+        return $this->db->update('educando_cidade', $municipio);
     }
 
     function update_record($educando, $id) {

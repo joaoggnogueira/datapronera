@@ -77,37 +77,28 @@
 
         $('#salvar').click(function () {
 
-            var form = Array(
-                {
+            var form = Array( {
                     'id'      : 'professor_nome',
                     'message' : 'Informe o nome do(a) professor(a) / educador(a)',
                     'extra'   : null
-                },
-
-                {
+                }, {
                     'id'      : 'professor_cpf',
                     'ni'      : ($('#ckCPF_ni').prop('checked') ||
                                   $('#ckCPF_na').prop('checked')),
                     'message' : 'Informe o CPF do(a) professor(a) / educador(a)',
                     'extra'   : null
-                },
-
-                {
+                }, {
                     'id'      : 'professor_rg',
                     'ni'      : ($('#ckRg_ni').prop('checked') ||
                                   $('#ckRg_na').prop('checked')),
                     'message' : 'Informe o RG do(a) professor(a) / educador(a)',
                     'extra'   : null
-                },
-
-                {
+                }, {
                     'name'    : 'rprof_sexo',
                     'ni'      : $('#ckSexo_ni').prop('checked'),
                     'message' : 'Informe o sexo do(a) professor(a) / educador(a)',
                     'extra'   : null
-                },
-
-                {
+                }, {
                     'name'    : 'rprof_escola',
                     'ni'      : $('#ckTitulacao_ni').prop('checked'),
                     'message' : 'Informe o grau de escolaridade / titulação do(a) professor(a) / educador(a)',

@@ -759,7 +759,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
                     e.nome,
                     e.tipo_territorio,
                     e.nome_territorio,
-                    CONCAT(LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS cod_curso,
+                    CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS cod_curso,
                     c.nome AS nome_curso,
                     cm.nome AS modalidade
 		', false);
@@ -785,7 +785,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 			e.sigla AS estado,
 			cd.cod_municipio,
 			cd.nome AS cidade,
-			CONCAT(LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso,
+			CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso,
 			c.nome AS curso
 		');
 
@@ -838,7 +838,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
     function lista_cursos_modalidade($access_level, $status) {
 
-        $this->db->select('cm.nome AS modalidade, CONCAT(LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso');
+        $this->db->select('cm.nome AS modalidade, CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso');
         $this->db->from('curso c');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
@@ -860,7 +860,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
     function lista_cursos_modalidade_sr($access_level, $status) {
 
-        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id_superintendencia, s.nome AS superintendencia, cm.nome AS modalidade, CONCAT(LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso');
+        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id_superintendencia, s.nome AS superintendencia, cm.nome AS modalidade, CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso');
         $this->db->from('curso c');
         $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
@@ -882,7 +882,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
     function alunos_curso($idSr, $status) {
         $sr = (int) $idSr;
-        $this->db->select('CONCAT(LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) as id_curso, c.nome as curso, e.nome as educando');
+        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) as id_curso, c.nome as curso, e.nome as educando');
         $this->db->from('educando e');
         $this->db->join('curso c', 'e.id_curso = c.id', 'left');
         $this->db->where('c.ativo_inativo', 'A');
@@ -1087,7 +1087,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
     function educadores_curso($access_level, $status) {
 
-        $this->db->select('CONCAT(LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso, COUNT(p.id) AS educadores');
+        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso, COUNT(p.id) AS educadores');
         $this->db->from('professor p');
         $this->db->join('curso c', 'p.id_curso = c.id', 'left');
         $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');

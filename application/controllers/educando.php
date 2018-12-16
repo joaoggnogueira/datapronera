@@ -433,6 +433,10 @@ class Educando extends CI_Controller {
         $query = $this->educando_m->get_tipo_acamp($this->uri->segment(3));
         echo $query;
     }
+    
+    function sugestao_genero(){
+        echo $this->educando_m->sugestao_genero($this->uri->segment(3));
+    }
 
 }
 

@@ -9,14 +9,19 @@ if (!defined('BASEPATH')) {
     .row_checkbox{
         display: flex;
         flex-direction: row;
+        align-items: center;
     }
     .row_checkbox label{
         margin-left: 10px;
+        display: flex;
+        flex-direction: column;
     }
     .row_checkbox:hover label{
         color: #003bb3;
     }
-
+    .check_vigencia{
+        margin: -5px 0px 0px !important;
+    }
     .group_checkbox{
         flex-direction: column;
         justify-content: space-between;
@@ -25,6 +30,18 @@ if (!defined('BASEPATH')) {
         background: white;
         width: 960px;
         margin-bottom: 10px;
+    }
+    
+    #scrollingDiv{
+        cursor: pointer;
+    }
+    
+    .label-title{
+        font-weight: bold;
+    }
+    
+    .label-subtitle{
+        font-weight: 500;
     }
 </style>
 
@@ -196,17 +213,32 @@ if (!defined('BASEPATH')) {
     });
 </script>
 
-<div class="group_checkbox" id="scrollingDiv">
-    <h4>Mostrar cursos:</h4>
+<details class="group_checkbox" id="scrollingDiv">
+    <summary>Opções</summary>
+    <h3>Mostrar cursos: </h3>
     <div class="row_checkbox form-check">
         <input checked type="checkbox" name="status" class="check_vigencia" value="AN" id="vigencia_checkbox_an"/>
-        <label for="vigencia_checkbox_an"> Dentro da Vigência (Cursos que possivelmente estão ocorrendo neste momento)</label>
+        <label for="vigencia_checkbox_an"> 
+            <div class="label-title">
+                Dentro da Vigência
+            </div>
+            <div class="label-subtitle">
+                Cursos que possivelmente estão ocorrendo neste momento
+            </div>
+        </label>
     </div>
     <div class="row_checkbox form-check">
         <input checked type="checkbox" name="status" class="check_vigencia" value="CC" id="vigencia_checkbox_cc"/>
-        <label for="vigencia_checkbox_cc"> Fora da Vigência (Cursos que ainda não iniciaram ou já foram finalizados)</label>
+        <label for="vigencia_checkbox_cc"> 
+            <div class="label-title">
+                Fora da Vigência
+            </div>
+            <div class="label-subtitle">
+                Cursos que ainda não iniciaram ou já foram finalizados
+            </div>
+        </label>
     </div>
-</div>
+</details>
 
 <ul class="nav nav-tabs" id="course-tab">
     <li class="active"><a href="#running">Cadastro em andamento</a></li>

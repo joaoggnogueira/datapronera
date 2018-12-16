@@ -1,4 +1,9 @@
 <ul class="nav navbar-nav scrollable selectable" id="nav-tools">
+    <li class="dropdown">
+        <button  id="fullscreen-toggle-content"  class="btn btn-primary" style="width: 40px;height: 40px">
+            <i class="fa fa-expand"></i>
+        </button>
+    </li>
     <li class="dropdown" id="select-mapa" onchange="updateMap();">
         <a href="#" class="dropdown-toggle flex-horizontal" style="padding-left: 25px;" data-toggle="dropdown">
             <div class="col flex-vertical">
@@ -69,14 +74,14 @@
                 <a href="#" class="title-filter" count="0">
                     Status do Curso
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu  no-cls no-out">
                     <li class="no-close fixed">
                         <input id="status_all" class="select-all" checked value="ALL" type="checkbox"/>
                         <label href="#" for="status_all">
                             Selecionar Tudo
                         </label>
                     </li>
-                    <hr/>
+                    <hr style="margin-bottom: 5px"/>
                     <li>
                         <ul class="overflow">
                             <li class="no-close">
@@ -101,36 +106,36 @@
                     </li>
                 </ul>
             </li>
-<!--            <li class="dropdown-submenu filter-type" value="vigencia">
+            <li class="dropdown-submenu filter-type" value="vigencia">
                 <a href="#" class="title-filter" count="0">
                     Vigência do Curso
                 </a>
                 <ul class="dropdown-menu">
                     <li class="no-close fixed">
-                        <input id="status_all" class="select-all" checked value="ALL" type="checkbox"/>
-                        <label href="#" for="status_all">
+                        <input id="vigencia_all" class="select-all" checked value="ALL" type="checkbox"/>
+                        <label href="#" for="vigencia_all">
                             Selecionar Tudo
                         </label>
                     </li>
-                    <hr/>
+                    <hr style="margin-bottom: 5px"/>
                     <li>
                         <ul class="overflow">
                             <li class="no-close">
                                 <input class="filter-checkbox" id="vigencia_an" checked value="AN" type="checkbox"/>
                                 <label href="#" for="vigencia_an">
-                                    Dentro da Vigência
+                                    Em execução
                                 </label>
                             </li>
                             <li class="no-close">
                                 <input class="filter-checkbox" id="vigencia_cc" checked value="CC" type="checkbox"/>
                                 <label href="#" for="vigencia_cc">
-                                    Fora da Vigência
+                                    Finalizado
                                 </label>
                             </li>
                         </ul>
                     </li>
                 </ul>
-            </li>-->
+            </li>
             <li class="dropdown-submenu filter-type" value="modalidade">
                 <a href="#" class="title-filter" count="0">
                     Modalidade
@@ -142,7 +147,7 @@
                             Selecionar Tudo
                         </label>
                     </li>
-                    <hr/>
+                    <hr style="margin-bottom: 5px"/>
                     <li>
                         <ul class="overflow">
                             <?PHP foreach ($modalidades as $modalidade): ?>
@@ -168,7 +173,7 @@
                             Selecionar Tudo
                         </label>
                     </li>
-                    <hr/>
+                    <hr style="margin-bottom: 5px"/>
                     <li>
                         <ul class="overflow">
                             <?PHP foreach ($superintendencias as $sr): ?>
@@ -183,30 +188,106 @@
                     </li>
                 </ul>
             </li>
-        </ul>
-    </li>
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle flex-horizontal" data-toggle="dropdown">
-            <div class="col flex-vertical vertical-center">
-                <span><i class="fa fa-plus-circle"></i>  Relações</span>
-            </div>
-            <div class="col" style="margin-left: 10px;margin-top: 10px;">
-                <i class="fa fa-caret-down"></i>
-            </div>
-        </a>
-        <ul class="dropdown-menu drop">
-            <li>
-                <a href="#" id="relacao_sr_cursos_button" data-toggle="modal" data-target="#relacao_sr_cursos_modal">
-                    <b>Cursos e Educandos</b><br/>
-                    Visualize as informações das Superintendências do Incra</br>
-                    E seus respectivos cursos
+            <li class="dropdown-submenu filter-type" value="assentamento">
+                <a href="#" class="title-filter" count="<?= (is_bool($srAtual) ? "0" : count($superintendencias)) ?>">
+                    Assentamento
                 </a>
+                <div class="dropdown-menu no-close" style="width: 350px;">
+                    &nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Válido somente para o Mapa Educandos <div class="lds-ring" id="loading-assentamentos" style='display: none'><div></div><div></div><div></div><div></div></div>
+                    <input id="tags-assentamento" name='tags-outside' class='tagify--outside no-close' placeholder='Cód. Sipra ou nome do assentamento'/>
+                    <label>
+                        <input type="checkbox" id="null_assentamento"/>
+                        Mostrar somente os sem código Sipra
+                    </label>
+                </div>
             </li>
         </ul>
     </li>
 </ul>
 <script>
     (function () {
+
+        jQuery('.dropdown-menu li a').mouseover(function (e) {
+            e.stopPropagation();
+            jQuery(this).parent().parent().find('li').each(function () {
+                jQuery(this).removeClass('open');
+            });
+            jQuery(this).parent().addClass('open');
+        });
+
+        jQuery('.dropdown-toggle').click(function (e) {
+            jQuery(this).parent().find('li').each(function () {
+                jQuery(this).removeClass('open');
+            });
+        });
+
+        $("#fullscreen-toggle-content").click(function () {
+            $("body").toggleClass("fullscreen");
+        });
+
+
+        $(document.body).ready(function () {
+            var controller;
+            var input = document.getElementById("tags-assentamento");
+
+            var tagify = new Tagify(input, {
+                whitelist: [],
+                dropdown: {
+                    classname: "color-blue",
+                    enabled: 3,
+                    maxItems: 10
+                },
+                maxTags: 1,
+                addTagOnBlur: false,
+                enforceWhitelist: true
+            }).on('add', function (e, tagName) {
+                $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).addClass("hide");
+                $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 1);
+                updateMap();
+            }).on('remove', function (e, tagName) {
+                $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).removeClass("hide");
+                $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 0);
+                updateMap();
+            });
+
+            tagify.on('input', function (e) {
+                var value = e.detail;
+                tagify.settings.whitelist.length = 0;
+                if (value.value.length >= 3) {
+                    $("#loading-assentamentos").show();
+                    controller && controller.abort();
+                    controller = new AbortController();
+                    fetch('<?php echo site_url('relatorio_mapas/get_sugestao_assentamento/'); ?>/' + value.value, {signal: controller.signal})
+                            .then(RES => RES.json())
+                            .then(function (whitelist) {
+
+                                whitelist.sort(function (a, b) {
+                                    return ('' + a).localeCompare(b);
+                                });
+
+                                tagify.settings.whitelist = whitelist;
+                                tagify.dropdown.show.call(tagify, value.value);
+                                $("#loading-assentamentos").hide();
+                            });
+                }
+            });
+
+            $("#null_assentamento").change(function () {
+                var valueAssentamento = $("#tags-assentamento").val();
+                if (valueAssentamento != "[]" && valueAssentamento != "" && valueAssentamento) {
+                    tagify.removeAllTags();
+                    $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).removeClass("hide");
+                    $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 0);
+                }
+                if (this.checked) {
+                    $(input).siblings(".tagify--outside").addClass("disabled").find(".tagify__input").removeAttr("contenteditable");
+                } else {
+                    $(input).siblings(".tagify--outside").removeClass("disabled").find(".tagify__input").attr("contenteditable", 'true');
+                    $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 0);
+                }
+                updateMap();
+            });
+        });
 
 <?= (is_bool($srAtual) ? "" : "$('#superintendencia_all')[0].indeterminate = true;") ?>
 
@@ -239,14 +320,15 @@
 
         initSelect("select-mapa");
         initSelect("modo-visualizacao");
-        
-        $(".no-close").click(function () {
+
+        $(".no-close,.no-cls").click(function () {
             event.stopPropagation();
         });
+
         $(".divider").click(function () {
             event.stopPropagation();
         });
-        
+
         function countNotSelected(checkboxes) {
             var count = 0;
             $(checkboxes).each(function (key, value) {
@@ -254,7 +336,7 @@
                     count++;
                 }
             });
-            return count;
+            return $(checkboxes).length - count;
         }
 
         function checkAnySelected(checkboxes) {
@@ -316,7 +398,6 @@
             selectall.click(function () {
                 selectAllCheckboxes(selectall[0].checked, checkboxes, selectall, select);
             });
-
         });
 
 
@@ -324,8 +405,19 @@
             var data = {
                 "status": [],
                 "modalidade": {"ids": [], "nil": false},
-                "sr": []
+                "sr": [],
+                "vigencia": []
             };
+
+            var valueAssentamento = $("#tags-assentamento").val();
+            if (valueAssentamento != "[]" && valueAssentamento != "" && valueAssentamento) {
+                var array = JSON.parse($("#tags-assentamento").val());
+                var assentamento = array[0].value.split(" ")[0];
+                data.assentamento = assentamento;
+            } else if($("#null_assentamento")[0].checked) {
+                 data.assentamento = "NULL";
+            }
+
             var parent = $("#filters-config");
             parent.find(".filter-type[value='status'] input.filter-checkbox:checked").each(function () {
                 data.status.push(this.value);
@@ -336,6 +428,9 @@
                 } else {
                     data.modalidade.nil = true;
                 }
+            });
+            parent.find(".filter-type[value='vigencia'] input.filter-checkbox:checked").each(function () {
+                data.vigencia.push(this.value);
             });
             parent.find(".filter-type[value='superintendencia'] input.filter-checkbox:checked").each(function () {
                 data.sr.push(this.value);

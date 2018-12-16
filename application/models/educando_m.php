@@ -16,8 +16,8 @@ class Educando_m extends CI_Model {
             return false;
         }
     }
-    
-    function get_educando_cidade($id){
+
+    function get_educando_cidade($id) {
         $this->db->select('ec.*');
         $this->db->from('educando_cidade ec');
         $this->db->where('ec.id_educando', $id);
@@ -90,12 +90,12 @@ class Educando_m extends CI_Model {
             return false;
         }
     }
-    
-    function remove_record_municipio($id){
+
+    function remove_record_municipio($id) {
         $this->db->where('id_educando', $id);
         return $this->db->delete('educando_cidade');
     }
-    
+
     function delete_record_municipio($id_cidade, $id) {
         $this->db->where('id_educando', $id);
         $this->db->where('id_cidade', $id_cidade);
@@ -111,6 +111,26 @@ class Educando_m extends CI_Model {
             return true;
         } else {
             return false;
+        }
+    }
+
+    function sugestao_genero($name) {
+        $name = explode(" ", urldecode($name));
+        $name = $name[0] . " %";
+        $sql = "SELECT 
+        (SELECT COUNT(id) FROM `educando` WHERE `nome` like ? AND`genero` like 'F') as 'feminino',
+        (SELECT COUNT(id) FROM `educando` WHERE `nome` like ? AND`genero` like 'M') as 'masculino'";
+
+        $query = $this->db->query($sql, array($name, $name));
+        $dados = $query->result();
+
+        $feminino = (int) $dados[0]->feminino;
+        $masculino = (int) $dados[0]->masculino;
+
+        if ($feminino + $masculino == 0) {
+            return "I";
+        } else {
+            return ($feminino > $masculino ? "F" : "M");
         }
     }
 

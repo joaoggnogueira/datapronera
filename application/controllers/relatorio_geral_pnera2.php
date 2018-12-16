@@ -272,7 +272,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                     $xls = $this->append_xls_data($xls, $result, array("NÍVEL", "CURSOS"));
 
                     $this->barchart->set_topLeftCell('K1');
-                    $this->barchart->set_bottomRightCell('Q25');
+                    $this->barchart->set_bottomRightCell('Q10');
 
                     $this->barchart->set_chart_colors(array('8B1A1A'));             // array - colors
                     $this->barchart->set_title("CURSOS POR NÍVEL");                 // string

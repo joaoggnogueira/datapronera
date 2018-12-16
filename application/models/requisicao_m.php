@@ -135,7 +135,7 @@ class Requisicao_m extends CI_Model {
         $resultado = "<option value=\"0\" disabled selected> Selecione o Estado </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">" . $row->sigla . "</option>";
+            $resultado .= "<option value=" . $row->id . ">".$row->nome." (" . $row->sigla . ")</option>";
         }
 
         echo $resultado;
@@ -405,7 +405,7 @@ class Requisicao_m extends CI_Model {
         $resultado = "<option value=\"0\" selected> Todos os Estados </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">" . $row->sigla . "</option>";
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome .' ('. $row->sigla . ") </option>";
         }
 
         echo $resultado;
@@ -450,7 +450,7 @@ class Requisicao_m extends CI_Model {
         $resultado = "<option value=\"0\" selected> Todas as Superintendências </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">" . $row->nome . "</option>";
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . " (".$row->sigla.") </option>";
         }
 
         echo $resultado;

@@ -64,6 +64,8 @@ class Barchart extends CI_Model {
 
         /** PHPExcel * */
         include 'PHPExcel.php';
+        
+        PHPExcel_Settings::setLocale('pt_br');
 
         $this->_objPHPExcel = new PHPExcel();
         $this->_objWorksheet = $this->_objPHPExcel->getActiveSheet();
@@ -195,18 +197,17 @@ class Barchart extends CI_Model {
 
         //Creating Header
         $this->create_header();
-        $this->_objPHPExcel->getActiveSheet()->getStyle("E10:E25")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
 
         // Prints table to worksheet		
         $this->_objWorksheet->fromArray($this->_chart_data);
 
         // Columnns data
-        $numDataColumns = count($this->_chart_data[7]) - $this->_num_legend_columns; //Count -1 because of the first column
+        $numDataColumns = count($this->_chart_data[7]) - $this->_num_legend_columns -1; //Count -1 because of the first column
         // Rowsdata
         $numDataRows = count($this->_chart_data) - 1; // Count -1 because of the first row
         // Legend Column
         $legendCol = $this->_legend_col;
-        $legendRow = 8;
+        $legendRow = 9;
         $firstDataRow = $legendRow + 1;
 
         // Formats the table with the format code received
@@ -218,7 +219,8 @@ class Barchart extends CI_Model {
             $contChar++;
             for ($cont2 = 7; $cont2 < $numDataRows; $cont2++) {
                 $aux = $cont2 + 2;
-                $this->_objPHPExcel->getActiveSheet()->getStyle("$contChar$aux")->getNumberFormat()->setFormatCode($this->_number_format);
+                //$this->_objPHPExcel->getActiveSheet()->getStyle("$contChar$aux")->getNumberFormat()->setFormatCode($this->_number_format);
+                $this->_objPHPExcel->getActiveSheet()->getStyle("$contChar$aux")->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
             }
         }
         
@@ -250,7 +252,7 @@ class Barchart extends CI_Model {
         //	Data Marker
         $xAxisTickValues = array(
             new PHPExcel_Chart_DataSeriesValues(
-                    'String', 'Worksheet!$' . $legendCol . '$' . $firstDataRow . ':$' . $legendCol . '$' . ($firstDataRow + $numDataRows - 8), null, 4
+                    'String', 'Worksheet!$' . $legendCol . '$' . $firstDataRow . ':$' . $legendCol . '$' . ($firstDataRow + $numDataRows - 9), null, 4
             ),
         );
 
@@ -269,7 +271,7 @@ class Barchart extends CI_Model {
             // Data values
             // Data Marker
             $dataSeriesValues[] = new PHPExcel_Chart_DataSeriesValues(
-                    'Number', 'Worksheet!$' . $contChar . '$' . $firstDataRow . ':$' . $contChar . '$' . ($firstDataRow + $numDataRows - 8), null, 4
+                    'Number', 'Worksheet!$' . $contChar . '$' . $firstDataRow . ':$' . $contChar . '$' . ($firstDataRow + $numDataRows - 9), null, 4
             );
         }
 

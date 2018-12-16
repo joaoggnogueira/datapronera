@@ -342,6 +342,14 @@ class Professor extends CI_Controller {
 
         echo json_encode($response);
     }
+    
+    function sugestao_genero(){
+        echo $this->professor_m->sugestao_genero($this->uri->segment(3));
+    }
+    
+    function sugestao_disciplina(){
+        echo $this->professor_m->sugestao_disciplina($this->uri->segment(3));
+    }
 
 }
 

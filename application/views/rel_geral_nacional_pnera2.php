@@ -90,7 +90,7 @@
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso_modalidade/1'); ?>">XLS</a>  
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso_modalidade/2'); ?>">PDF</a>
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso_modalidade/3'); ?>">HTML</a>
-                        (Problema no XLS) Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos por modalidade <span class="badge badge-nominal">nominal</span>  
+                        Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos por modalidade <span class="badge badge-nominal">nominal</span>  
                     </li>
 
                     <li class="li-rel">
@@ -218,19 +218,19 @@
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade/2'); ?>">PDF</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade/3'); ?>">HTML</a> 
-                        (Problema no XLS) Lista de cursos por modalidade <span class="badge badge-nominal">nominal</span>  
+                        Lista de cursos por modalidade <span class="badge badge-nominal">nominal</span>  
                     </li>
 
                     <li class="li-rel">
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade_sr/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade_sr/2'); ?>">PDF</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade_sr/3'); ?>">HTML</a> 
-                        (Problema no XLS) Lista de cursos por modalidade e superintendência <span class="badge badge-nominal">nominal</span>  
+                        Lista de cursos por modalidade e superintendência <span class="badge badge-nominal">nominal</span>  
                     </li>
 
                     <li class="li-rel">
                         <a class="btn btn-success" style="padding-left: 60px;padding-right:60px;" data-toggle="modal" href="#cursoAlunoModal">Gerar ...</a> 
-                        (Problema no XLS) Lista de alunos por curso <span class="badge badge-nominal">nominal</span>  
+                        Lista de alunos por curso <span class="badge badge-nominal">nominal</span>  
                     </li>
                 </ul>
                 <hr/>

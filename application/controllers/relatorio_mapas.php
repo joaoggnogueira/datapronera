@@ -56,6 +56,10 @@ class Relatorio_mapas extends CI_Controller {
         echo json_encode($response);
     }
     
+    function get_sugestao_assentamento($search){
+        echo json_encode($this->mapas_m->get_sugestao_assentamento($search));
+    }
+    
     //RELACOES
     function relacao_sr_curso(){
         echo json_encode($this->mapas_m->relacao_sr_curso($this->input->get("sr")));

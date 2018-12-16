@@ -68,7 +68,10 @@ $this->session->set_userdata('curr_content', 'cadastro_pessoa');
                     {
                         'id': 'nome',
                         'message': 'Informe o nome',
-                        'extra': null
+                        'extra': {
+                            'operation': 'pattern',
+                            'message': 'O nome possui caracteres inválidos'
+                        }
                     },
                     {
                         'name': 'sexo',
@@ -254,7 +257,7 @@ $this->session->set_userdata('curr_content', 'cadastro_pessoa');
         <div class="form-group">
             <label>1. Nome </label>
             <div>
-                <input type="text" class="form-control tamanho-lg" id="nome" name="nome"
+                <input pattern="^[^-\s][a-zA-ZÀ-ú ]*" type="text" class="form-control tamanho-lg" id="nome" name="nome"
                        value="<?php if ($operacao != 'add') echo $dados[0]->nome; ?>">
                 <label class="control-label form bold" for="nome"></label>
             </div>

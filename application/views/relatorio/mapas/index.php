@@ -49,7 +49,7 @@ endif;
                     Carregando<br/><br/>
                     <i style="text-decoration: none;font-size: 30px">Google Maps</i><br/><br/>
                     <span class="lds-dual-ring"></span> Aguarde ...
-                <b class="problem"></b>
+                    <b class="problem"></b>
                 </p>
             </div>
         </div>
@@ -167,16 +167,16 @@ endif;
 
     function init() {
         var timer;
-         
-        function timer_function(){
-            if(typeof MarkerClusterer !== "undefined"){
+
+        function timer_function() {
+            if (typeof MarkerClusterer !== "undefined") {
                 clearInterval(timer);
                 updateMap();
             } else {
                 console.log("Aguardando MarkerClusterer ser Carregado");
             }
         }
-        
+
         timer = setInterval(timer_function, 1000);
     }
 
@@ -198,6 +198,8 @@ endif;
 
     function updateMap() {
         if (typeof (google) !== "undefined") {
+            hide_shape();
+
             if (map === null) {
                 initMap();
             } else {
@@ -221,7 +223,7 @@ endif;
                 $(".select-all").attr("disabled", true);
                 $("#loadingmarkers").show();
             }
-            if(atual_request){
+            if (atual_request) {
                 atual_request.abort();
                 atual_request = false;
                 console.log("Request aborted");
@@ -244,8 +246,12 @@ endif;
         }
     }
 
+    /**
+     * @param {type} node Dados do Município e Caracterizacao
+     */
     function openWindow(buttons, marker, node) {
 
+        show_shape(node.cod);
         var id = node.id;
 
         var createButton = function (buttonspec) {
@@ -274,6 +280,16 @@ endif;
             buttonsr[i] = createButton(buttons[i]);
             ul.appendChild(buttonsr[i]);
         }
+        var value_title = true;
+
+        switch ($("#select-mapa").eq(0).attr("value")) {
+            case "educando":
+                value_title = "Educando(s)";
+                break;
+            case "curso":
+                value_title = "Curso(s)";
+                break;
+        }
 
         option.appendChild(document.createElement("p"));
         var table = document.createElement("table");
@@ -292,7 +308,7 @@ endif;
                 .append(
                         $("<div/>").
                         addClass("panel-heading").css("margin-left", "auto").css("margin-right", "auto").css("width", "100%").addClass("row").
-                        html("<h5 class='col-md-11' style='margin-top:0px;margin-bottom:0px'><i class='glyphicon glyphicon-map-marker'></i> " + node.municipio + "<b> (" + node.estado + ")</b></h5>\
+                        html("<h5 class='col-md-11' style='margin-top:0px;margin-bottom:0px'><i class='glyphicon glyphicon-map-marker'></i> " + node.municipio + " (" + node.estado + ") - <b>" + node.total + " " + value_title + "</b></h5>\
                          <div class='col-md-1'><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></div>")
                         )
                 .append(pai);
@@ -316,7 +332,6 @@ endif;
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(div.get(0));
         markerwindow = marker;
         infowindow = div;
-        console.log(markerwindow);
         map_recenter(markerwindow.getPosition(), -(($(window).width() - 100) / 4), 0);
         $(buttonsr[0]).click();
         if (buttons.length === 1) {
@@ -326,7 +341,7 @@ endif;
         div.slideDown(300);
     }
 
-    function createMarker(node) {
+    function createMarker(node, max) {
         if (!typeMarkerIs("circle")) {
             var icon = {
                 url: "<?= base_url('css/images/marker.png') ?>",
@@ -348,18 +363,21 @@ endif;
                 },
                 labelClass: "labels"
             };
-            
+
             if (typeMarkerIs("normal")) {
                 marker_data.map = map;
             }
             return new google.maps.Marker(marker_data);
         } else {
+            var total = Math.pow(node.total / max, 0.6) * max; //POW da maior contraste entre numeros pequenos, e menor entre numeros grandes
+            //var total = node.total;
+            
             switch ($("#select-mapa").eq(0).attr("value")) {
                 case "educando":
-                    var radius = node.total * 100 + 10000;
+                    var radius = total * 50 + 1000;
                     break;
                 case "curso":
-                    var radius = node.total * 5000 + 10000;
+                    var radius = total * 1000 + 10000;
                     break;
             }
 
@@ -376,7 +394,7 @@ endif;
                 center: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
                 radius: radius
             });
-            
+
             circle.getPosition = circle.getCenter;
             return circle;
         }
@@ -389,6 +407,7 @@ endif;
 
     function closeWindow() {
         if (infowindow) {
+            hide_shape();
             map.controls[google.maps.ControlPosition.TOP_RIGHT].removeAt(0);
             infowindow.remove();
             infowindow = false;
@@ -447,17 +466,20 @@ endif;
         atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", {filters: getFilter()}, function (cursos) {
             atual_request = false;
             hashMarkers = [];
+            var max = Math.max.apply(Math, cursos.map(function (o) {
+                return o.total;
+            }));
             var markers = cursos.map(function (curso) {
                 if (typeof (google) !== "undefined") {
-                    var marker = createMarker(curso);
+                    var marker = createMarker(curso, max);
                     hashMarkers[curso.id] = marker;
                     marker.addListener('click', function () {
                         var data = [
                             {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
                         ];
-                        <?PHP if (!$publico): ?>
+<?PHP if (!$publico): ?>
                             data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
-                        <?PHP endif; ?>
+<?PHP endif; ?>
                         openWindow(data, marker, curso);
                     });
                 }
@@ -477,26 +499,33 @@ endif;
 
     function prepareMapaEducando() {
         atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>", {filters: getFilter()}, function (educandos) {
+
+            var max = Math.max.apply(Math, educandos.map(function (o) {
+                return o.total;
+            }));
+
             atual_request = false;
             hashMarkers = [];
+            console.log(max);
+
             var markers = educandos.map(function (educando) {
                 if (typeof (google) !== "undefined") {
-                    var marker = createMarker(educando);
+                    var marker = createMarker(educando, max);
                     hashMarkers[educando.id] = marker;
-                    <?PHP if (!$publico): ?>
+<?PHP if (!$publico): ?>
                         marker.addListener('click', function () {
                             openWindow([
                                 {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
                                 {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
                             ], marker, educando);
                         });
-                    <?PHP endif; ?>
+<?PHP endif; ?>
                 }
                 return marker;
             });
             //MarkerClusterer is not defined
             if (typeof (google) !== "undefined" && typeMarkerIs("group")) {
-                if(typeof MarkerClusterer !== "undefined"){
+                if (typeof MarkerClusterer !== "undefined") {
                     markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
                 } else {
                     alert("Lentidão da rede causou erro ocorreu ao carregar a página!\nAtualize a página");
@@ -513,6 +542,53 @@ endif;
     }
 
     var tableopened = null;
+    var atualStateMun = false;
+
+    function hide_shape() {
+        if (map) {
+            map.data.setStyle(function (feature) {
+                return {visible: false};
+            });
+        }
+    }
+
+    function show_shape(codmun) {
+        var uf_id = ("" + codmun).substr(0, 2);
+        if (uf_id != atualStateMun) {
+            if (atualStateMun != false) {
+                map.data.forEach(function (feature) {
+                    map.data.remove(feature);
+                });
+            }
+            atualStateMun = uf_id;
+            $.getJSON('<?php echo base_url(); ?>shapes/geojs-' + uf_id + '-mun.json', function (data) {
+                map.data.addGeoJson(data);
+                map.data.setStyle(function (feature) {
+                    var geocodigo = feature.getProperty('id');
+                    return {
+                        fillColor: "#0000FF",
+                        strokeWeight: 1.0,
+                        fillOpacity: 0.5,
+                        strokeColor: "#0000FF",
+                        strokeOpacity: 1,
+                        visible: (codmun == geocodigo)
+                    };
+                });
+            });
+        } else {
+            map.data.setStyle(function (feature) {
+                var geocodigo = feature.getProperty('id');
+                return {
+                    fillColor: "#0000FF",
+                    strokeWeight: 1.0,
+                    fillOpacity: 0.3,
+                    strokeColor: "#0000FF",
+                    strokeOpacity: 1,
+                    visible: (codmun == geocodigo)
+                };
+            });
+        }
+    }
 
     function appendTable(url, titles, widths, btn, onselect, search) {
 

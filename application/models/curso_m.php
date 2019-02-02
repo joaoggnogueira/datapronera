@@ -22,6 +22,19 @@ class Curso_m extends CI_Model {
             return false;
         }
     }
+    
+    function get_sr_uf($curso_id){
+        $this->db->select("s.id_estado uf");
+        $this->db->from('curso c');
+        $this->db->join('superintendencia s', 's.id = c.id_superintendencia', 'left');
+        $this->db->where('c.id', $curso_id);
+        
+        $query = $this->db->get();
+
+        $dados = $query->result();
+        
+        return $dados[0]->uf;
+    }
 
     function update_record($curso, $id) {
         $this->db->where('id', $id);

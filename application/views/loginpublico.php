@@ -10,6 +10,33 @@ if (!defined('BASEPATH'))
     .modal-backdrop.fade.in{
         z-index: 10000;
     }
+    #header{
+        border-bottom: none;
+        max-height: 0px;
+        overflow: hidden;
+    }
+    #middle{
+        margin-top: 83px;
+        border-top: 10px solid #5cb85c;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+    #status{
+        top: 0px;
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        -webkit-text-fill-color: black;
+        -webkit-box-shadow: 0 0 0px 1000px #EEF inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -160,7 +187,6 @@ if (!defined('BASEPATH'))
 //        $ciphertext = urlencode($ciphertext);
 //        echo "<br/><br/>".$i." : ".$ciphertext;
 //    }
-
 //    $key = "e228c23d3a6e078f20e43bb0a6e5bc32";
 //    if (isset($_GET['token'])) {
 //        $token = $_GET['token'];

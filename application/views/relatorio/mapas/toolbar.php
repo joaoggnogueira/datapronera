@@ -225,7 +225,6 @@
             $("body").toggleClass("fullscreen");
         });
 
-
         $(document.body).ready(function () {
             var controller;
             var input = document.getElementById("tags-assentamento");
@@ -257,7 +256,12 @@
                     $("#loading-assentamentos").show();
                     controller && controller.abort();
                     controller = new AbortController();
-                    fetch('<?php echo site_url('relatorio_mapas/get_sugestao_assentamento/'); ?>/' + value.value, {signal: controller.signal})
+                    
+                    var term = value.value;
+                    term = term.replace("'",'0X2019');
+                    
+                    //não tem compatibilidade com IE
+                    fetch('<?php echo site_url('relatorio_mapas/get_sugestao_assentamento/'); ?>/' + term, {signal: controller.signal})
                             .then(RES => RES.json())
                             .then(function (whitelist) {
 
@@ -266,7 +270,7 @@
                                 });
 
                                 tagify.settings.whitelist = whitelist;
-                                tagify.dropdown.show.call(tagify, value.value);
+                                tagify.dropdown.show.call(tagify, "");
                                 $("#loading-assentamentos").hide();
                             });
                 }
@@ -332,11 +336,15 @@
         function countNotSelected(checkboxes) {
             var count = 0;
             $(checkboxes).each(function (key, value) {
-                if (!value.checked) {
+                if (value.checked) {
                     count++;
                 }
             });
-            return $(checkboxes).length - count;
+            if ($(checkboxes).length !== count) {
+                return count;
+            } else {
+                return 0;
+            }
         }
 
         function checkAnySelected(checkboxes) {
@@ -400,7 +408,6 @@
             });
         });
 
-
         window.getFilter = function () {
             var data = {
                 "status": [],
@@ -414,8 +421,8 @@
                 var array = JSON.parse($("#tags-assentamento").val());
                 var assentamento = array[0].value.split(" ")[0];
                 data.assentamento = assentamento;
-            } else if($("#null_assentamento")[0].checked) {
-                 data.assentamento = "NULL";
+            } else if ($("#null_assentamento")[0].checked) {
+                data.assentamento = "NULL";
             }
 
             var parent = $("#filters-config");

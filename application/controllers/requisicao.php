@@ -35,6 +35,10 @@ class Requisicao extends CI_Controller {
     function get_assentamentos() {
         return $this->requisicao_m->get_assentamentos($this->uri->segment(3));
     }
+    
+    function get_assentamentos_sugestao(){
+        return $this->requisicao_m->get_assentamentos_sugestao($this->uri->segment(3));
+    }
 
     function get_estados() {
         return $this->requisicao_m->get_estados();

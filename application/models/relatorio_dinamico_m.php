@@ -200,6 +200,8 @@ class Relatorio_dinamico_m extends CI_Model {
                 CONCAT(LPAD(c2.id_superintendencia, (2), (0) ),('.'), LPAD(c2.id, (3), (0) )) as CURSO_VINCULADO, 
                 ed.id as ID, 
                 ed.nome as NOME,
+                ed.cpf as CPF,
+                ed.rg as RG,
                 CASE ed.genero
                     WHEN 'M' THEN 'MASCULINO'
                     WHEN 'F' THEN 'FEMININO'
@@ -246,6 +248,8 @@ class Relatorio_dinamico_m extends CI_Model {
             CONCAT(LPAD(c2.id_superintendencia, (2), (0) ),('.'), LPAD(c2.id, (3), (0) )) as CURSO_VINCULADO, 
             p.id as ID, 
             p.nome as NOME,
+            p.cpf as CPF,
+            p.rg as RG,
             CASE p.genero 
                 WHEN 'M' THEN 'MASCULINO' 
                 WHEN 'F' THEN 'FEMININO' 

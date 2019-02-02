@@ -18,12 +18,21 @@ class Mapas_m extends CI_Model {
     }
 
     function get_sugestao_assentamento($search) {
-        $stmt = "SELECT DISTINCT CONCAT(a.codigo,' - ',a.nome) as busca "
-                . "FROM assentamentos a "
-                . "INNER JOIN educando e ON e.code_sipra_assentamento LIKE a.codigo "
-                . "WHERE CONCAT(a.codigo,' - ',a.nome) LIKE '%$search%'";
+        
+        $search = urldecode($search);
+        
+        $this->db->select("CONCAT((a.codigo),(' - '),(a.nome)) as busca");
+        $this->db->from("assentamentos a");
+        $this->db->join("educando e", "e.code_sipra_assentamento = a.codigo");
+        $this->db->like('a.codigo', $search);
+        $this->db->or_like('a.nome', $search);
+        $this->db->limit(10);
+        $this->db->distinct();
 
-        $query = $this->db->query($stmt);
+        $query = $this->db->get();
+        
+        //echo $this->db->last_query();
+        
         $dados = $query->result();
         $result = array();
         foreach ($dados as $value) {
@@ -171,7 +180,8 @@ class Mapas_m extends CI_Model {
                 lg.latitude as lat, 
                 lg.longitude as lng,
                 cr.inicio_realizado as inicio,
-                cr.termino_realizado as termino
+                cr.termino_realizado as termino,
+                m.cod_municipio as cod
             FROM `curso` c
                 INNER JOIN caracterizacao cr ON c.id = cr.id_curso
                 INNER JOIN caracterizacao_cidade ccr ON ccr.id_caracterizacao = cr.id
@@ -242,7 +252,8 @@ class Mapas_m extends CI_Model {
                 lg.latitude as lat, 
                 lg.longitude as lng,
                 ca.inicio_realizado as inicio,
-                ca.termino_realizado as termino 
+                ca.termino_realizado as termino,
+                m.cod_municipio as cod
             FROM `educando` e
                 INNER JOIN educando_cidade ec ON ec.id_educando = e.id
                 INNER JOIN cidade m ON m.id = ec.id_cidade

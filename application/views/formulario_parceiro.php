@@ -194,6 +194,7 @@ $this->session->set_userdata('curr_content', 'parceiro');
                     ckParceiro_site: $('#ckParceiro_site').prop('checked'),
                     parceiro_site: $('#parceiro_site').val().toUpperCase(),
                     rparceiro_natureza: $("input:radio[name=rparceiro_natureza]:checked").val(),
+                    parceiro_natureza_outros: $("#parceiro_natureza_outros").val().toUpperCase(),
                     rparceiro_abrangencia: $("input:radio[name=rparceiro_abrangencia]:checked").val(),
                     ckparceiro_tipo_01: $('#ckparceiro_tipo_01').prop('checked'),
                     ckparceiro_tipo_02: $('#ckparceiro_tipo_02').prop('checked'),
@@ -403,7 +404,7 @@ else
                     <input type="text" class="form-control" id="parceiro_natureza_outros" name="parceiro_natureza_outros" placeHolder="Especificar"
                     <?php
                     if ($retrivial && $dados[0]->natureza == 'OUTROS') {
-                        echo "value=\"$dados[0]->natureza_descricao\"";
+                        echo "value=\"".$dados[0]->natureza_descricao."\"";
                     } else {
                         echo "style=\"display:none\";";
                     }

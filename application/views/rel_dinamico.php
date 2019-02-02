@@ -58,6 +58,9 @@
     .table-checkbox tr td:first-child,.table-checkbox tr th:first-child{
         padding-right: 20px;
     }
+    #select2-cursos-select-container{
+        min-width: 700px;
+    }
 
 </style>
 
@@ -70,16 +73,16 @@
             $("#loading-cursos").show();
             $("#gerar").attr("disabled", true);
 
-            var status = []; 
+            var status = [];
             $('#check_status input[type=checkbox]').each(function () {
-                if(this.checked){
+                if (this.checked) {
                     status.push(this.value);
                 }
             });
 
             $.post("<?php echo site_url('relatorio_dinamico/get_cursos'); ?>", {
                 superintendencia: $('#superintendencias-select').val(),
-                status_curso:  JSON.stringify(status),
+                status_curso: JSON.stringify(status),
                 modalidade: $('#modalidades-select').val(),
                 municipio: $('#municipios-select').val(),
                 nivel: $('#niveis-select').val(),
@@ -93,7 +96,7 @@
                 if ($('#cursos-select').data('select2')) {
                     $('#cursos-select').select2('destroy');
                 }
-                $("#cursos-select").html(html).css("min-width", "300px").css("max-width", "500px").select2();
+                $("#cursos-select").html(html).css("min-width", "500px").css("max-width", "800px").select2();
                 $("#loading-cursos").hide();
                 if ($('#cursos-select option').length == 1) {
                     $("#filter-alert").show();
@@ -102,7 +105,7 @@
                 }
             });
         }
-        
+
         function check_nivel_modalidade() {
             var modalidade = $('#modalidades-select').val();
             var nivel = $('#niveis-select').val();
@@ -137,35 +140,20 @@
                 $("#alert_modalidade_nivel").html('');
             }
         }
-        
-        function parent_checkbox(checkbox_obj_child,checkbox_obj_parent){
-            checkbox_obj_child.click(function(){
-                if(this.checked){
+
+        function parent_checkbox(checkbox_obj_child, checkbox_obj_parent) {
+            checkbox_obj_child.click(function () {
+                if (this.checked) {
                     checkbox_obj_parent[0].checked = true;
                 }
             });
-            checkbox_obj_parent.click(function(){
+            checkbox_obj_parent.click(function () {
                 checkbox_obj_child[0].checked = this.checked;
             });
         }
-        
-        parent_checkbox($("#check_municipio_curso"),$("#check_curso"));
-        parent_checkbox($("#check_disciplinas"),$("#check_professores"));
 
-        $('#reset').click(function () {
-            $('#superintendencias-select').val(0).trigger('change');
-            $('input[type=radio][name=status_curso]').val(0);
-
-            $('#inicio0-realizado').val("");
-            $('#inicio1-realizado').val("");
-            $('#termino0-realizado').val("");
-            $('#termino1-realizado').val("");
-
-            $("#niveis-select").val(0).trigger('change.select2');
-            $("#modalidades-select").val(0).trigger('change.select2');
-
-            check_nivel_modalidade();
-        });
+        parent_checkbox($("#check_municipio_curso"), $("#check_curso"));
+        parent_checkbox($("#check_disciplinas"), $("#check_professores"));
 
         var url = "<?php echo site_url('relatorio_dinamico') . '/'; ?>";
 
@@ -252,8 +240,19 @@
                 $('#municipios-select').html(data).select2();
             });
         });
-
+        $("#alert_empty,#alert_csv").hide();
         $('#gerar').click(function () {
+            var fileformat = $("#format").val();
+            var totalfiles = $("input[name='relatorio']:checked").length;
+            if (totalfiles === 0) {
+                $("#alert_empty").show();
+                return;
+            } else {
+                if (fileformat == "CSV" && totalfiles > 1) {
+                    $("#alert_csv").show();
+                    return;
+                }
+            }
 
             var superintendencia = $('#superintendencias-select').val();
             var curso = $('#cursos-select').val();
@@ -277,18 +276,24 @@
 
             $('#filtros_tipo_parceria .checkbox-parceria').each(function () {
                 var name = $(this).attr("name");
-                var value = $(this).find('input[type=radio][name='+name+']:checked')[0].value;
+                var value = $(this).find('input[type=radio][name=' + name + ']:checked')[0].value;
                 tipo_parceria_aux[name] = value;
             });
-            
-            var status = []; 
+
+            var status = [];
             $('#check_status input[type=checkbox]').each(function () {
-                if(this.checked){
+                if (this.checked) {
                     status.push(this.value);
                 }
             });
-            
-            $('<form target="_blank" action="' + url + 'gerarRelatorio" method="POST">' +
+            var form = false;
+            function on_finish() {
+                alert("123");
+                form.remove();
+            }
+
+            form = $('<form target="_blank" rel="noopener" style="display:none;" action="' + url + 'gerarRelatorio" method="POST">' +
+                    "<textarea name='format'>" + fileformat + "</textarea>" +
                     "<textarea name='superintendencia'>" + superintendencia + "</textarea>" +
                     "<textarea name='curso'>" + curso + "</textarea>" +
                     "<textarea name='status_curso'>" + JSON.stringify(status) + "</textarea>" +
@@ -315,7 +320,7 @@
                     "<textarea name='check_parceiros'>" + ($('#check_parceiros').is(":checked") ? "true" : "false") + "</textarea>" +
                     "<textarea name='check_municipio_parceiros'>" + ($('#check_municipio_parceiros').is(":checked") ? "true" : "false") + "</textarea>" +
                     "<textarea name='check_tipo_parceria'>" + ($('#check_tipo_parceria').is(":checked") ? "true" : "false") + "</textarea>" +
-                    "</form>").appendTo('body').submit().remove();
+                    "</form>").bind('ajax:complete', on_finish).appendTo('body').submit();
         });
 
 
@@ -515,7 +520,17 @@
         <label><input type="checkbox" name='relatorio' id="check_parceiros" checked/> Parceiros </label>
     </div>
 </details> 
+<div class="alert alert-block alert-danger fade in" id="alert_empty">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <b>Nenhum relatório selecionado!</b>&nbsp;&nbsp;&nbsp;
+    Por favor selecione pelo menos um dos relatórios
+</div>
 <br>
 <p id="filter-alert"><i class="fa fa-exclamation-triangle"></i> Nenhum curso passou nos filtros </p>
 <input type="button" id="gerar" class="btn btn-success" value="Gerar Planilha">
-<input type="button" id="reset" class="btn btn-warning" value="Resetar filtros">
+<label> &nbsp;&nbsp;&nbsp;&nbsp;Formato de Exportação: </label>
+<select class="form-control" id="format" style="display: inline;width: 270px;">
+    <option value="XLSX">XLSX - Microsoft Excel</option>
+    <option value="ODS">ODS - LibreOffice Calc</option>
+    <option value="JSON">JSON - JavaScript Object Notation</option>
+</select>

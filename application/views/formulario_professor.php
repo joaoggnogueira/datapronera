@@ -1,5 +1,9 @@
 <?php
 $this->session->set_userdata('curr_content', 'professor');
+if ($operacao == 'add')
+    $retrivial = false;
+else
+    $retrivial = true;
 ?>
 <style>
     .ui-autocomplete {
@@ -7,6 +11,10 @@ $this->session->set_userdata('curr_content', 'professor');
         max-height: 200px;
         overflow-y: auto;
         overflow-x: hidden;
+    }
+    
+    #middle{
+        margin-top: 170px;
     }
 </style>
 <script type="text/javascript">
@@ -82,7 +90,9 @@ $this->session->set_userdata('curr_content', 'professor');
         $('#ckTitulacao_ni').niCheck({
             'name': ['rprof_escola']
         });
-
+        <?PHP if ($retrivial): ?>
+            $("#desc-course").fadeIn(400).find(".navbar-brand").text("Editando professor(a) <?= $dados[0]->nome ?>");
+        <?PHP endif; ?>
         $('#salvar').click(function () {
 
             var form = Array({
@@ -187,12 +197,7 @@ if ($operacao == 'update')
 
 </script>
 
-<?php
-if ($operacao == 'add')
-    $retrivial = false;
-else
-    $retrivial = true;
-?>
+
 
 <form id="form"	method="post">
     <fieldset>

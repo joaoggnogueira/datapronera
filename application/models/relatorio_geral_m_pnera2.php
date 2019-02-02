@@ -123,7 +123,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
                     $result_parcial = $bool->result_array();
                     $result[$cont] = $result_parcial[0];
                     $result[$cont]['total'] = $result_parcial[0]['eja_fundamental'] + $result_parcial[0]['ensino_medio'] + $result_parcial[0]['ensino_superior'];
-                    if($result[$cont]['total']=='0') {
+                    if ($result[$cont]['total'] == '0') {
                         $result[$cont]['total'] = '-';
                     }
                     $cont++;
@@ -449,6 +449,51 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         return $result;
     }
 
+    function alunos_cadastrados_curso($status) {
+        $this->db->select('
+			CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS cod,
+                        c.nome as nome,
+                        COUNT(e.id) as cadastrados,
+                        IF(ca.numero_ingressantes = -1 OR ca.numero_ingressantes = "" OR ca.numero_ingressantes IS NULL,("N/D"),(ca.numero_ingressantes)) as ingressante,
+                        IF(ca.numero_concluintes = -1 OR ca.numero_concluintes = "" OR ca.numero_ingressantes IS NULL,("N/D"),(ca.numero_concluintes)) as concluintes
+		', false);
+        $this->db->from('curso c');
+        $this->db->join('caracterizacao ca', 'ca.id_curso = c.id');
+        $this->db->join('educando e', 'e.id_curso = c.id', 'left');
+        $this->db->where('c.ativo_inativo', 'A');
+        $this->db->where_in('c.status', $status);
+        $this->db->group_by('c.id');
+        $this->db->order_by('c.id_superintendencia,c.id');
+
+        if (($query = $this->db->get()) != null) {
+            $rows_result = $query->result_array();
+            $sumcadastrados = 0;
+            $sumingressantes = 0;
+            $sumconcluintes = 0;
+            foreach ($rows_result as $key => $row) {
+                if ($row['cadastrados'] != 'N/D') {
+                    $sumcadastrados += (int) $row['cadastrados'];
+                }
+                if ($row['ingressante'] != 'N/D') {
+                    $sumingressantes += (int) $row['ingressante'];
+                }
+                if ($row['concluintes'] != 'N/D') {
+                    $sumconcluintes += (int) $row['concluintes'];
+                }
+            }
+        }
+
+        $rows_result[] = array(
+            "cod" => "",
+            "nome" => "TOTAL",
+            "cadastrados" => $sumcadastrados,
+            "ingressante" => $sumingressantes,
+            "concluintes" => $sumconcluintes
+        );
+
+        return $rows_result;
+    }
+
     function alunos_concluintes_superintendencia($status) {
 
         $this->db->select("
@@ -462,6 +507,10 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         $this->db->where_in('c.status', $status);
         $this->db->where('cr.numero_concluintes >=', 0);
         $this->db->group_by('s.id');
+
+        if ($access_level <= 3) {
+            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
+        }
 
         if (($query = $this->db->get()) != null) {
             return $query->result_array();
@@ -1462,9 +1511,9 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $this->db->select(
                 'IF(e.sigla IS NULL,("N/A"),(e.sigla)) AS estado,'
-              . ' IF(cd.cod_municipio IS NULL,("N/A"),(cd.cod_municipio)) as cod_municipio,'
-              . ' IF(cd.nome IS NULL,("N/A"),(cd.nome)) AS municipio,'
-              . ' COUNT(DISTINCT ie.nome) AS instituicoes');
+                . ' IF(cd.cod_municipio IS NULL,("N/A"),(cd.cod_municipio)) as cod_municipio,'
+                . ' IF(cd.nome IS NULL,("N/A"),(cd.nome)) AS municipio,'
+                . ' COUNT(DISTINCT ie.nome) AS instituicoes');
         $this->db->from('instituicao_ensino ie');
         $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
         $this->db->join('cidade cd', 'ie.id_cidade = cd.id', 'left');
@@ -1875,9 +1924,9 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
     }
 
     function producoes_estado($status) {
-        
+
         $title_status = $this->array_to_sql($status);
-        
+
         $tabelas = array(
             'pg' => 'producao_geral',
             'pt' => 'producao_trabalho',
@@ -1918,8 +1967,8 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
     function producoes_superintendencia($status) {
 
-        $title_status = $this->array_to_sql($status);        
-        
+        $title_status = $this->array_to_sql($status);
+
         $tabelas = array(
             'pg' => 'producao_geral',
             'pt' => 'producao_trabalho',
@@ -1956,9 +2005,9 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
     }
 
     function producoes_tipo($access_level, $status) {
-        
-        $title_status = $this->array_to_sql($status);     
-        
+
+        $title_status = $this->array_to_sql($status);
+
         $producoes = array(
             'VIDEO' => array(
                 'cast' => 'VÍDEO',
@@ -2044,7 +2093,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
     }
 
     function pesquisa_estado() {
-        
+
         $tabelas = array(
             'pac' => 'pesquisa_academico',
             'plc' => 'pesquisa_livro_coletanea',

@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Pronera</title>
+        <title>DataPronera</title>
         <meta name="theme-color" content="#5bb75b"/>
         <meta name="Description" content="O Sistema Datapronera foi desenvolvido para a II Pesquisa Nacional sobre a Educação na Reforma Agrária, e teve como objetivo inicial armazenar todos os dados que foram encontrados nesta pesquisa. Após esta pesquisa, o Datapronera foi melhorado e uma nova versão, foi desenvolvida para que o levantamento destes dados pudesse ocorrer durante os anos seguintes a II Pesquisa Nacional."/>
         <meta name="author" content="Incra/Pronera/Unesp FCT"/>
         <meta name="keywords" content="Datapronera, Pronera, Pnera"/>
+        <link rel="shortcut icon" type="image/png" href="<?php echo base_url(); ?>css/img/pronera_logo.png"/>
         <!-- CSS -->
         <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap.css" />
         <link type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/index.css" />

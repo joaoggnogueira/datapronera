@@ -110,6 +110,25 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
+    function get_assentamentos_sugestao(){
+        $this->db->select('a.codigo, a.nome');
+        $this->db->from('assentamentos a');
+        $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
+        if($estado!="0"){
+            $this->db->where('s.id_estado', $estado);
+        }
+        
+        $query = $this->db->get();
+        
+        $resultado = "";
+        
+        foreach ($query->result() as $row) {
+            $resultado .= "<option value='" . $row->codigo . "' title='" . $row->nome . "'>" . $row->codigo . " - " . $row->nome . "</option>";
+        }
+
+        echo $resultado;
+    }
+    
     function get_assentamentos($estado) {
         $this->db->select('a.codigo, a.nome');
         $this->db->from('assentamentos a');

@@ -177,14 +177,14 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
-                    
+
                     $xls = $this->create_header("Municípios de realização dos cursos por modalidade", $title_status);
                     $xls = $this->append_xls_data($xls, $result, array("MODALIDADE", "ESTADO", "CÓD. MUNICÍPIO", "MUNICÍPIO", "CÓD. CURSO", "CURSO"));
 
                     $this->barchart->set_include_charts(false); // hide charts
-                    
+
                     $this->barchart->set_number_format("00.000");
-                    
+
                     $this->write_xls($xls, 'MUNICIPIOS-CURSO-MODALIDADE.xls');
                 } else if ($tipo == 2) {
                     $this->write_pdf('Municípios de realização dos cursos por modalidade', $result, $title_status, 'relatorio/2pnera/municipios_curso_modalidade');
@@ -606,6 +606,32 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                     $this->write_pdf('Alunos concluintes por nível e superintendência', $result, $title_status, 'relatorio/2pnera/alunos_concluintes_nivel_sr');
                 } else if ($tipo == 3) {
                     $this->write_html('Alunos concluintes por nível e superintendência', $result, $title_status, 'relatorio/2pnera/alunos_concluintes_nivel_sr');
+                }
+            } else {
+                $this->handle_empty();
+            }
+        } else {
+            $this->handle_error();
+        }
+    }
+
+    public function alunos_cadastrados_curso($tipo) {
+        $status = $this->get_status();
+        $title_status = $this->title_status($status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_cadastrados_curso($status);
+        if (is_array($result)) {
+            if (count($result) != 0) {
+                if ($tipo == 1) {
+                    $xls = $this->create_header("Relação de Total de alunos cadastrados, ingressantes e concluintes por curso", $title_status);
+                    $xls = $this->append_xls_data($xls, $result, array("COD", "NOME", "CADASTRADO", "INGRESSANTE", "CONCLUÍNTES"));
+
+                    $this->barchart->set_include_charts(false);
+
+                    $this->write_xls($xls, 'ALUNOS-CADASTRADOS-INGRESSANTES-CONCLUINTES-CURSO.xls');
+                } else if ($tipo == 2) {
+                    $this->write_pdf('Relação de Total de alunos cadastrados, ingressantes e concluintes por curso', $result, $title_status, 'relatorio/2pnera/alunos_cadastrados_curso');
+                } else if ($tipo == 3) {
+                    $this->write_html('Relação de Total de alunos cadastrados, ingressantes e concluintes por curso', $result, $title_status, 'relatorio/2pnera/alunos_cadastrados_curso');
                 }
             } else {
                 $this->handle_empty();

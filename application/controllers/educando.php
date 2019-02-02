@@ -10,6 +10,7 @@ class Educando extends CI_Controller {
         $this->load->helper('url');  // Loading Helper
 
         $this->load->model('educando_m');
+        $this->load->model('curso_m');
         $this->load->model('caracterizacao_m');
     }
 
@@ -44,11 +45,11 @@ class Educando extends CI_Controller {
             $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
             $data['content'] = $this->session->userdata('curr_content');
+            $dados['sr_uf'] =  $this->curso_m->get_sr_uf($this->session->userdata('id_curso'));
 
             $valores['dados'] = $dados;
             $valores['educando'] = $educando;
             $valores['operacao'] = $this->input->post('operacao');
-
 
             $municipio_estado = $this->educando_m->get_estado_municipio($educando['id']);
             if (!isset($municipio_estado)) {
@@ -428,14 +429,34 @@ class Educando extends CI_Controller {
         echo json_encode($response);
     }
 
-    function get_tipo_acamp() {
+    function sugestao_assentamento_sipra(){
+        echo json_encode($this->educando_m->sugestao_assentamento_sipra($this->uri->segment(3)));
+    }
 
+    function sugestao_assentamento_nonsipra(){
+        echo json_encode($this->educando_m->sugestao_assentamento_nonsipra($this->uri->segment(3)));    
+    }
+    
+    function recent_assentamento_sipra(){
+        echo json_encode($this->educando_m->recent_assentamento_sipra());  
+    }
+    
+    function recent_assentamento_nonsipra(){
+        echo json_encode($this->educando_m->recent_assentamento_nonsipra());  
+    }
+    
+    function get_tipo_acamp() {
         $query = $this->educando_m->get_tipo_acamp($this->uri->segment(3));
         echo $query;
     }
     
     function sugestao_genero(){
-        echo $this->educando_m->sugestao_genero($this->uri->segment(3));
+        $result = $this->educando_m->sugestao_genero($this->uri->segment(3));
+        if($result == "I"){
+            $this->load->model('professor_m');
+            $result = $this->professor_m->sugestao_genero($this->uri->segment(3));
+        }
+        echo $result;
     }
 
 }

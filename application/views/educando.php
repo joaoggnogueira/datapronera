@@ -11,7 +11,16 @@
         });
 
         table.hideColumns([0]);
-
+        
+        $("#export").click(function(){
+            var url = "<?php echo site_url('relatorio_dinamico') . '/'; ?>";
+           $('<form target="_blank" action="' + url + 'gerarRelatorio" method="POST">' +
+                    "<textarea name='format'>XLSX</textarea>" +
+                    "<textarea name='curso'><?= $this->session->userdata('id_curso') ?></textarea>" +
+                    "<textarea name='check_educando'>true</textarea>" +
+                "</form>").appendTo('body').submit().remove(); 
+        });
+        
         //$('#educando_table').tableInit(url);
         //$('#educando_table').hideColumns([0]);
         /*var url="<?php echo site_url(''); ?>/";
@@ -129,8 +138,9 @@
         <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="remover">Remover</button></li>
     <?php } ?>
         <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="visualizar">Visualizar</button></li>
+        <li class="buttons" style="float: right"><button type="button" class="btn btn-success" id="export">Exportar XSLX</button></li>
     </ul>    
-
+    
     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="students_table">
         <thead>
             <tr>

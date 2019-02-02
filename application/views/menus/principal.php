@@ -67,6 +67,10 @@
 		<li><a href="#" onclick="
 			request('<?php echo site_url('curso/index'); ?>', null, 'hide');
 		">Curso</a></li>
+		
+                <li><a href="#" onclick="
+			request('<?php echo site_url('assentamento/index'); ?>', null, 'hide');
+		">Assentamento</a></li>
 
 		<?php
 

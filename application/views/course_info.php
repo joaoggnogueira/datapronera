@@ -1,6 +1,6 @@
 <script type="text/javascript">
-	
-	$(document).ready(function () {
+
+    $(document).ready(function () {
 
 //		$('#submit').click(function () {
 //            $('#dialog-fin-cs').dialogInit(function () {
@@ -14,30 +14,34 @@
 //            }, [500,220]);
 //        });
 
-	});
+    });
 
 </script>
 
 <nav class="navbar navbar-default" role="navigation">
-  	<div class="container">
+    <div class="container">
 
-	    <div class="navbar-header">
-	      	<a class="navbar-brand" href="#"><?php echo $this->session->userdata('cod_course'); ?></a>
-	      	<a class="navbar-brand" href="#"><?php echo $this->session->userdata('name_course'); ?></a>
-	    </div>
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"><?php echo $this->session->userdata('cod_course'); ?></a>
+            <a class="navbar-brand" href="#"><?php 
+            echo htmlspecialchars ($this->session->userdata('name_course')); 
+            ?></a>
+            <div id="desc-course" style="display: none">
+                <a class="navbar-brand" style="margin-top: -15px;font-size: 14px;font-weight: bold;" href="#"></a>
+            </div>
+        </div>
 
-<!--	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	    	<?php
+        <!--	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <?php
+        if ($this->session->userdata('status_curso') != '2P' &&
+                $this->session->userdata('status_curso') != 'CC') {
+            echo '<button id="submit" type="button" class="btn btn-default btn-sm navbar-btn pull-right">Finalizar Cadastro</button>';
+        }
+        ?>
+                        
+                    </div>-->
 
-	    		if ($this->session->userdata('status_curso') != '2P' &&
-    					$this->session->userdata('status_curso') != 'CC') {
-	    			echo '<button id="submit" type="button" class="btn btn-default btn-sm navbar-btn pull-right">Finalizar Cadastro</button>';
-	    		}
-	    	?>
-	    	
-	    </div>-->
-
-  	</div>
+    </div>
 </nav>
 
 <div id="dialog-fin-cs" name="dialog-fin-cs" class="dialog" title="Confirmar submiss&atilde;o">

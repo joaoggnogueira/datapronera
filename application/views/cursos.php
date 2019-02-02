@@ -220,7 +220,7 @@ if (!defined('BASEPATH')) {
         <input checked type="checkbox" name="status" class="check_vigencia" value="AN" id="vigencia_checkbox_an"/>
         <label for="vigencia_checkbox_an"> 
             <div class="label-title">
-                Dentro da Vigência
+                Em progresso
             </div>
             <div class="label-subtitle">
                 Cursos que possivelmente estão ocorrendo neste momento
@@ -231,7 +231,7 @@ if (!defined('BASEPATH')) {
         <input checked type="checkbox" name="status" class="check_vigencia" value="CC" id="vigencia_checkbox_cc"/>
         <label for="vigencia_checkbox_cc"> 
             <div class="label-title">
-                Fora da Vigência
+                Concluído ou aguardando início
             </div>
             <div class="label-subtitle">
                 Cursos que ainda não iniciaram ou já foram finalizados

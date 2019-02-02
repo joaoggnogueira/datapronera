@@ -164,7 +164,7 @@ $.fn.scrollable = function () {
     });
 }
 
-function request(_url, _data, _fn) {
+function request(_url, _data, _fn, _callback) {
 
     _fn = _fn || 'show';
 
@@ -186,6 +186,7 @@ function request(_url, _data, _fn) {
 
                 _fn == 'show' ? showMessage('status', data) : hideMessage('status');
 
+                $("#desc-course").fadeOut(400);
                 // Carrega conteúdo da nova view
                 $('#content').fadeOut().queue(function (next) {
                     $(this)
@@ -217,6 +218,10 @@ function request(_url, _data, _fn) {
                                 .fadeIn("slow");
                         next();
                     });
+                }
+
+                if (_callback && _callback.success) {
+                    _callback.success();
                 }
 
                 // Login não autorizado
@@ -1013,7 +1018,7 @@ $.fn.dialogInit = function (_function, _size) {
 $.fn.listCities = function (_url, _elem_city_id) {
     var $this = $(this);
     var $elemCity = $('#' + _elem_city_id);
-
+    
     $this.change(function () {
         var state_id = $this.val();
         $elemCity.html("<option>Aguarde...</option>");
@@ -1025,6 +1030,27 @@ $.fn.listCities = function (_url, _elem_city_id) {
     }).change();
 
 };
+
+$.fn.listFallbackJson = function (_url, _elem_city_id) {
+    var $this = $(this);
+    var $elemCity = $('#' + _elem_city_id);
+    var atual_request = false;
+
+    $this.change(function () {
+        var state_id = $this.val();
+        $elemCity.html("<option>Aguarde...</option>");
+        if (atual_request !== false) {
+            atual_request.abort();
+        }
+        atual_request = $.get(_url + '/' + state_id, function (cities) {
+            atual_request = false;
+            $elemCity.html(cities);
+        });
+
+    }).change();
+
+};
+
 
 $.fn.listCourses = function (_url, _elem_course_id) {
     var $this = $(this);

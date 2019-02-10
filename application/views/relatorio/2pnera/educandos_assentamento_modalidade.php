@@ -3,18 +3,17 @@
 		<tr>
 			<th style="text-align:left">TERRITORIO / ASSENTAMENTO</th>
 			<th>EJA ALFABETIZACAO</th>
-			<th>EJA ANOS INICIAIS</th>
-			<th>EJA ANOS FINAIS</th>
-			<th>COM. EJA NIVEL MEDIO (MAGISTERIO/FORMAL)</th>
-			<th>EJA NIVEL MEDIO (NORMAL)</th>
-			<th>NIVEL MEDIO/TECNICO (CONCOMITANTE)</th>
-			<th>NIVEL MEDIO/TECNICO (INTEGRADO)</th>
-			<th>NIVEL MEDIO PROFISSIONAL (POS-MEDIO)</th>
+			<th>EJA A. INICIAIS</th>
+			<th>EJA A. FINAIS</th>
+			<th>COM. EJA N. MEDIO (MAGISTERIO/FORMAL)</th>
+			<th>EJA N. MEDIO (NORMAL)</th>
+			<th>N. MEDIO/TECNICO (CONCOMITANTE)</th>
+			<th>N. MEDIO/TECNICO (INTEGRADO)</th>
+			<th>N. MEDIO PROFISSIONAL (POS-MEDIO)</th>
 			<th>GRADUACAO</th>
 			<th>ESPECIALIZACAO</th>
-			<th>RESIDENCIA AGRARIA</th>
+			<th>RESID. AGRARIA</th>
 			<th>MESTRADO</th>
-			<th>DOUTORADO</th>
 		</tr>
 		<?php 
 			foreach ($result as $row) {
@@ -33,7 +32,6 @@
 				<td style="text-align:center"><?php echo $row['especializacao']; ?></td>
 				<td style="text-align:center"><?php echo $row['res_agraria']; ?></td>
 				<td style="text-align:center"><?php echo $row['mestrado']?></td>
-				<td style="text-align:center"><?php echo $row['doutorado'] ?></td>
 			</tr>
 		<?php
 			}

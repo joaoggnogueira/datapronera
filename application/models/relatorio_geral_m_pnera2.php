@@ -13,6 +13,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         }
     }
 
+    //PREPARE-SE PARA MORRER FUNÇÃO
     function array_to_sql($stats) {
         $text = json_encode($stats);
         $text = str_replace("[", "(", $text);
@@ -20,20 +21,105 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         return $text;
     }
 
-    function cursos_modalidade($access_level, $status) {
+    function db_join_and_where_vigencia_filter($vigencia, $join) {
+        if ($vigencia != "BOTH") {
+            if ($join) {
+                $this->db->join("caracterizacao cr", "cr.id_curso = c.id");
+            }
+            $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
+            if ($vigencia == "AN") {
+                $this->db->where("($atual BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            } else if ($vigencia == "CC") {
+                $this->db->where("($atual NOT BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            }
+        }
+    }
 
-        $this->db->select('cm.nome AS modalidade, COUNT(c.id) AS cursos');
-        $this->db->from('curso_modalidade cm');
-        $this->db->join('curso c', 'cm.id = c.id_modalidade', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
+    function db_where_sr_filter($access_level) {
         if ($access_level <= 3) {
             $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
         }
+    }
 
-        $this->db->group_by('cm.nome');
+    function db_where_status_filter($status) {
+        $this->db->where('c.ativo_inativo', 'A');
+        $this->db->where_in('c.status', $status);
+    }
 
+    function get_tipo_territorio() {
+        return array(
+            'acampamento' => 'ACAMPAMENTO',
+            'assentamento' => 'ASSENTAMENTO',
+            'comunidade' => 'COMUNIDADE',
+            'quilombola' => 'QUILOMBOLA',
+            'comunidade_ribeirinha' => 'COMUNIDADE RIBEIRINHA',
+            'floresta_nacional' => 'FLORESTA NACIONAL',
+            'resex' => 'RESEX',
+            'flona' => 'FLONA',
+            'rds' => 'RDS',
+            'outro' => 'OUTRO',
+            'nao_preenchido' => '',
+            'nao_informado' => '###'
+        );
+    }
+
+    function get_titulacao_professor($short_name = false) {
+        return ($short_name ? array(
+            'ensino_fundamental_completo' => array("ENSINO FUNDAMENTAL COMPLETO"),
+            'ensino_fundamental_incompleto' => array("ENSINO FUNDAMENTAL INCOMPLETO"),
+            'ensino_medio_completo' => array("ENSINO MEDIO COMPLETO"),
+            'ensino_medio_incompleto' => array("ENSINO MEDIO INCOMPLETO"),
+            'graduado' => array("GRADUADO(A)"),
+            'especialista' => array("ESPECIALISTA"),
+            'mestre' => array("MESTRE(A)"),
+            'doutor' => array("DOUTOR(A)"),
+            'undefined' => array("", "NAOINFORMADO", "###")) : array(
+            'ENSINO FUNDAMENTAL COMPLETO' => array("ENSINO FUNDAMENTAL COMPLETO"),
+            'ENSINO FUNDAMENTAL INCOMPLETO' => array("ENSINO FUNDAMENTAL INCOMPLETO"),
+            'ENSINO MÉDIO COMPLETO' => array("ENSINO MEDIO COMPLETO"),
+            'ENSINO MÉDIO INCOMPLETO' => array("ENSINO MEDIO INCOMPLETO"),
+            'GRADUADO(A)' => array("GRADUADO(A)"),
+            'ESPECIALISTA' => array("ESPECIALISTA"),
+            'MESTRE(A)' => array("MESTRE(A)"),
+            'DOUTOR(A)' => array("DOUTOR(A)"),
+            'NÃO INFORMADO' => array("", "NAOINFORMADO", "###")
+        ));
+    }
+
+    function get_niveis($short_name = false) {
+        if ($short_name) {
+            return array(
+                "eja_fundamental" => array(17, 19, 23),
+                "ensino_medio" => array(18, 24, 16, 21, 20, 31),
+                "ensino_superior" => array(15, 25, 22, 30, 32, 34, 35, 33)
+            );
+        } else {
+            return array(
+                "EJA FUNDAMENTAL" => array(17, 19, 23),
+                "ENSINO MÉDIO" => array(18, 24, 16, 21, 20, 31),
+                "ENSINO SUPERIOR" => array(15, 25, 22, 30, 32, 34, 35, 33)
+            );
+        }
+    }
+
+    function get_modalidades() {
+        return array(
+            "15" => "graduacao",
+            "16" => "medio_conc",
+            "17" => "eja_alf",
+            "18" => "eja_mag_form",
+            "19" => "eja_anos_inic",
+            "20" => "medio_prof_",
+            "21" => "medio_int",
+            "22" => "res_agraria",
+            "23" => "eja_anos_fin",
+            "24" => "eja_normal",
+            "25" => "especializacao",
+            "30" => "mestrado"
+        );
+    }
+
+    function db_result() {
         if (($query = $this->db->get()) != null) {
             return $query->result_array();
         } else {
@@ -41,768 +127,349 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         }
     }
 
-    function cursos_nivel($access_level, $status) {
-
-        $niveis = array(
-            "EJA FUNDAMENTAL" => "('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')",
-            "ENSINO MÉDIO" => "('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')",
-            "ENSINO SUPERIOR" => "('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')"
-        );
-
-        $stms = array();
-        foreach ($niveis as $key => $value) {
-            $stm = "SELECT '$key' as nivel,IF(COUNT(c.id)<>0,COUNT(c.id),('-')) as total FROM curso c
-                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                    WHERE cm.nome IN $value
-                    AND c.ativo_inativo = 'A'
-                    AND c.status IN " . $this->array_to_sql($status) . "  ";
-            if ($access_level <= 3) {
-                $stm .= " AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
-            }
-            array_push($stms, $stm);
+    /**
+     * $array_to[$index_to] <- $array_from[$index_from] (join by glue)
+     */
+    function array_push_column(&$array_to, $index_to, $array_from, $index_from, $glue) {
+        $hash = array();
+        foreach ($array_from as $key => $value) {
+            $hash[$value[$glue]] = $value;
         }
 
-        $sql = implode(" UNION ALL ", $stms);
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
+        foreach ($array_to as $key => $value) {
+            if (isset($hash[$value[$glue]])) {
+                $array_to[$key][$index_to] = $hash[$value[$glue]][$index_from];
+            }
         }
     }
 
-    function cursos_nivel_superintendencia($status) {
-        $stm1 = "SELECT s.id AS id,CONCAT(('SR - '),LPAD(s.id,(2),(0))) AS cod, s.nome AS nome FROM superintendencia s GROUP BY s.id";
-        if ($bool = $this->db->query($stm1)) {
-            $supers = $bool->result_array();
-            $result = array();
-            $cont = 0;
-            $status_text = $this->array_to_sql($status);
-            foreach ($supers as $row) {
-                $stm2 = "SELECT '" . $row['nome'] . "' AS nome, '" . $row['cod'] . "' AS cod, 
-                    IF((SELECT IF(COUNT(c.id)<>0,COUNT(c.id),('-')) FROM curso c
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
-                                    AND c.id_superintendencia = '" . $row['id'] . "'
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $status_text) IS NULL, 0, 
-                            (SELECT IF(COUNT(c.id)<>0,COUNT(c.id),('-')) FROM curso c
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
-                                    AND c.id_superintendencia = '" . $row['id'] . "'
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $status_text)
-                    ) AS eja_fundamental,
-                    IF((SELECT IF(COUNT(c.id)<>0,COUNT(c.id),('-')) FROM curso c
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
-                                    AND c.id_superintendencia = '" . $row['id'] . "'
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $status_text) IS NULL, 0, 
-                            (SELECT IF(COUNT(c.id)<>0,COUNT(c.id),('-')) FROM curso c
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
-                                    AND c.id_superintendencia = '" . $row['id'] . "'
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $status_text)
-                    ) AS ensino_medio,
-                    IF((SELECT IF(COUNT(c.id)<>0,COUNT(c.id),('-')) FROM curso c
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
-                                    AND c.id_superintendencia = '" . $row['id'] . "'
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $status_text) IS NULL, 0, 
-                            (SELECT IF(COUNT(c.id)<>0,COUNT(c.id),('-')) FROM curso c
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
-                                    AND c.id_superintendencia = '" . $row['id'] . "'
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $status_text)
-                    ) AS ensino_superior";
-                if ($bool = $this->db->query($stm2)) {
-                    $result_parcial = $bool->result_array();
-                    $result[$cont] = $result_parcial[0];
-                    $result[$cont]['total'] = $result_parcial[0]['eja_fundamental'] + $result_parcial[0]['ensino_medio'] + $result_parcial[0]['ensino_superior'];
-                    if ($result[$cont]['total'] == '0') {
-                        $result[$cont]['total'] = '-';
-                    }
-                    $cont++;
+    function array_push_keys($array, $keys, $defaultValue) {
+        foreach ($keys as $key) {
+            $array[$key] = $defaultValue;
+        }
+        return $array;
+    }
+
+    function matrix_push_keys($matriz, $keys, $defaultValue) {
+        foreach ($matriz as $index => $rows) {
+            $matriz[$index] = $this->array_push_keys($rows, $keys, $defaultValue);
+        }
+        return $matriz;
+    }
+
+    function percent_rows($result_final, $columns) {
+        foreach ($result_final as $key_result => $result) {
+            $sum = 0;
+            foreach ($columns as $key => $value) {
+                if (isset($result[$key])) {
+                    $sum += (int) $result[$key];
+                } else {
+                    $result_final[$key_result][$key] = "-";
+                }
+            }
+            foreach ($columns as $key => $value) {
+                if ($sum != 0) {
+                    $result_final[$key_result][$key] = 100.0 * ($result_final[$key_result][$key] / $sum);
                 }
             }
         }
-        return $result;
+        return $result_final;
     }
 
-    function cursos_superintendencia($status) {
-
-        $this->db->select("CONCAT(('SR - '),LPAD(s.id,(2),(0))) as id, s.nome AS superintendencia, COUNT(c.id) AS cursos");
-        $this->db->from('superintendencia s');
-        $this->db->join('curso c', 's.id = c.id_superintendencia', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-        $this->db->group_by('s.id');
-        $this->db->order_by('s.id');
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
+    function percent_column($result_final, $columnanme, $sum) {
+        if ($sum != 0) {
+            foreach ($result_final as $key => $result) {
+                $result_final[$key][$columnanme] = ($result[$columnanme] / $sum) * 100;
+            }
+            return $result_final;
         } else {
-            return false;
+            return array();
         }
     }
 
-    function alunos_ingressantes_modalidade($access_level, $status) {
+    function cursos_modalidade($access_level, $vigencia, $status) {
+        $this->db->select('cm.nome AS modalidade, COUNT(c.id) AS cursos')
+                ->from('curso_modalidade cm')
+                ->join('curso c', 'cm.id = c.id_modalidade', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+
+        $this->db->group_by('cm.nome');
+        return $this->db_result();
+    }
+
+    function cursos_nivel($access_level, $vigencia, $status) {
+        $niveis = $this->get_niveis();
+        $result_final = array();
+        foreach ($niveis as $key => $value) {
+            $this->db->select("('$key') as nivel,IF(COUNT(c.id)<>0,COUNT(c.id),('-')) as total")->from('curso c');
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db->where_in('c.id_modalidade', $value);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $result = $this->db_result();
+            array_push($result_final, $result[0]);
+        }
+        return $result_final;
+    }
+
+    function cursos_nivel_superintendencia($vigencia, $status) {
+        $niveis = $this->get_niveis(true);
+        $this->db->select("s.id as id, CONCAT(('SR - '),LPAD(s.id,(2),(0)),(' '),(s.nome)) as nome, (0) as total")->from("superintendencia s")->order_by('s.id');
+        $result_final = $this->db_result();
+        foreach ($niveis as $key => $value) { //itera os 3 níveis de curso
+            $this->db->select("s.id as id, COUNT(c.id) as total")->from("superintendencia s")->join("curso c", "s.id = c.id_superintendencia", "left");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db->where_in('c.id_modalidade', $value)->group_by('s.id');
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "total", "id");
+            foreach ($result_final as $key_row => $row) {
+                if (!isset($row[$key])) {
+                    $result_final[$key_row][$key] = 0;
+                }
+                $result_final[$key_row]['total'] += (int) $result_final[$key_row][$key];
+            }
+        }
+        return $result_final;
+    }
+
+    function cursos_superintendencia($access_level, $vigencia, $status) {
+
+        $this->db->select("CONCAT(('SR - '),LPAD(s.id,(2),(0))) as id, s.nome AS superintendencia, COUNT(c.id) AS cursos")
+                ->from('superintendencia s')
+                ->join('curso c', 's.id = c.id_superintendencia', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->group_by('s.id')->order_by('s.id');
+
+        return $this->db_result();
+    }
+
+    function alunos_ingressantes_modalidade($access_level, $vigencia, $status) {
 
         $this->db->select('
 			cm.nome AS modalidade,
 			IF (SUM(cr.numero_ingressantes) > 0, SUM(cr.numero_ingressantes), 0) AS alunos_ingressantes
-		', false);
-        $this->db->from('caracterizacao cr');
-        $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+		', false)
+                ->from('caracterizacao cr')
+                ->join('curso c', 'cr.id_curso = c.id', 'left')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
         $this->db->where('cr.numero_ingressantes >=', 0);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
+        $this->db_where_sr_filter($access_level);
 
         $this->db->group_by('cm.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function alunos_ingressantes_nivel($access_level, $status) {
-
-        $niveis = array(
-            "EJA FUNDAMENTAL" => "('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')",
-            "ENSINO MÉDIO" => "('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')",
-            "ENSINO SUPERIOR" => "('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')"
-        );
-
-        $stms = array();
+    function alunos_ingressantes_nivel($access_level, $vigencia, $status) {
+        $niveis = $this->get_niveis();
+        $result_final = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '$key' AS nivel,SUM(cr.numero_ingressantes) as alunos
-                    FROM caracterizacao cr
-                    LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                    WHERE cm.nome IN $value 
-                    AND c.ativo_inativo = 'A'
-                    AND c.status IN " . $this->array_to_sql($status);
-
-            if ($access_level <= 3) {
-                $stm .= " AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
-            }
-            array_push($stms, $stm);
+            $this->db->select("('$key') AS nivel,SUM(cr.numero_ingressantes) as alunos")
+                    ->from("caracterizacao cr")
+                    ->join("curso c", "cr.id_curso = c.id", "left");
+            $this->db_join_and_where_vigencia_filter($vigencia, false);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $this->db->where_in("c.id_modalidade", $value);
+            $result = $this->db_result();
+            array_push($result_final, $result[0]);
         }
-        $sql = implode(" UNION ALL ", $stms);
-
-        //$this->db->select('cm.nivel AS modalidade,IF (SUM(cr.numero_ingressantes) > 0, SUM(cr.numero_ingressantes), 0) AS alunos_ingressantes', false);
-        //$this->db->from('caracterizacao cr');
-        //$this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', '2P');
-        //$this->db->where('cr.numero_ingressantes >=', 0);
-        //if ($access_level <= 3) {
-        //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        //}
-        //$this->db->group_by('cm.nivel');
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $result_final;
     }
 
-    function alunos_ingressantes_nivel_sr($status) {
-        $stm1 = "SELECT s.id AS id, CONCAT(('SR - '),LPAD(s.id,(2),(0))) AS cod, s.nome AS nome FROM superintendencia s GROUP BY s.id";
-        $title_status = $this->array_to_sql($status);
-        if ($bool = $this->db->query($stm1)) {
-            $supers = $bool->result_array();
-            $result = array();
-            $cont = 0;
-
-            foreach ($supers as $row) {
-                $stm2 = "SELECT '" . $row['nome'] . "' AS nome, '" . $row['cod'] . "' AS id, 
-						IF((SELECT IF(SUM(cr.numero_ingressantes)<>0,SUM(cr.numero_ingressantes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
-							) IS NULL, 0, 
-							(SELECT IF(SUM(cr.numero_ingressantes)<>0,SUM(cr.numero_ingressantes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS'))
-						) AS eja_fundamental,
-						IF((SELECT IF(SUM(cr.numero_ingressantes)<>0,SUM(cr.numero_ingressantes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
-							) IS NULL, 0, 
-							(SELECT IF(SUM(cr.numero_ingressantes)<>0,SUM(cr.numero_ingressantes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)'))
-						) AS ensino_medio,
-						IF((SELECT IF(SUM(cr.numero_ingressantes)<>0,SUM(cr.numero_ingressantes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
-							) IS NULL, 0, 
-							(SELECT IF(SUM(cr.numero_ingressantes)<>0,SUM(cr.numero_ingressantes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO'))
-						) AS ensino_superior";
-                if ($bool = $this->db->query($stm2)) {
-                    $result_parcial = $bool->result_array();
-                    $result[$cont] = $result_parcial[0];
-                    $result[$cont]['total'] = $result_parcial[0]['eja_fundamental'] + $result_parcial[0]['ensino_medio'] + $result_parcial[0]['ensino_superior'];
-                    $cont++;
+    function alunos_ingressantes_nivel_sr($vigencia, $status) {
+        $niveis = $this->get_niveis(true);
+        $this->db->select("s.id as id, s.nome AS nome, CONCAT(('SR - '),LPAD(s.id,(2),(0)),(' '),(s.nome)) as cod, (0) as total")->from("superintendencia s")->order_by('s.id');
+        $result_final = $this->db_result();
+        foreach ($niveis as $key => $value) { //itera os 3 níveis de curso
+            $this->db->select("s.id as id, SUM(cr.numero_ingressantes) as total")->from("superintendencia s")
+                    ->join("curso c", "s.id = c.id_superintendencia", "left")
+                    ->join("caracterizacao cr", "cr.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, false);
+            $this->db_where_status_filter($status);
+            $this->db->where("cr.numero_concluintes >", 0)->where_in('c.id_modalidade', $value)->group_by('s.id');
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "total", "id");
+            foreach ($result_final as $key_row => $row) {
+                if (!isset($row[$key])) {
+                    $result_final[$key_row][$key] = 0;
                 }
+                $result_final[$key_row]['total'] += (int) $result_final[$key_row][$key];
             }
         }
-        return $result;
+        return $result_final;
     }
 
-    function alunos_ingressantes_superintendencia($status) {
+    function alunos_ingressantes_superintendencia($vigencia, $status) {
 
         $this->db->select("
 			CONCAT(('SR - '),LPAD(s.id,(2),(0))) as id, s.nome AS superintendencia,
 			IF (SUM(cr.numero_ingressantes) > 0, SUM(cr.numero_ingressantes), 0) AS alunos_ingressantes
-		", false);
-        $this->db->from('caracterizacao cr');
-        $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+		", false)
+                ->from('caracterizacao cr')
+                ->join('curso c', 'cr.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
         $this->db->where('cr.numero_ingressantes >=', 0);
         $this->db->group_by('s.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function alunos_concluintes_modalidade($access_level, $status) {
+    function alunos_concluintes_modalidade($access_level, $vigencia, $status) {
 
         $this->db->select('
 			cm.nome AS modalidade,
 			IF (SUM(cr.numero_concluintes) > 0, SUM(cr.numero_concluintes), 0) AS alunos_concluintes
-		', false);
-        $this->db->from('caracterizacao cr');
-        $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+		', false)->from('caracterizacao cr')
+                ->join('curso c', 'cr.id_curso = c.id', 'left')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
         $this->db->where('cr.numero_concluintes >=', 0);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('cm.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function alunos_concluintes_nivel($access_level, $status) {
-
-        $niveis = array(
-            "EJA FUNDAMENTAL" => "('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')",
-            "ENSINO MÉDIO" => "('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')",
-            "ENSINO SUPERIOR" => "('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')"
-        );
-        $title_status = $this->array_to_sql($status);
-        $stms = array();
+    function alunos_concluintes_nivel($access_level, $vigencia, $status) {
+        $niveis = $this->get_niveis();
+        $result_final = array();
         foreach ($niveis as $key => $value) {
-            $stm = "SELECT '$key' AS nivel,SUM(cr.numero_concluintes) as alunos
-                FROM caracterizacao cr
-                LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-                LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                WHERE cm.nome IN $value
-                AND c.ativo_inativo = 'A'
-                AND c.status IN $title_status";
-            if ($access_level <= 3) {
-                $stm .= " AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia');
-            }
-            array_push($stms, $stm);
+            $this->db->select("('$key') as nivel,SUM(cr.numero_concluintes) as alunos")
+                    ->from('curso c')
+                    ->join('caracterizacao cr', 'cr.id_curso = c.id');
+            $this->db_join_and_where_vigencia_filter($vigencia, false);
+            $this->db->where_in('c.id_modalidade', $value);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $result = $this->db_result();
+            array_push($result_final, $result[0]);
         }
-
-        $sql = implode(" UNION ALL ", $stms);
-
-        //$this->db->select('cm.nivel AS modalidade,IF (SUM(cr.numero_concluintes) > 0, SUM(cr.numero_concluintes), 0) AS alunos_concluintes', false);
-        //$this->db->from('caracterizacao cr');
-        //$this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', '2P');
-        //$this->db->where('cr.numero_concluintes >=', 0);
-        //if ($access_level <= 3) {
-        //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        //}
-        //$this->db->group_by('cm.nivel');
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $result_final;
     }
 
-    function alunos_concluintes_nivel_sr($status) {
-        $stm1 = "SELECT s.id AS id, CONCAT(('SR - '),LPAD(s.id,(2),(0))) as cod , s.nome AS nome FROM superintendencia s GROUP BY s.id";
-        $title_status = $this->array_to_sql($status);
-        if ($bool = $this->db->query($stm1)) {
-            $supers = $bool->result_array();
-            $result = array();
-            $cont = 0;
-
-            foreach ($supers as $row) {
-                $stm2 = "SELECT '" . $row['nome'] . "' AS nome, '" . $row['cod'] . "' AS id, 
-						IF((SELECT IF(SUM(cr.numero_concluintes)<>0,SUM(cr.numero_concluintes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
-							) IS NULL, 0, 
-							(SELECT IF(SUM(cr.numero_concluintes)<>0,SUM(cr.numero_concluintes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS'))
-						) AS eja_fundamental,
-						IF((SELECT IF(SUM(cr.numero_concluintes)<>0,SUM(cr.numero_concluintes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
-							) IS NULL, 0, 
-							(SELECT IF(SUM(cr.numero_concluintes)<>0,SUM(cr.numero_concluintes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)'))
-						) AS ensino_medio,
-						IF((SELECT IF(SUM(cr.numero_concluintes)<>0,SUM(cr.numero_concluintes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
-							) IS NULL, 0, 
-							(SELECT IF(SUM(cr.numero_concluintes)<>0,SUM(cr.numero_concluintes),('-')) FROM caracterizacao cr
-								LEFT OUTER JOIN curso c ON (cr.id_curso = c.id)
-								LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-								WHERE c.ativo_inativo =  'A' 
-								AND c.status IN $title_status
-								AND c.id_superintendencia = '" . $row['id'] . "'
-								AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO'))
-						) AS ensino_superior";
-                if ($bool = $this->db->query($stm2)) {
-                    $result_parcial = $bool->result_array();
-                    $result[$cont] = $result_parcial[0];
-                    $result[$cont]['total'] = $result_parcial[0]['eja_fundamental'] + $result_parcial[0]['ensino_medio'] + $result_parcial[0]['ensino_superior'];
-                    $cont++;
+    function alunos_concluintes_nivel_sr($vigencia, $status) {
+        $niveis = $this->get_niveis(true);
+        $this->db->select("s.id as id, s.nome AS nome, CONCAT(('SR - '),LPAD(s.id,(2),(0)),(' '),(s.nome)) as cod, (0) as total")->from("superintendencia s")->order_by('s.id');
+        $result_final = $this->db_result();
+        foreach ($niveis as $key => $value) { //itera os 3 níveis de curso
+            $this->db->select("s.id as id, SUM(cr.numero_concluintes) as total")->from("superintendencia s")
+                    ->join("curso c", "s.id = c.id_superintendencia", "left")
+                    ->join("caracterizacao cr", "cr.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, false);
+            $this->db_where_status_filter($status);
+            $this->db->where("cr.numero_concluintes >", 0)->where_in('c.id_modalidade', $value)->group_by('s.id');
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "total", "id");
+            foreach ($result_final as $key_row => $row) {
+                if (!isset($row[$key])) {
+                    $result_final[$key_row][$key] = 0;
                 }
+                $result_final[$key_row]['total'] += (int) $result_final[$key_row][$key];
             }
         }
-        return $result;
+        return $result_final;
     }
 
-    function alunos_cadastrados_curso($status) {
-        $this->db->select('
-			CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS cod,
+    function alunos_cadastrados_curso($access_level, $vigencia, $status) {
+        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS cod,
                         c.nome as nome,
                         COUNT(e.id) as cadastrados,
-                        IF(ca.numero_ingressantes = -1 OR ca.numero_ingressantes = "" OR ca.numero_ingressantes IS NULL,("N/D"),(ca.numero_ingressantes)) as ingressante,
-                        IF(ca.numero_concluintes = -1 OR ca.numero_concluintes = "" OR ca.numero_ingressantes IS NULL,("N/D"),(ca.numero_concluintes)) as concluintes
-		', false);
-        $this->db->from('curso c');
-        $this->db->join('caracterizacao ca', 'ca.id_curso = c.id');
-        $this->db->join('educando e', 'e.id_curso = c.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-        $this->db->group_by('c.id');
-        $this->db->order_by('c.id_superintendencia,c.id');
+                        IF(cr.numero_ingressantes = -1 OR cr.numero_ingressantes = "" OR cr.numero_ingressantes IS NULL,("N/D"),(cr.numero_ingressantes)) as ingressante,
+                        IF(cr.numero_concluintes = -1 OR cr.numero_concluintes = "" OR cr.numero_ingressantes IS NULL,("N/D"),(cr.numero_concluintes)) as concluintes
+		', false)
+                ->from('curso c')->join('caracterizacao cr', 'cr.id_curso = c.id')->join('educando e', 'e.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
 
-        if (($query = $this->db->get()) != null) {
-            $rows_result = $query->result_array();
-            $sumcadastrados = 0;
-            $sumingressantes = 0;
-            $sumconcluintes = 0;
-            foreach ($rows_result as $key => $row) {
-                if ($row['cadastrados'] != 'N/D') {
-                    $sumcadastrados += (int) $row['cadastrados'];
-                }
-                if ($row['ingressante'] != 'N/D') {
-                    $sumingressantes += (int) $row['ingressante'];
-                }
-                if ($row['concluintes'] != 'N/D') {
-                    $sumconcluintes += (int) $row['concluintes'];
-                }
-            }
+        $this->db->group_by('c.id')->order_by('c.id_superintendencia, c.id');
+        $rows_result = $this->db_result();
+        $total_row = array("cod" => "", "nome" => "TOTAL", "cadastrados" => 0, "ingressante" => 0, "concluintes" => 0);
+        foreach ($rows_result as $row) {
+            $total_row['cadastrados'] += (int) $row['cadastrados'];
+            $total_row['ingressante'] += (int) $row['ingressante'];
+            $total_row['concluintes'] += (int) $row['concluintes'];
         }
-
-        $rows_result[] = array(
-            "cod" => "",
-            "nome" => "TOTAL",
-            "cadastrados" => $sumcadastrados,
-            "ingressante" => $sumingressantes,
-            "concluintes" => $sumconcluintes
-        );
-
+        $rows_result[] = $total_row;
         return $rows_result;
     }
 
-    function alunos_concluintes_superintendencia($status) {
+    function alunos_concluintes_superintendencia($access_level, $vigencia, $status) {
 
         $this->db->select("
 			CONCAT(('SR - '),LPAD(s.id,(2),(0))) as id, s.nome AS superintendencia,
 			IF (SUM(cr.numero_concluintes) > 0, SUM(cr.numero_concluintes), 0) AS alunos_concluintes
-		", false);
-        $this->db->from('caracterizacao cr');
-        $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+		", false)
+                ->from('caracterizacao cr')
+                ->join('curso c', 'cr.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
         $this->db->where('cr.numero_concluintes >=', 0);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('s.id');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function educandos_assentamento_modalidade($status) {
-        $title_status = $this->array_to_sql($status);
-        $sql = " SELECT
-                       TRIM(tb1.assent) AS assent,
-                        IF (tb2.qtde IS NULL, ('-'), tb2.qtde) AS eja_alf,
-                        IF (tb3.qtde IS NULL, ('-'), tb3.qtde) AS eja_anos_inic,
-                        IF (tb4.qtde IS NULL, ('-'), tb4.qtde) AS eja_anos_fin,
-                        IF (tb5.qtde IS NULL, ('-'), tb5.qtde) AS eja_mag_form,
-                        IF (tb6.qtde IS NULL, ('-'), tb6.qtde) AS eja_normal,
-                        IF (tb7.qtde IS NULL, ('-'), tb7.qtde) AS medio_conc,
-                        IF (tb8.qtde IS NULL, ('-'), tb8.qtde) AS medio_int,
-                        IF (tb9.qtde IS NULL, ('-'), tb9.qtde) AS medio_prof_,
-                        IF (tb10.qtde IS NULL, ('-'), tb10.qtde) AS graduacao,
-                        IF (tb11.qtde IS NULL, ('-'), tb11.qtde) AS especializacao,
-                        IF (tb12.qtde IS NULL, ('-'), tb12.qtde) AS res_agraria,
-                        IF (tb13.qtde IS NULL, ('-'), tb13.qtde) AS mestrado,
-                        IF (tb14.qtde IS NULL, ('-'), tb14.qtde) AS doutorado
-
-                FROM 
-
-                (SELECT DISTINCT ed.nome_territorio AS assent
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                ) AS tb1
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'EJA ALFABETIZACAO'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb2
-
-                ON (tb1.assent = tb2.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'EJA ANOS INICIAIS'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb3
-
-                ON (tb1.assent = tb3.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'EJA ANOS FINAIS'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb4
-
-                ON (tb1.assent = tb4.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'EJA NIVEL MEDIO (MAGISTERIO/FORMAL)'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb5
-
-                ON (tb1.assent = tb5.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'EJA NIVEL MEDIO (NORMAL)'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb6
-
-                ON (tb1.assent = tb6.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'NIVEL MEDIO/TECNICO (CONCOMITANTE)'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb7
-
-                ON (tb1.assent = tb7.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'NIVEL MEDIO/TECNICO (INTEGRADO)'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb8
-
-                ON (tb1.assent = tb8.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'NIVEL MEDIO PROFISSIONAL (POS-MEDIO)'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb9
-
-                ON (tb1.assent = tb9.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'GRADUACAO'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb10
-
-                ON (tb1.assent = tb10.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'ESPECIALIZACAO'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb11
-
-                ON (tb1.assent = tb11.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'RESIDENCIA AGRARIA'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb12
-
-                ON (tb1.assent = tb12.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'MESTRADO'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb13
-
-                ON (tb1.assent = tb13.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status 
-                        AND cm.nome = 'DOUTORADO'
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb14
-
-                ON (tb1.assent = tb14.assent)";
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
+    function educandos_assentamento_modalidade($access_level, $vigencia, $status) {
+        $this->db->select("ed.nome_territorio AS a, c.id_modalidade as i, COUNT(ed.nome_territorio) as t")
+                ->from("educando ed")
+                ->join("curso c", "c.id = ed.id_curso");
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->group_by("ed.nome_territorio, c.id_modalidade")->order_by("ed.nome_territorio, c.id_modalidade");
+        $array = $this->db_result();
+        $hash_modalidade = $this->get_modalidades(true);
+        $array_count = array_values($hash_modalidade);
+        $result = array();
+        $atual_assent = $this->array_push_keys(array('assent' => $array[0]['a']), $array_count, 0);
+        foreach ($array as $reg) {
+            if ($atual_assent['assent'] != $reg['a']) {
+                $result[] = $atual_assent;
+                $atual_assent = $this->array_push_keys(array('assent' => $reg['a']), $array_count, 0);
+            }
+            $atual_assent[$hash_modalidade[$reg['i']]] = (int) $reg['t'];
         }
+        return $result;
     }
 
-    function educandos_assentamento_nivel($status) {
+    function educandos_assentamento_nivel($access_level, $vigencia, $status) {
+        $niveis = $this->get_niveis(true);
+        $this->db->select("ed.nome_territorio AS assent, ('-') as eja_fundamental, ('-') as ensino_medio, ('-') as ensino_superior")
+                ->from("educando ed")->join("curso c", "c.id = ed.id_curso");
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->distinct();
+        $result_final = $this->db_result();
 
-        $title_status = $this->array_to_sql($status);
-        $sql = "SELECT
-                        TRIM(tb1.assent) AS assent,
-                        IF (tb2.qtde IS NULL, ('-'), tb2.qtde) AS eja_fundamental,
-                        IF (tb3.qtde IS NULL, ('-'), tb3.qtde) AS nivel_medio,
-                        IF (tb4.qtde IS NULL, ('-'), tb4.qtde) AS nivel_superior
-
-                FROM 
-
-                (SELECT DISTINCT ed.nome_territorio AS assent
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                ) AS tb1
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status
-                        AND cm.nome IN ('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb2
-
-                ON (tb1.assent = tb2.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status
-                        AND cm.nome IN ('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb3
-
-                ON (tb1.assent = tb3.assent)
-
-                LEFT OUTER JOIN
-
-                (SELECT ed.nome_territorio AS assent, COUNT(ed.id) AS qtde
-                        FROM educando ed
-                        INNER JOIN curso cs ON (cs.id = ed.id_curso)
-                        LEFT OUTER JOIN curso_modalidade cm ON (cs.id_modalidade = cm.id)
-                        WHERE cs.ativo_inativo = 'A' AND cs.status IN $title_status
-                        AND cm.nome IN ('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')
-                        AND ed.tipo_territorio = 'ASSENTAMENTO'
-                        GROUP BY ed.nome_territorio
-                ) AS tb4
-
-                ON (tb1.assent = tb4.assent)";
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
+        foreach ($niveis as $key => $value) { //itera os 3 níveis de curso
+            $this->db->select("('$key') as nivel, ed.nome_territorio AS assent, COUNT(ed.nome_territorio) as total")
+                    ->from("educando ed")->join("curso c", "c.id = ed.id_curso")->where_in('c.id_modalidade', $value);
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $this->db->group_by("ed.nome_territorio")->order_by("ed.nome_territorio");
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "total", "assent");
         }
+        return $result_final;
     }
 
-    function lista_educandos_cursos_sr($id, $status) {
+    function lista_educandos_cursos_sr($id, $vigencia, $status) {
         $sr = (int) $id;
         $this->db->select('
                     e.nome,
@@ -813,1117 +480,533 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
                     cm.nome AS modalidade
 		', false);
 
-        $this->db->from('educando e');
-        $this->db->join('curso c', 'e.id_curso = c.id');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db->from('educando e')
+                ->join('curso c', 'e.id_curso = c.id')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
         $this->db->where('c.id_superintendencia', $sr);
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db_where_status_filter($status);
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function municipios_curso_modalidade($access_level, $status) {
-
-        $this->db->select('
-			cm.nome AS modalidade,
+    function municipios_curso_modalidade($access_level, $vigencia, $status) {
+        $this->db->select('cm.nome AS modalidade,
 			e.sigla AS estado,
 			cd.cod_municipio,
 			cd.nome AS cidade,
 			CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso,
-			c.nome AS curso
-		');
-
-        $this->db->from('curso c');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->join('caracterizacao cr', 'c.id = cr.id_curso', 'left');
-        $this->db->join('caracterizacao_cidade cc', 'cr.id = cc.id_caracterizacao', 'left');
-        $this->db->join('cidade cd', 'cc.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+			c.nome AS curso');
+        $this->db->from('curso c')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left')
+                ->join('caracterizacao cr', 'c.id = cr.id_curso', 'left')
+                ->join('caracterizacao_cidade cc', 'cr.id = cc.id_caracterizacao', 'left')
+                ->join('cidade cd', 'cc.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('c.nome, cm.nome, e.sigla, cd.cod_municipio, cd.nome, c.id');
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+
+        return $this->db_result();
     }
 
-    function municipios_curso($access_level, $status) {
-
+    function municipios_curso($access_level, $vigencia, $status) {
         $this->db->select('e.sigla AS estado, cd.cod_municipio, cd.nome AS cidade, COUNT(c.id) AS cursos');
-        $this->db->from('caracterizacao_cidade cc');
-        $this->db->join('caracterizacao cr', 'cc.id_caracterizacao = cr.id', 'left');
-        $this->db->join('curso c', 'cr.id_curso = c.id', 'left');
-        $this->db->join('cidade cd', 'cc.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->from('caracterizacao_cidade cc')
+                ->join('caracterizacao cr', 'cc.id_caracterizacao = cr.id', 'left')
+                ->join('curso c', 'cr.id_curso = c.id', 'left')
+                ->join('cidade cd', 'cc.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
         $this->db->where('cd.cod_municipio IS NOT ', 'NULL', false);
+        $this->db_where_sr_filter($access_level);
+        $this->db->group_by('cd.cod_municipio, cd.nome, e.sigla')->order_by('e.sigla, cd.nome');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        $this->db->group_by('cd.cod_municipio, cd.nome, e.sigla');
-        $this->db->order_by('e.sigla, cd.nome');
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function lista_cursos_modalidade($access_level, $status) {
-
-        $this->db->select('cm.nome AS modalidade, CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso');
-        $this->db->from('curso c');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
+    function lista_cursos_modalidade($access_level, $vigencia, $status) {
+        $this->db->select('cm.nome AS modalidade, CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso')
+                ->from('curso c')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
 
         $this->db->order_by('cm.nome, s.id, c.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function lista_cursos_modalidade_sr($access_level, $status) {
+    function lista_cursos_modalidade_sr($access_level, $vigencia, $status) {
 
-        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id_superintendencia, s.nome AS superintendencia, cm.nome AS modalidade, CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso');
-        $this->db->from('curso c');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id_superintendencia, s.nome AS superintendencia, cm.nome AS modalidade, CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso')
+                ->from('curso c')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->order_by('s.id, cm.nome, c.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function alunos_curso($idSr, $status) {
+    function alunos_curso($idSr, $vigencia, $status) {
         $sr = (int) $idSr;
-        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) as id_curso, c.nome as curso, e.nome as educando');
-        $this->db->from('educando e');
-        $this->db->join('curso c', 'e.id_curso = c.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-        $this->db->where('c.id_superintendencia', $sr);
-        $this->db->order_by('c.id');
+        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) as id_curso, c.nome as curso, e.nome as educando')
+                ->from('educando e')
+                ->join('curso c', 'e.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db->where('c.id_superintendencia', $sr)->order_by('c.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function titulacao_educadores($access_level, $status) {
-
-        $titulacoes = array(
-            '("ENSINO FUNDAMENTAL COMPLETO")' => 'ENSINO FUNDAMENTAL COMPLETO',
-            '("ENSINO FUNDAMENTAL INCOMPLETO")' => 'ENSINO FUNDAMENTAL INCOMPLETO',
-            '("ENSINO MEDIO COMPLETO")' => 'ENSINO MÉDIO COMPLETO',
-            '("ENSINO MEDIO INCOMPLETO")' => 'ENSINO MÉDIO INCOMPLETO',
-            '("GRADUADO(A)")' => 'GRADUADO(A)',
-            '("ESPECIALISTA")' => 'ESPECIALISTA',
-            '("MESTRE(A)")' => 'MESTRE(A)',
-            '("DOUTOR(A)")' => 'DOUTOR(A)',
-            '("","NAOINFORMADO","###")' => 'NÃO INFORMADO'
-        );
-
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
-
-        $stms = array();
-        $title_status = $this->array_to_sql($status);
+    function titulacao_educadores($access_level, $vigencia, $status) {
+        $titulacoes = $this->get_titulacao_professor();
+        $result_final = array();
+        $sum = 0;
         foreach ($titulacoes as $key => $value) {
-
-            $stm = "SELECT CAST('" . $value . "' AS CHAR(40)) AS titulacao,
-					IF (
-						(((SELECT COUNT(p.id) FROM professor p
-							LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-							WHERE c.ativo_inativo = 'A' $complement
-							AND c.status IN $title_status
-							AND p.titulacao IN  $key ) * 100) /
-								(SELECT COUNT(p.id) FROM professor p
-									LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-									WHERE c.ativo_inativo = 'A' $complement
-									AND c.status IN $title_status)
-						) IS NULL, 0,
-						(((SELECT COUNT(p.id) FROM professor p
-							LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-							WHERE c.ativo_inativo = 'A' $complement
-							AND c.status IN $title_status
-							AND p.titulacao IN  $key ) * 100) /
-								(SELECT COUNT(p.id) FROM professor p
-									LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-									WHERE c.ativo_inativo = 'A' $complement
-									AND c.status IN $title_status)
-						)
-					) AS educadores";
-
-            array_push($stms, $stm);
+            $this->db->select("('$key') as titulacao, COUNT(p.id) as educadores")
+                    ->from("professor p")
+                    ->join("curso c", "p.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $this->db->where_in("p.titulacao", $value);
+            $result = $this->db_result();
+            $sum += (int) $result[0]['educadores'];
+            array_push($result_final, $result[0]);
         }
-
-        $sql = implode(" UNION ALL ", $stms);
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->percent_column($result_final, "educadores", $sum);
     }
 
-    function titulacao_educadores_superintendencia($status) {
+    function titulacao_educadores_superintendencia($vigencia, $status) {
+        $titulacoes = $this->get_titulacao_professor(true);
 
-        $titulacoes = array(
-            '("ENSINO FUNDAMENTAL COMPLETO")' => 'ensino_fundamental_completo',
-            '("ENSINO FUNDAMENTAL INCOMPLETO")' => 'ensino_fundamental_incompleto',
-            '("ENSINO MEDIO COMPLETO")' => 'ensino_medio_completo',
-            '("ENSINO MEDIO INCOMPLETO")' => 'ensino_medio_incompleto',
-            '("GRADUADO(A)")' => 'graduado',
-            '("ESPECIALISTA")' => 'especialista',
-            '("MESTRE(A)")' => 'mestre',
-            '("DOUTOR(A)")' => 'doutor',
-            '("","NAOINFORMADO","###")' => 'undefined'
-        );
+        $this->db->select("s.id as id_sr, CONCAT(('SR - '),LPAD(s.id,(2),(0)),(' '),(s.nome)) as id")->from("superintendencia s");
+        $result_final = $this->db_result();
 
-        $select = 'SELECT CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id, s.nome,';
-        $title_status = $this->array_to_sql($status);
-        $stms = array();
         foreach ($titulacoes as $key => $value) {
-
-            $stm = "IF (
-			        (((SELECT COUNT(p.id) FROM professor p
-			            LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-			            LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			            WHERE c.ativo_inativo = 'A' AND c.status IN $title_status
-			            AND p.titulacao IN $key
-			            AND sp.id = s.id) * 100) /
-			                (SELECT COUNT(p.id) FROM professor p
-			                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-			                    LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			                    WHERE c.ativo_inativo = 'A' AND c.status IN $title_status
-			                    AND sp.id = s.id)
-			        ) IS NULl, 0,
-			        (((SELECT COUNT(p.id) FROM professor p
-			            LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-			            LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			            WHERE c.ativo_inativo = 'A' AND c.status IN $title_status
-			            AND p.titulacao IN $key
-			            AND sp.id = s.id) * 100) /
-			                (SELECT COUNT(p.id) FROM professor p
-			                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-			                    LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-			                    WHERE c.ativo_inativo = 'A' AND c.status IN $title_status
-			                    AND sp.id = s.id)
-			        )
-			    ) AS $value";
-            array_push($stms, $stm);
+            $this->db->select("s.id as id_sr, COUNT(p.id) as educadores")
+                    ->from("superintendencia s")
+                    ->join("curso c", "s.id = c.id_superintendencia")
+                    ->join("professor p", "p.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db->where_in("p.titulacao", $value)->group_by("s.id");
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "educadores", "id_sr");
         }
-
-        $clause = "FROM superintendencia s GROUP BY s.id";
-
-        $sql = implode(" ", array($select, implode(",", $stms), $clause));
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->percent_rows($result_final, $titulacoes);
     }
 
-    function educadores_nivel($access_level, $status) {
-        $title_status = $this->array_to_sql($status);
-        $niveis = array(
-            "EJA FUNDAMENTAL" => "('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')",
-            "ENSINO MÉDIO" => "('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')",
-            "ENSINO SUPERIOR" => "('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')"
-        );
-
-        $stms = array();
+    function educadores_nivel($access_level, $vigencia, $status) {
+        $niveis = $this->get_niveis();
+        $result_final = array();
+        $sum = 0;
         foreach ($niveis as $key => $value) {
-
-            if ($access_level <= 3) {
-                $stm = "SELECT '" . $key . "' AS nivel,
-                        IF(
-                            (SELECT COUNT(p.id) FROM professor p
-                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
-                            ) > 0, 
-                            (SELECT COUNT(p.id) FROM professor p
-                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
-                            ), 0
-                        ) AS educadores";
-            } else {
-                $stm = "SELECT '" . $key . "' AS nivel,
-                    IF(
-                            (SELECT COUNT(p.id) FROM professor p
-                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                            ) > 0, 
-                            (SELECT COUNT(p.id) FROM professor p
-                                    LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                            ), 0
-                    ) AS educadores";
-            }
-            array_push($stms, $stm);
+            $this->db->select("('$key') as nivel, COUNT(p.id) as educadores")
+                    ->from("professor p")
+                    ->join("curso c", "p.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db->where_in('c.id_modalidade', $value);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $result = $this->db_result();
+            $sum += $result[0]['educadores'];
+            array_push($result_final, $result[0]);
         }
-
-        $sql = implode(" UNION ALL ", $stms);
-
-        //$this->db->select('cm.nivel, COUNT(p.id)');
-        //$this->db->from('professor p');
-        //$this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', '2P');
-        //if ($access_level <= 3) {
-        //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        //}
-        //$this->db->group_by('cm.nivel');
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
+        foreach ($result_final as $key => $value) {
+            $result_final[$key]['educadores'] = ($value['educadores'] / $sum) * 100;
         }
+        return $result_final;
     }
 
-    function educadores_curso($access_level, $status) {
+    function educadores_curso($access_level, $vigencia, $status) {
 
-        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso, COUNT(p.id) AS educadores');
-        $this->db->from('professor p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, c.nome AS curso, COUNT(p.id) AS educadores')
+                ->from('professor p')
+                ->join('curso c', 'p.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->group_by('c.id')
+                ->order_by('c.id, c.nome');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        $this->db->group_by('c.id');
-        $this->db->order_by('c.id, c.nome');
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function educadores_superintendencia($status) {
+    function educadores_superintendencia($vigencia, $status) {
 
-        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id, s.nome AS superintendencia, COUNT(p.id) AS educadores');
-        $this->db->from('professor p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) AS id, s.nome AS superintendencia, COUNT(p.id) AS educadores')
+                ->from('professor p')
+                ->join('curso c', 'p.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
         $this->db->group_by('s.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function genero_educadores_modalidade($access_level, $status) {
-
-        $title_status = $this->array_to_sql($status);
+    function genero_educadores_modalidade($access_level, $vigencia, $status) {
         $generos = array('masculino' => 'M', 'feminino' => 'F');
-
-
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
-
-        $select = "SELECT cm.nome AS modalidade,";
-
-        $stms = array();
+        $this->db->select("cm.id as id,cm.nome as modalidade")->from("curso_modalidade cm");
+        $result_final = $this->db_result();
         foreach ($generos as $key => $value) {
-
-            $stm = "IF (
-			        (((SELECT COUNT(p.id) FROM professor p
-			            LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
-			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status IN $title_status
-			            AND cmd.id = cm.id
-			            AND p.genero = '" . $value . "') * 100) /
-			                (SELECT COUNT(p.id) FROM professor p
-			                    LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
-			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status IN $title_status
-					            AND cmd.id = cm.id)
-			        ) IS NULL, 0,
-			        (((SELECT COUNT(p.id) FROM professor p
-			            LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
-			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status IN $title_status
-			            AND cmd.id = cm.id
-			            AND p.genero = '" . $value . "') * 100) /
-			                (SELECT COUNT(p.id) FROM professor p
-			                    LEFT OUTER JOIN curso c ON (c.id = p.id_curso)
-			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status IN $title_status
-					            AND cmd.id = cm.id)
-			        )
-			    ) AS $key";
-
-            array_push($stms, $stm);
+            $this->db->select("c.id_modalidade as id, COUNT(p.id) as educadores")
+                    ->from("professor p")
+                    ->join("curso c", "p.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $this->db->where("p.genero", $value)->group_by('c.id_modalidade');
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "educadores", "id");
         }
-
-        $clause = "FROM curso_modalidade cm GROUP BY cm.id";
-
-        $sql = implode(" ", array($select, implode(",", $stms), $clause));
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->percent_rows($result_final, $generos);
     }
 
-    function educandos_superintendencia($status) {
+    function educandos_superintendencia($vigencia, $status) {
 
-        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) as id, s.nome, COUNT(e.id) AS educandos');
-        $this->db->from('educando e');
-        $this->db->join('curso c', 'e.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) as id, s.nome, COUNT(e.id) AS educandos')
+                ->from('educando e')
+                ->join('curso c', 'e.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
         $this->db->group_by('s.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function municipio_origem_educandos($access_level, $status) {
+    function municipio_origem_educandos($access_level, $vigencia, $status) {
 
-        $this->db->select('
-			e.sigla AS estado,
+        $this->db->select('e.sigla AS estado,
 			cd.nome AS municipio,
 			cd.cod_municipio AS cod_municipio,
 			IF (COUNT(e.id) > 0, COUNT(e.id), 0) AS educandos
 		', false);
 
-        $this->db->from('educando_cidade ec');
-        $this->db->join('cidade cd', 'ec.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->join('educando ed', 'ec.id_educando = ed.id', 'left');
-        $this->db->join('curso c', 'ed.id_curso = c.id', 'left');
-        $this->db->where_in('c.status', $status);
-        $this->db->where('c.ativo_inativo', 'A');
+        $this->db->from('educando_cidade ec')
+                ->join('cidade cd', 'ec.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left')
+                ->join('educando ed', 'ec.id_educando = ed.id', 'left')
+                ->join('curso c', 'ed.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
+        $this->db->group_by('cd.cod_municipio, e.sigla, cd.nome, cd.id')->order_by('e.sigla');
 
-        $this->db->group_by('cd.cod_municipio, e.sigla, cd.nome, cd.id');
-        $this->db->order_by('e.sigla');
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function territorio_educandos_modalidade($access_level, $status) {
+    function territorio_educandos_superintendencia($vigencia, $status) {
+        $territorios = $this->get_tipo_territorio();
+        $keys_territorios = array_keys($territorios);
 
-        $territorios = array(
-            'acampamento' => 'ACAMPAMENTO',
-            'assentamento' => 'ASSENTAMENTO',
-            'comunidade' => 'COMUNIDADE',
-            'quilombola' => 'QUILOMBOLA',
-            'comunidade_ribeirinha' => 'COMUNIDADE RIBEIRINHA',
-            'floresta_nacional' => 'FLORESTA NACIONAL',
-            'resex' => 'RESEX',
-            'flona' => 'FLONA',
-            'rds' => 'RDS',
-            'outro' => 'OUTRO',
-            'nao_preenchido' => '',
-            'nao_informado' => '###'
-        );
+        $this->db->select("s.id as id_sr, CONCAT(('SR - '),LPAD(s.id,(2),(0))) as id, s.nome as nome")->from("superintendencia s");
+        $result_final = $this->matrix_push_keys($this->db_result(), $keys_territorios, "-");
 
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
-        $title_status = $this->array_to_sql($status);
-        $select = "SELECT cm.nome,";
-
-        $stms = array();
         foreach ($territorios as $key => $value) {
-
-            $stm = "(SELECT IF(COUNT(e.id)<>0,COUNT(e.id),('-')) AS educandos
-					FROM educando e
-        			LEFT OUTER JOIN curso c ON (e.id_curso = c.id)
-        			LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-        			WHERE c.ativo_inativo = 'A' $complement
-        			AND c.status IN $title_status
-        			AND cmd.id = cm.id
-        			AND e.tipo_territorio = '" . $value . "') AS $key";
-
-            array_push($stms, $stm);
+            $this->db->select("IF(COUNT(e.id)<>0,COUNT(e.id),('-')) AS educandos, c.id_superintendencia id_sr")
+                    ->from("educando e")
+                    ->join("curso c", "e.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db->where("e.tipo_territorio", $value)->group_by("c.id_superintendencia");
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "educandos", "id_sr");
         }
 
-        $clause = "FROM curso_modalidade cm";
-
-        $sql = implode(" ", array($select, implode(",", $stms), $clause));
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $result_final;
     }
 
-    function territorio_educandos_superintendencia($status) {
+    function idade_educandos_modalidade($access_level, $vigencia, $status) {
 
-        $territorios = array(
-            'acampamento' => 'ACAMPAMENTO',
-            'assentamento' => 'ASSENTAMENTO',
-            'comunidade' => 'COMUNIDADE',
-            'quilombola' => 'QUILOMBOLA',
-            'comunidade_ribeirinha' => 'COMUNIDADE RIBEIRINHA',
-            'floresta_nacional' => 'FLORESTA NACIONAL',
-            'resex' => 'RESEX',
-            'flona' => 'FLONA',
-            'rds' => 'RDS',
-            'outro' => 'OUTRO',
-            'nao_preenchido' => '',
-            'nao_informado' => '###'
-        );
+        $this->db->select('cm.nome AS modalidade,IF (AVG(e.idade) IS NOT NULL, AVG(e.idade), 0) AS idade', false)
+                ->from('educando e')
+                ->join('curso c', 'e.id_curso = c.id', 'left')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left')
+                ->join('caracterizacao cr', 'c.id = cr.id_curso', 'left')
+                ->where('e.idade >', 0)
+                ->where('e.data_nascimento <>', '0000-00-00')
+                ->where('e.data_nascimento <>', '1900-01-01')
+                ->where('cr.inicio_realizado <>', 'NI');
 
-        $select = 'SELECT CONCAT(("SR - "),LPAD(s.id,(2),(0))) as id, s.nome,';
-        $title_status = $this->array_to_sql($status);
-        $stms = array();
-        foreach ($territorios as $key => $value) {
-
-            $stm = "(SELECT IF(COUNT(e.id)<>0,COUNT(e.id),('-')) AS educandos FROM educando e
-        			LEFT OUTER JOIN curso c ON (e.id_curso = c.id)
-        			LEFT OUTER JOIN superintendencia sp ON (c.id_superintendencia = sp.id)
-        			WHERE c.ativo_inativo = 'A'
-        			AND c.status IN $title_status
-        			AND sp.id = s.id
-        			AND e.tipo_territorio = '" . $value . "') AS $key";
-
-            array_push($stms, $stm);
-        }
-
-        $clause = "FROM superintendencia s WHERE s.id <> 31";
-
-        $sql = implode(" ", array($select, implode(",", $stms), $clause));
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
-    }
-
-    function idade_educandos_modalidade($access_level, $status) {
-
-        $this->db->select('
-			cm.nome AS modalidade,
-			IF (AVG(e.idade) IS NOT NULL, AVG(e.idade), 0) AS idade
-		', false);
-
-        $this->db->from('educando e');
-        $this->db->join('curso c', 'e.id_curso = c.id', 'left');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->join('caracterizacao cr', 'c.id = cr.id_curso', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-        $this->db->where('e.idade >', 0);
-        $this->db->where('e.data_nascimento <>', '0000-00-00');
-        $this->db->where('e.data_nascimento <>', '1900-01-01');
-        $this->db->where('cr.inicio_realizado <>', 'NI');
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db_where_status_filter($status);
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('cm.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function genero_educandos_modalidade($access_level, $status) {
-
-        $title_status = $this->array_to_sql($status);
+    function genero_educandos_modalidade($access_level, $vigencia, $status) {
         $generos = array('masculino' => 'M', 'feminino' => 'F');
-
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
-
-        $select = "SELECT cm.nome AS modalidade,";
-
-        $stms = array();
+        $this->db->select("cm.id as id, cm.nome as modalidade")->from("curso_modalidade cm");
+        $result_final = $this->db_result();
         foreach ($generos as $key => $value) {
-
-            $stm = "IF (
-			        (((SELECT COUNT(e.id) FROM educando e
-			            LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
-			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status IN $title_status
-			            AND cmd.id = cm.id
-			            AND e.genero = '" . $value . "') * 100) /
-			                (SELECT COUNT(e.id) FROM educando e
-			                    LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
-			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status IN $title_status
-					            AND cmd.id = cm.id)
-			        ) IS NULL, 0,
-			        (((SELECT COUNT(e.id) FROM educando e
-			            LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
-			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status IN $title_status
-			            AND cmd.id = cm.id
-			            AND e.genero = '" . $value . "') * 100) /
-			                (SELECT COUNT(e.id) FROM educando e
-			                    LEFT OUTER JOIN curso c ON (c.id = e.id_curso)
-			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-					            WHERE c.ativo_inativo = 'A' $complement
-					            AND c.status IN $title_status
-					            AND cmd.id = cm.id)
-			        )
-			    ) AS $key";
-
-            array_push($stms, $stm);
+            $this->db->select("c.id_modalidade as id, COUNT(e.id) as educandos")
+                    ->from("educando e")
+                    ->join("curso c", "e.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $this->db->where("e.genero", $value)->group_by('c.id_modalidade');
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "educandos", "id");
         }
-
-        $clause = "FROM curso_modalidade cm GROUP BY cm.id";
-
-        $sql = implode(" ", array($select, implode(",", $stms), $clause));
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->percent_rows($result_final, $generos);
     }
 
-    function localizacao_instituicoes_ensino($access_level, $status) {
+    function localizacao_instituicoes_ensino($access_level, $vigencia, $status) {
 
-        $this->db->select('IF(e.sigla IS NULL,("N/A"),(e.sigla)) AS estado, IF(cd.nome IS NULL,("N/A"),(cd.nome)) AS municipio, IF(cd.cod_municipio IS NULL,("N/A"),(cd.cod_municipio)) as cod_municipio, i.nome AS instituicao');
-        $this->db->from('instituicao_ensino i');
-        $this->db->join('cidade cd', 'i.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->join('curso c', 'i.id_curso = c.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-        $this->db->distinct();
+        $this->db->select('IF(e.sigla IS NULL,("N/A"),(e.sigla)) AS estado, IF(cd.nome IS NULL,("N/A"),(cd.nome)) AS municipio, IF(cd.cod_municipio IS NULL,("N/A"),(cd.cod_municipio)) as cod_municipio, i.nome AS instituicao')
+                ->from('instituicao_ensino i')
+                ->join('cidade cd', 'i.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left')
+                ->join('curso c', 'i.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->distinct()->order_by('e.sigla, cd.nome, i.nome');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        $this->db->order_by('e.sigla, cd.nome, i.nome');
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            echo $this->db->last_query();
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function instituicoes_ensino_modalidade($access_level, $status) {
+    function instituicoes_ensino_modalidade($access_level, $vigencia, $status) {
 
-        $this->db->select('cm.nome AS modalidade, COUNT(DISTINCT ie.nome) AS instituicoes');
-        $this->db->from('instituicao_ensino ie');
-        $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('cm.nome AS modalidade, COUNT(DISTINCT ie.nome) AS instituicoes')
+                ->from('instituicao_ensino ie')
+                ->join('curso c', 'ie.id_curso = c.id', 'left')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->group_by('cm.id');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        $this->db->group_by('cm.id'); // Verificar isso
-
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function instituicoes_ensino_municipio($access_level, $status) {
+    function instituicoes_ensino_municipio($access_level, $vigencia, $status) {
 
-        $this->db->select(
-                'IF(e.sigla IS NULL,("N/A"),(e.sigla)) AS estado,'
-                . ' IF(cd.cod_municipio IS NULL,("N/A"),(cd.cod_municipio)) as cod_municipio,'
-                . ' IF(cd.nome IS NULL,("N/A"),(cd.nome)) AS municipio,'
-                . ' COUNT(DISTINCT ie.nome) AS instituicoes');
-        $this->db->from('instituicao_ensino ie');
-        $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
-        $this->db->join('cidade cd', 'ie.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('IF(e.sigla IS NULL,("N/A"),(e.sigla)) AS estado,'
+                        . ' IF(cd.cod_municipio IS NULL,("N/A"),(cd.cod_municipio)) as cod_municipio,'
+                        . ' IF(cd.nome IS NULL,("N/A"),(cd.nome)) AS municipio,'
+                        . ' COUNT(DISTINCT ie.nome) AS instituicoes')
+                ->from('instituicao_ensino ie')
+                ->join('curso c', 'ie.id_curso = c.id', 'left')
+                ->join('cidade cd', 'ie.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->group_by('cd.id')->order_by('e.sigla, cd.nome');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        $this->db->group_by('cd.id');
-        $this->db->order_by('e.sigla, cd.nome');
-
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function instituicoes_ensino_estado($status) {
+    function instituicoes_ensino_estado($vigencia, $status) {
 
-        $this->db->select('IF(e.sigla IS NULL,("N/A"),(CONCAT((e.nome),(" ("),(e.sigla),(")")))) AS estado, COUNT(DISTINCT ie.nome) AS instituicoes');
-        $this->db->from('instituicao_ensino ie');
-        $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
-        $this->db->join('cidade cd', 'ie.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('IF(e.sigla IS NULL,("N/A"),(CONCAT((e.nome),(" ("),(e.sigla),(")")))) AS estado, COUNT(DISTINCT ie.nome) AS instituicoes')
+                ->from('instituicao_ensino ie')
+                ->join('curso c', 'ie.id_curso = c.id', 'left')
+                ->join('cidade cd', 'ie.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
         $this->db->group_by('e.sigla');
 
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function instituicoes_ensino_nivel($access_level, $status) {
-
-        $title_status = $this->array_to_sql($status);
-
-        $niveis = array(
-            "EJA FUNDAMENTAL" => "('EJA ALFABETIZACAO','EJA ANOS INICIAIS','EJA ANOS FINAIS')",
-            "ENSINO MÉDIO" => "('EJA NIVEL MEDIO (MAGISTERIO/FORMAL)','EJA NIVEL MEDIO (NORMAL)', 'NIVEL MEDIO/TECNICO (CONCOMITANTE)', 'NIVEL MEDIO/TECNICO (INTEGRADO)','NIVEL MEDIO PROFISSIONAL (POS-MEDIO)')",
-            "ENSINO SUPERIOR" => "('GRADUACAO','ESPECIALIZACAO','RESIDENCIA AGRARIA','MESTRADO','DOUTORADO')"
-        );
-
-        $stms = array();
+    function instituicoes_ensino_nivel($access_level, $vigencia, $status) {
+        $niveis = $this->get_niveis();
+        $result_final = array();
         foreach ($niveis as $key => $value) {
-            if ($access_level <= 3) {
-                $stm = "SELECT '" . $key . "' AS nivel,
-                    IF(
-                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
-                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A' 
-                                    AND c.status IN $title_status
-                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
-                            ) > 0, 
-                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
-                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                                    AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . "
-                            ), 0
-                    ) AS instituicoes";
-            } else {
-                $stm = "SELECT '" . $key . "' AS nivel,
-                    IF(
-                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
-                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                            ) > 0, 
-                            (SELECT COUNT(DISTINCT ie.nome) FROM instituicao_ensino ie
-                                    LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-                                    LEFT OUTER JOIN curso_modalidade cm ON (c.id_modalidade = cm.id)
-                                    WHERE cm.nome IN " . $value . "
-                                    AND c.ativo_inativo = 'A'
-                                    AND c.status IN $title_status
-                            ), 0
-                    ) AS instituicoes";
-            }
-            array_push($stms, $stm);
+            $this->db->select("('$key') as nivel, COUNT(DISTINCT ie.nome) as instituicoes")
+                    ->from("instituicao_ensino ie")
+                    ->join("curso c", "ie.id_curso = c.id");
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db->where_in('c.id_modalidade', $value);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $result = $this->db_result();
+            array_push($result_final, $result[0]);
         }
 
-        $sql = implode(" UNION ALL ", $stms);
-
-        //$this->db->select('cm.nivel, COUNT(DISTINCT ie.nome) AS instituicoes');
-        //$this->db->from('instituicao_ensino ie');
-        //$this->db->join('curso c', 'ie.id_curso = c.id', 'left');
-        //$this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        //$this->db->where('c.ativo_inativo', 'A');
-        //$this->db->where('c.status', '2P');
-        //if ($access_level <= 3) {
-        //	$this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        //}
-        //$this->db->group_by('cm.nivel');
-
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $result_final;
     }
 
-    function instituicoes_ensino_superintendencia($status) {
+    function instituicoes_ensino_superintendencia($vigencia, $status) {
 
-        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) as id, s.nome AS superintendencia, COUNT(DISTINCT ie.nome) AS instituicoes');
-        $this->db->from('instituicao_ensino ie');
-        $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('CONCAT(("SR - "),LPAD(s.id,(2),(0))) as id, s.nome AS superintendencia, COUNT(DISTINCT ie.nome) AS instituicoes')
+                ->from('instituicao_ensino ie')
+                ->join('curso c', 'ie.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
         $this->db->group_by('s.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function cursos_natureza_inst_ensino($access_level, $status) {
-
-        $title_status = $this->array_to_sql($status);
-
-        $naturezas = array(
-            'PUBLICA MUNICIPAL' => 'PÚBLICA MUNICIPAL',
-            'PUBLICA ESTADUAL' => 'PÚBLICA ESTADUAL',
-            'PUBLICA FEDERAL' => 'PÚBLICA FEDEREAL',
-            'PRIVADA SEM FINS LUCRATIVOS' => 'PRIVADA SEM FINS LUCRATIVOS'
-        );
-
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
-
-        $stms = array();
-        foreach ($naturezas as $key => $value) {
-
-            $stm = "SELECT CAST('" . $value . "' AS CHAR(40)) AS natureza,
-					IF (COUNT(ie.id) > 0, COUNT(ie.id), 0) AS instituicoes
-					FROM instituicao_ensino ie
-                	LEFT OUTER JOIN curso c ON (ie.id_curso = c.id)
-                	WHERE c.ativo_inativo = 'A' $complement
-                	AND c.status IN $title_status
-                	AND ie.natureza_instituicao = '" . $key . "'";
-
-            array_push($stms, $stm);
-        }
-
-        $sql = implode(" UNION ALL ", $stms);
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+    function cursos_natureza_inst_ensino($access_level, $vigencia, $status) {
+        $this->db->select("ie.natureza_instituicao AS natureza, COUNT(DISTINCT ie.nome) as instituicoes")
+                ->from("instituicao_ensino ie")
+                ->join("curso c", "ie.id_curso = c.id");
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+        $this->db->where("ie.nome <>", "")->group_by("ie.natureza_instituicao");
+        return $this->db_result();
     }
 
-    function instituicao_ensino_cursos($access_level, $status) {
+    function instituicao_ensino_cursos($access_level, $vigencia, $status) {
 
-        $title_status = $this->array_to_sql($status);
-
-        $this->db->select('IF(ie.nome IS NULL,("N/A"),(ie.nome)) AS instituicao, COUNT(ie.id) AS cursos');
-        $this->db->from('instituicao_ensino ie');
-        $this->db->join('curso c', 'ie.id_curso = c.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db->select('IF(ie.nome IS NULL,("N/A"),(ie.nome)) AS instituicao, COUNT(ie.id) AS cursos')
+                ->from('instituicao_ensino ie')
+                ->join('curso c', 'ie.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('ie.nome');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function organizacoes_demandantes_modalidade($access_level, $status) {
+    function organizacoes_demandantes_modalidade($access_level, $vigencia, $status) {
 
-        $this->db->select('
-			cm.nome AS modalidade,
-			IF (COUNT(od.id) > 0, COUNT(od.id), 0) AS organizacoes
-		', false);
-
-        $this->db->from('organizacao_demandante od');
-        $this->db->join('curso c', 'od.id_curso = c.id', 'left');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('cm.nome AS modalidade,IF (COUNT(DISTINCT od.nome) > 0, COUNT(DISTINCT od.nome), 0) AS organizacoes', false)
+                ->from('organizacao_demandante od')
+                ->join('curso c', 'od.id_curso = c.id', 'left')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('cm.nome');
 
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function membros_org_demandantes_modalidade($access_level, $status) {
-
-        $title_status = $this->array_to_sql($status);
-
+    function membros_org_demandantes_modalidade($access_level, $vigencia, $status) {
         $estudo = array('sim' => 'S', 'nao' => 'N', 'ni' => 'i');
+        $this->db->select("cm.id as id, cm.nome AS modalidade")->from("curso_modalidade cm");
+        $result_final = $this->db_result();
 
-        $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') : "";
-
-        $select = "SELECT cm.nome AS modalidade,";
-
-        $stms = array();
         foreach ($estudo as $key => $value) {
-
-            $stm = "IF ((((SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
-			            LEFT OUTER JOIN organizacao_demandante od ON (odc.id_organizacao_demandante = od.id)
-			            LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
-			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status IN $title_status
-			            AND odc.estuda_pronera = '" . $value . "'
-			            AND cmd.id = cm.id) * 100) /
-			                (SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
-			                    LEFT OUTER JOIN organizacao_demandante od ON (odc.id_organizacao_demandante = od.id)
-			                    LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
-			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			                    WHERE c.ativo_inativo = 'A' $complement
-			                    AND c.status IN $title_status
-			                    AND cmd.id = cm.id)
-			        ) IS NULL, 0,
-			        (((SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
-			            LEFT OUTER JOIN organizacao_demandante od ON (odc.id_organizacao_demandante = od.id)
-			            LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
-			            LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			            WHERE c.ativo_inativo = 'A' $complement
-			            AND c.status IN $title_status
-			            AND odc.estuda_pronera = '" . $value . "'
-			            AND cmd.id = cm.id) * 100) /
-			                (SELECT COUNT(odc.id) FROM organizacao_demandante_coordenador odc
-			                    LEFT OUTER JOIN organizacao_demandante od ON (odc.id_organizacao_demandante = od.id)
-			                    LEFT OUTER JOIN curso c ON (od.id_curso = c.id)
-			                    LEFT OUTER JOIN curso_modalidade cmd ON (c.id_modalidade = cmd.id)
-			                    WHERE c.ativo_inativo = 'A' $complement
-			                    AND c.status  IN $title_status
-			                    AND cmd.id = cm.id)
-			        )
-			    ) AS $key";
-
-            array_push($stms, $stm);
+            $this->db->select("cmd.id as id, COUNT(odc.id) as total")
+                    ->from("organizacao_demandante_coordenador odc")
+                    ->join("organizacao_demandante od", "odc.id_organizacao_demandante = od.id", 'left outer')
+                    ->join("curso c", "od.id_curso = c.id", 'left outer')
+                    ->join("curso_modalidade cmd", "c.id_modalidade = cmd.id", 'left outer');
+            $this->db_join_and_where_vigencia_filter($vigencia, true);
+            $this->db_where_status_filter($status);
+            $this->db_where_sr_filter($access_level);
+            $this->db->where("odc.estuda_pronera", $value);
+            $this->db->group_by("cmd.id");
+            $result = $this->db_result();
+            $this->array_push_column($result_final, $key, $result, "total", "id");
         }
-
-        $clause = "FROM curso_modalidade cm GROUP BY cm.id";
-
-        $sql = implode(" ", array($select, implode(",", $stms), $clause));
-
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        
+        return $this->percent_rows($result_final, $estudo);
     }
 
-    function organizacao_demandante_cursos($access_level, $status) {
+    function organizacao_demandante_cursos($access_level, $vigencia, $status) {
 
-        $this->db->select('od.nome AS organizacao, COUNT(od.id) AS cursos');
-        $this->db->from('organizacao_demandante od');
-        $this->db->join('curso c', 'od.id_curso = c.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db->select('od.nome AS organizacao, COUNT(od.id) AS cursos')
+                ->from('organizacao_demandante od')
+                ->join('curso c', 'od.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('od.nome');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function localizacao_parceiros($access_level, $status) {
+    function localizacao_parceiros($access_level, $vigencia, $status) {
 
-        $this->db->select('e.sigla AS estado, cd.cod_municipio, cd.nome AS municipio, p.nome AS parceiro');
-        $this->db->from('parceiro p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->join('cidade cd', 'p.id_cidade = cd.id', 'left');
-        $this->db->join('estado e', 'cd.id_estado = e.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('e.sigla AS estado, cd.cod_municipio, cd.nome AS municipio, p.nome AS parceiro')
+                ->from('parceiro p')
+                ->join('curso c', 'p.id_curso = c.id', 'left')
+                ->join('cidade cd', 'p.id_cidade = cd.id', 'left')
+                ->join('estado e', 'cd.id_estado = e.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
         $this->db->where('p.id_cidade <>', 0);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
+        $this->db_where_sr_filter($access_level);
 
         $this->db->group_by('e.sigla, cd.nome, p.nome, cd.cod_municipio');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function parceiros_modalidade($access_level, $status) {
+    function parceiros_modalidade($access_level, $vigencia, $status) {
 
-        $this->db->select('
-			cm.nome AS modalidade,
-			IF (COUNT(p.id) > 0, COUNT(p.id), 0) AS parceiros
-		', false);
-
-        $this->db->from('parceiro p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db->select('cm.nome AS modalidade,IF (COUNT(p.id) > 0, COUNT(p.id), 0) AS parceiros', false)
+                ->from('parceiro p')
+                ->join('curso c', 'p.id_curso = c.id', 'left')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('cm.nome');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function parceiros_superintendencia($status) {
+    function parceiros_superintendencia($vigencia, $status) {
 
-        $this->db->select('CONCAT(("SR - "),LPAD(s.id, (2), (0) )) as id, s.nome AS superintendencia, COUNT(p.id) AS parceiros');
-        $this->db->from('parceiro p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
+        $this->db->select('CONCAT(("SR - "),LPAD(s.id, (2), (0) )) as id, s.nome AS superintendencia, COUNT(p.id) AS parceiros')
+                ->from('parceiro p')
+                ->join('curso c', 'p.id_curso = c.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
         $this->db->group_by('s.id');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function parceiros_natureza($access_level, $status) {
+    function parceiros_natureza($access_level, $vigencia, $status) {
 
-        $this->db->select('p.natureza, COUNT(p.id) AS parceiros');
-        $this->db->from('parceiro p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->where('p.natureza IS NOT NULL', null, false);
-        $this->db->where('p.natureza <>', '');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db->select('p.natureza, COUNT(p.id) AS parceiros')
+                ->from('parceiro p')
+                ->join('curso c', 'p.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db->where('p.natureza IS NOT NULL', null, false)
+                ->where('p.natureza <>', '');
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('p.natureza');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function lista_parceiros($access_level, $status) {
+    function lista_parceiros($access_level, $vigencia, $status) {
 
-        $this->db->select('p.nome AS parceiro, p.sigla AS sigla, p.abrangencia AS abrangencia');
-        $this->db->from('parceiro p');
-        $this->db->join('curso c', 'p.id_curso = c.id', 'left');
-        $this->db->where('c.ativo_inativo', 'A');
-        $this->db->where_in('c.status', $status);
-
-        if ($access_level <= 3) {
-            $this->db->where('c.id_superintendencia', $this->session->userdata('id_superintendencia'));
-        }
-
+        $this->db->select('p.nome AS parceiro, p.sigla AS sigla, p.abrangencia AS abrangencia')
+                ->from('parceiro p')
+                ->join('curso c', 'p.id_curso = c.id', 'left');
+        $this->db_join_and_where_vigencia_filter($vigencia, true);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
         $this->db->group_by('p.nome');
 
-        if (($query = $this->db->get()) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function producoes_estado($status) {
+    function producoes_estado($vigencia, $status) {
 
         $title_status = $this->array_to_sql($status);
 
@@ -1936,6 +1019,18 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         );
 
         $select = "SELECT e.sigla, ";
+        $join_vigencia = "";
+        $where_vigencia = "";
+        if ($vigencia != "BOTH") {
+            $join_vigencia = " INNER JOIN caracterizacao cr ON cr.id_curso = c.id";
+            $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
+            if ($vigencia == "AN") {
+                $where_vigencia = ("AND ($atual BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            } else if ($vigencia == "CC") {
+                $where_vigencia = ("AND ($atual NOT BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            }
+        }
+
 
         $stms = array();
         foreach ($tabelas as $key => $value) {
@@ -1944,8 +1039,10 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 					LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 					LEFT OUTER JOIN superintendencia s ON (c.id_superintendencia = s.id)
 			        LEFT OUTER JOIN estado et ON (s.id_estado = et.id)
+                                $join_vigencia
 			        WHERE c.ativo_inativo = 'A'
 			        AND c.status IN $title_status
+                                $where_vigencia
 			        AND et.id = e.id) AS $key";
 
             array_push($stms, $stm);
@@ -1957,15 +1054,10 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $sql = implode(" ", array($select, implode(",", $stms), $clause));
 
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            echo $this->db->last_query();
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function producoes_superintendencia($status) {
+    function producoes_superintendencia($vigencia, $status) {
 
         $title_status = $this->array_to_sql($status);
 
@@ -1976,7 +1068,17 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             'pm' => 'producao_memoria',
             'pl' => 'producao_livro'
         );
-
+        $join_vigencia = "";
+        $where_vigencia = "";
+        if ($vigencia != "BOTH") {
+            $join_vigencia = " INNER JOIN caracterizacao cr ON cr.id_curso = c.id";
+            $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
+            if ($vigencia == "AN") {
+                $where_vigencia = ("AND ($atual BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            } else if ($vigencia == "CC") {
+                $where_vigencia = ("AND ($atual NOT BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            }
+        }
         $select = "SELECT s.id, s.nome, ";
 
         $stms = array();
@@ -1985,7 +1087,9 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             $stm = "(SELECT IF(COUNT(p.id) <> 0,COUNT(p.id),('-')) FROM $value p
 					LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
 					LEFT OUTER JOIN superintendencia si ON (c.id_superintendencia = si.id)
+                                        $join_vigencia
 					WHERE c.ativo_inativo = 'A'
+                                        $where_vigencia
 					AND c.status IN $title_status
 					AND si.id = s.id) AS $key";
 
@@ -1997,14 +1101,10 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $sql = implode(" ", array($select, implode(",", $stms), $clause));
 
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
-    function producoes_tipo($access_level, $status) {
+    function producoes_tipo($access_level, $vigencia, $status) {
 
         $title_status = $this->array_to_sql($status);
 
@@ -2062,7 +1162,17 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
                 'tabela' => 'producao_geral'
             )
         );
-
+        $join_vigencia = "";
+        $where_vigencia = "";
+        if ($vigencia != "BOTH") {
+            $join_vigencia = " INNER JOIN caracterizacao cr ON cr.id_curso = c.id";
+            $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
+            if ($vigencia == "AN") {
+                $where_vigencia = ("AND ($atual BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            } else if ($vigencia == "CC") {
+                $where_vigencia = ("AND ($atual NOT BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+            }
+        }
         $complement = ($access_level <= 3) ? "AND c.id_superintendencia = " . $this->session->userdata('id_superintendencia') . " " : " ";
 
         $stms = array();
@@ -2071,7 +1181,10 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             $stm = "SELECT CAST('" . $value['cast'] . "' AS CHAR(30)) AS natureza_producao,
 					COUNT(p.id) AS producoes FROM " . $value['tabela'] . " p
         			LEFT OUTER JOIN curso c ON (p.id_curso = c.id)
-       				WHERE c.ativo_inativo = 'A' AND c.status IN $title_status $complement";
+                                $join_vigencia
+       				WHERE c.ativo_inativo = 'A' 
+                                $where_vigencia
+                                AND c.status IN $title_status $complement";
 
             if (strpos($value['tabela'], 'geral') !== false) {
                 $stm .= "AND p.natureza_producao = '" . $key . "'";
@@ -2085,11 +1198,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $sql .= "AND p.natureza_producao NOT IN('VIDEO','CARTILHA / APOSTILA','TEXTO','MUSICA','CADERNO')";
 
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
     function pesquisa_estado() {
@@ -2125,11 +1234,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $sql = implode(" ", array($select, implode(",", $stms), $clause));
 
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
     function pesquisa_superintendencia() {
@@ -2163,11 +1268,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $sql = implode(" ", array($select, implode(",", $stms), $clause));
 
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
     function pesquisa_tipo($access_level) {
@@ -2237,11 +1338,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
 
         $sql = implode(" UNION ALL ", $stms);
 
-        if (($query = $this->db->query($sql)) != null) {
-            return $query->result_array();
-        } else {
-            return false;
-        }
+        return $this->db_result();
     }
 
 }

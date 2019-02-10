@@ -7,12 +7,12 @@
 			<th>ACAMPAMENTO</th>
 			<th>ASSENTAMENTO</th>
 			<th>COMUNIDADE</th>
-			<th>COM. RIBEIRINHA</th>
-			<th>FLONA</th>
-			<th>F. NACIONAL</th>
 			<th>QUILOMBOLA</th>
-			<th>RDS</th>
+			<th>COM. RIBEIRINHA</th>
+			<th>F. NACIONAL</th>
 			<th>RESEX</th>
+			<th>FLONA</th>
+			<th>RDS</th>
 			<th>OUTRO</th>
 			<th>N.P.</th>
 			<th>N.I.</th>

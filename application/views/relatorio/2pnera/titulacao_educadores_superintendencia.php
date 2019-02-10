@@ -1,8 +1,7 @@
 <div>
 	<table style="width:100%; font-size: 13px;" border="1" cellspacing="0">
 		<tr>
-			<th>CÓDIGO</th>
-			<th style="text-align:left">SUPERINTENDÊNCIA</th>
+			<th>SUPERINTENDÊNCIA</th>
 			<th>% ENSINO FUNDAMENTAL COMPLETO</th>
 			<th>% ENSINO FUNDAMENTAL INCOMPLETO</th>
 			<th>% ENSINO MÉDIO COMPLETO</th>
@@ -18,7 +17,6 @@
 		?>
 			<tr>
 				<td style="text-align:center"><?PHP echo $row['id']; ?></td>
-				<td><?php echo $row['nome']; ?></td>
 				<td style="text-align:center"><?php echo $row['ensino_fundamental_completo']; ?></td>
 				<td style="text-align:center"><?php echo $row['ensino_fundamental_incompleto']; ?></td>
 				<td style="text-align:center"><?php echo $row['ensino_medio_completo']; ?></td>

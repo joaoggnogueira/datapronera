@@ -148,6 +148,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         return $status;
     }
 
+    private function get_vigencia() {
+        return $this->input->get("vigencia");
+    }
+
     private function switch_status($stat) {
         switch ($stat) {
             case "AN": return "Em Andamento";
@@ -171,8 +175,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function municipios_curso_modalidade($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->municipios_curso_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->municipios_curso_modalidade($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -202,8 +207,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function municipios_curso($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->municipios_curso($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->municipios_curso($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -230,8 +236,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function cursos_modalidade($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->cursos_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->cursos_modalidade($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -262,8 +269,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function cursos_nivel($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->cursos_nivel($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->cursos_nivel($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -294,8 +302,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function cursos_nivel_superintendencia($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->cursos_nivel_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->cursos_nivel_superintendencia($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -322,8 +331,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function cursos_superintendencia($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->cursos_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->cursos_superintendencia($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -357,8 +367,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_ingressantes_modalidade($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_modalidade($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -391,8 +402,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_ingressantes_nivel($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -425,8 +437,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_ingressantes_superintendencia($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_superintendencia($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -462,8 +475,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_ingressantes_nivel_sr($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel_sr($status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_ingressantes_nivel_sr($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -489,8 +503,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function alunos_concluintes_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -522,8 +537,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_concluintes_nivel($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -556,8 +572,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_concluintes_superintendencia($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_superintendencia($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -591,8 +608,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function alunos_concluintes_nivel_sr($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel_sr($status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_concluintes_nivel_sr($vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -617,8 +635,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function alunos_cadastrados_curso($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_cadastrados_curso($status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_cadastrados_curso($this->session->userdata('access_level'),$vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -643,8 +662,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function lista_cursos_modalidade($tipo) { //nominal
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->lista_cursos_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->lista_cursos_modalidade($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -670,8 +690,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function lista_cursos_modalidade_sr($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->lista_cursos_modalidade_sr($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->lista_cursos_modalidade_sr($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -696,8 +717,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function alunos_curso($tipo, $idsr) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_curso($idsr, $status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_curso($idsr, $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -724,8 +746,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function titulacao_educadores($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->titulacao_educadores($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->titulacao_educadores($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -756,8 +779,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function titulacao_educadores_superintendencia($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->titulacao_educadores_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->titulacao_educadores_superintendencia($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -786,8 +810,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function educadores_nivel($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->educadores_nivel($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->educadores_nivel($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -818,8 +843,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function educadores_curso($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->educadores_curso($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->educadores_curso($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -845,8 +871,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function educadores_superintendencia($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->educadores_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->educadores_superintendencia($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -881,8 +908,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function genero_educadores_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->genero_educadores_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->genero_educadores_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -914,8 +942,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function educandos_superintendencia($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->educandos_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->educandos_superintendencia($vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -949,8 +978,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function municipio_origem_educandos($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->municipio_origem_educandos($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->municipio_origem_educandos($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -975,8 +1005,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function territorio_educandos_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->territorio_educandos_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->territorio_educandos_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1002,8 +1033,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function territorio_educandos_superintendencia($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->territorio_educandos_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->territorio_educandos_superintendencia($vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1029,8 +1061,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function idade_educandos_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->idade_educandos_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->idade_educandos_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1062,8 +1095,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function genero_educandos_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->genero_educandos_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->genero_educandos_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1097,9 +1131,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
         // GAMBIARRRA para aumentar a área de memória 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
         ini_set('memory_limit', '2048M');
-        $result = $this->relatorio_geral_m_pnera2->educandos_assentamento_modalidade($status);
+        $result = $this->relatorio_geral_m_pnera2->educandos_assentamento_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1130,8 +1165,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         // GAMBIARRRA para aumentar a área de memória 
         ini_set('memory_limit', '2048M');
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->educandos_assentamento_nivel($status);
+        $result = $this->relatorio_geral_m_pnera2->educandos_assentamento_nivel($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1159,8 +1195,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
         ini_set('memory_limit', '1024M');
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->lista_educandos_cursos_sr($sr, $status);
+        $result = $this->relatorio_geral_m_pnera2->lista_educandos_cursos_sr($sr, $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 $nomesr = $this->requisicao_m->get_superintendencias_nome(1, $sr);
@@ -1187,8 +1224,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function localizacao_instituicoes_ensino($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->localizacao_instituicoes_ensino($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->localizacao_instituicoes_ensino($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1214,8 +1252,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function instituicoes_ensino_modalidade($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_modalidade($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1246,8 +1285,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function instituicoes_ensino_nivel($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_nivel($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_nivel($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1278,8 +1318,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function instituicoes_ensino_superintendencia($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_superintendencia($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1310,8 +1351,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function instituicoes_ensino_municipio($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_municipio($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_municipio($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1338,8 +1380,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function instituicoes_ensino_estado($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_estado($status);
+        $result = $this->relatorio_geral_m_pnera2->instituicoes_ensino_estado($vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1369,8 +1412,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function cursos_natureza_inst_ensino($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->cursos_natureza_inst_ensino($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->cursos_natureza_inst_ensino($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1401,8 +1445,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
     public function instituicao_ensino_cursos($tipo) {
 
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->instituicao_ensino_cursos($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->instituicao_ensino_cursos($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1427,8 +1472,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function organizacoes_demandantes_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->organizacoes_demandantes_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->organizacoes_demandantes_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1457,8 +1503,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function membros_org_demandantes_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->membros_org_demandantes_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->membros_org_demandantes_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1494,8 +1541,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function organizacao_demandante_cursos($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->organizacao_demandante_cursos($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->organizacao_demandante_cursos($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1520,8 +1568,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function localizacao_parceiros($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->localizacao_parceiros($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->localizacao_parceiros($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1547,8 +1596,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function parceiros_modalidade($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->parceiros_modalidade($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->parceiros_modalidade($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1577,8 +1627,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function parceiros_superintendencia($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->parceiros_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->parceiros_superintendencia($vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1607,8 +1658,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function parceiros_natureza($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->parceiros_natureza($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->parceiros_natureza($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -1633,8 +1685,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function lista_parceiros($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->lista_parceiros($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->lista_parceiros($this->session->userdata('access_level'), $vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
@@ -1664,13 +1717,14 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function producoes_estado($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->producoes_estado($status);
+        $result = $this->relatorio_geral_m_pnera2->producoes_estado($vigencia, $status);
 
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
-                    $xls = $this->create_header("Total de Produções por tipo e Estado", $title_status);
+                    $xls = $this->create_header("Total de Produções por tipo e Estado", $vigencia, $title_status);
                     $xls = $this->append_xls_data($xls, $result, array("ESTADO", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS"));
 
                     $this->barchart->set_include_charts(false); // hide charts
@@ -1691,12 +1745,13 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function producoes_superintendencia($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->producoes_superintendencia($status);
+        $result = $this->relatorio_geral_m_pnera2->producoes_superintendencia($vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
-                    $xls = $this->create_header("Total de Produções por tipo e Superintendência", $title_status);
+                    $xls = $this->create_header("Total de Produções por tipo e Superintendência", $vigencia, $title_status);
                     $xls = $this->append_xls_data($xls, $result, array("CÓDIGO", "SUPERINTENDÊNCIA", "PRODUÇÕES GERAIS", "TRABALHOS", "ARTIGOS", "MEMÓRIAS", "LIVROS"));
 
                     $this->barchart->set_include_charts(false); // hide charts
@@ -1717,8 +1772,9 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
     public function producoes_tipo($tipo) {
         $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->producoes_tipo($this->session->userdata('access_level'), $status);
+        $result = $this->relatorio_geral_m_pnera2->producoes_tipo($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {

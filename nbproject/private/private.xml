@@ -20,9 +20,10 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/views/formulario_educando.php</file>
-            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/views/relatorio/mapas/index.php</file>
-            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/views/relatorio/mapas/toolbar.php</file>
+            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/models/relatorio_geral_m_pnera2.php</file>
+            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/views/relatorio/2pnera/territorio_educandos_superintendencia.php</file>
+            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/controllers/relatorio_geral_pnera2.php</file>
+            <file>file:/C:/Users/Acer/Documents/BCC/Datapronera/aplicacao2018/dprnra/application/views/rel_geral_nacional_pnera2.php</file>
         </group>
     </open-files>
 </project-private>

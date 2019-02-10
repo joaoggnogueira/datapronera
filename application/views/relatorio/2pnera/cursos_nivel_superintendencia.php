@@ -2,7 +2,6 @@
 <div>
 	<table style="width:100%; font-size: 13px;" border="1" cellspacing="0">
 		<tr>
-			<th>CÓDIGO</th>
 			<th style="text-align:left">SUPERINTENDÊNCIA</th>
 			<th>EJA FUNDAMENTAL</th>
 			<th>ENSINO MÉDIO</th>
@@ -13,7 +12,6 @@
 			foreach ($result as $row) {
 		?>
 			<tr>
-				<td style="text-align:center"><?php echo $row['cod']; ?></td>
 				<td><?php echo $row['nome']; ?></td>
 				<td style="text-align:center"><?php echo $row['eja_fundamental']; ?></td>
 				<td style="text-align:center"><?php echo $row['ensino_medio']; ?></td>

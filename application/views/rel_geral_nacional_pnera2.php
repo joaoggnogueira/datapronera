@@ -39,6 +39,7 @@
         -webkit-border-radius: 10px;
         border-radius: 10px;
         line-height: 15px;
+        z-index: 0;
     }
     .badge_novo:before {
         content: "";
@@ -71,39 +72,98 @@
     .row_checkbox:hover label{
         color: #003bb3;
     }
-
     .group_checkbox{
-        flex-direction: row;
-        justify-content: space-between;
-        display: flex;
-        align-items: center;
-        padding: 0px 5px;
-        border-bottom: 1px solid #AAA;
         background: white;
         position: fixed;
         width: 960px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+    label{
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                              supported by Chrome and Opera */
+    }
+    .group_checkbox summary{
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                              supported by Chrome and Opera */
+        padding: 10px;
+        cursor: default;
+        font-size: 18px;
+        background: #5cb85c;
+        color: white;
+        font-weight: bold;
+    }
+    .checkbox-card{
+        display: flex;
+        flex-direction: row;
+    }
+    .checkbox-card > div{
+        flex-direction: column;
+        display: flex;
+        margin: 20px;
+    }
+    details[open] summary ~ * {
+        animation: sweep .5s ease-in-out;
     }
 
+    @keyframes sweep {
+        0%    {opacity: 0; margin-left: -10px}
+        100%  {opacity: 1; margin-left: 0px}
+    }
 </style>
 <form>
     <fieldset>
         <legend><h3>Relat&oacute;rios Gerais</h3></legend>
         <div class="group_checkbox" id="scrollingDiv">
-            <h4>Status do Cadastros do Curso</h4>
-            <div class="row_checkbox form-check">
-                <input checked type="checkbox" name="status" class="check_status" value="AN" id="status_checkbox_an"/>
-                <label for="status_checkbox_an"> Em andamento</label>
-            </div>
-            <div class="row_checkbox form-check">
-                <input checked type="checkbox" name="status" value="CC" class="check_status" id="status_checkbox_cc"/>
-                <label for="status_checkbox_cc"> Concluídos</label>
-            </div>
-            <div class="row_checkbox form-check">
-                <input checked type="checkbox" name="status" value="2P" class="check_status" id="status_checkbox_2p"/>
-                <label for="status_checkbox_2p"> PNERA II</label>
-            </div>
+            <details>
+                <summary><i class="fa fa-filter"></i> Filtros</summary>
+                <div class="checkbox-card">
+                    <div>
+                        <h4>Status do Cadastros do Curso</h4>
+                        <hr/>
+                        <div class="row_checkbox form-check">
+                            <input checked type="checkbox" name="status" class="check_status" value="AN" id="status_checkbox_an"/>
+                            <label for="status_checkbox_an"> Em andamento</label>
+                        </div>
+                        <div class="row_checkbox form-check">
+                            <input checked type="checkbox" name="status" value="CC" class="check_status" id="status_checkbox_cc"/>
+                            <label for="status_checkbox_cc"> Concluídos</label>
+                        </div>
+                        <div class="row_checkbox form-check">
+                            <input checked type="checkbox" name="status" value="2P" class="check_status" id="status_checkbox_2p"/>
+                            <label for="status_checkbox_2p"> PNERA II</label>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Status de Vigência do Curso</h4>
+                        <hr/>
+                        <div class="row_checkbox form-check">
+                            <input type="radio" name="vigencia" value="BOTH" class="check_vigencia" id="vigencia_checkbox_both" checked />
+                            <label for="vigencia_checkbox_both"> Ambos</label>
+                        </div>
+                        <div class="row_checkbox form-check">
+                            <input type="radio" name="vigencia" value="AN" class="check_vigencia" id="vigencia_checkbox_an"/>
+                            <label for="vigencia_checkbox_an"> Em andamento</label>
+                        </div>
+                        <div class="row_checkbox form-check">
+                            <input type="radio" name="vigencia" value="CC" class="check_vigencia" id="vigencia_checkbox_cc"/>
+                            <label for="vigencia_checkbox_cc"> Encerrado</label>
+                        </div>
+                    </div>
+                </div>
+            </details>
         </div>
-        <ul class="li-rel" style="margin-top: 80px">
+        <ul class="li-rel" style="margin-top: 60px">
             <li>
                 <h4>Cursos</h4>
                 <ul>
@@ -118,7 +178,7 @@
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso/2'); ?>">PDF</a>
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/municipios_curso/3'); ?>">HTML</a>
-                        Munic&iacute;pios de realiza&ccedil;&atilde;o dos cursos <span class="badge badge-nacional">total nacional</span>  
+                        Total de Cursos por Munic&iacute;pios de realiza&ccedil;&atilde;o<span class="badge badge-nacional">total nacional</span>  
                     </li>
 
                     <li class="li-rel">
@@ -170,72 +230,8 @@
                         Total de Cursos por superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> </a> 
                     </li>
 
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/3'); ?>">HTML</a> 
-                        Total de Alunos ingressantes por modalidade <span class="badge badge-nacional">total nacional</span> </a> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/3'); ?>">HTML</a> 
-                        Total de Alunos ingressantes por n&iacute;vel <span class="badge badge-nacional">total nacional</span> </a> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/3'); ?>">HTML</a> 
-                        Total de Alunos ingressantes por superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/3'); ?>">HTML</a> 
-                        Total de Alunos ingressantes por n&iacute;vel e superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/3'); ?>">HTML</a> 
-                        Total de Alunos concluintes por modalidade <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/3'); ?>">HTML</a> 
-                        Total de Alunos concluintes por n&iacute;vel <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/3'); ?>">HTML</a> 
-                        Total de Alunos concluintes por superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/3'); ?>">HTML</a> 
-                        Total de Alunos concluintes por n&iacute;vel e superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_cadastrados_curso/1'); ?>">XLS</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_cadastrados_curso/2'); ?>">PDF</a> 
-                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_cadastrados_curso/3'); ?>">HTML</a> 
-                        <span class="badge badge_novo">NOVO</span> Relação de Total de alunos cadastrados, ingressantes e concluintes <span class="badge badge-nacional">total nacional</span> 
-                    </li>
-
-
                     <!--<li class="li-rel">
-                            <arel="noopener" target="_blank" href="<?php //echo site_url('relatorio_geral_pnera2/informacoes_relevantes');                     ?>"><i>Informa&ccedil;&otilde;es Relevantes:
+                            <arel="noopener" target="_blank" href="<?php //echo site_url('relatorio_geral_pnera2/informacoes_relevantes');                           ?>"><i>Informa&ccedil;&otilde;es Relevantes:
                                     <ul class="listNone">
                                             <li>Pocentagem (%) da titula&ccedil;&atilde;o dos coordenadores <span class="badge badge-nacional">total nacional</span> </li>
                                             <li>Dura&ccedil;&atilde;o m&eacute;dia dos cursos em anos <span class="badge badge-nacional">total nacional</span> </li>
@@ -256,11 +252,6 @@
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade_sr/2'); ?>">PDF</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade_sr/3'); ?>">HTML</a> 
                         Lista de cursos por modalidade e superintendência <span class="badge badge-nominal">nominal</span>  
-                    </li>
-
-                    <li class="li-rel">
-                        <a class="btn btn-success" style="padding-left: 60px;padding-right:60px;" data-toggle="modal" href="#cursoAlunoModal">Gerar ...</a> 
-                        Lista de alunos por curso <span class="badge badge-nominal">nominal</span>  
                     </li>
                 </ul>
                 <hr/>
@@ -317,6 +308,75 @@
             <li>
                 <h4>Educandos</h4>
                 <ul>
+                    
+                    <li class="li-rel">
+                        <a class="btn btn-success" style="padding-left: 60px;padding-right:60px;" data-toggle="modal" href="#cursoAlunoModal">Gerar ...</a> 
+                        Lista de Educandos por curso <span class="badge badge-nominal">nominal</span>  
+                    </li>
+                    
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_modalidade/3'); ?>">HTML</a> 
+                        Total de Educandos ingressantes por modalidade <span class="badge badge-nacional">total nacional</span> </a> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel/3'); ?>">HTML</a> 
+                        Total de Educandos ingressantes por n&iacute;vel <span class="badge badge-nacional">total nacional</span> </a> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_superintendencia/3'); ?>">HTML</a> 
+                        Total de Educandos ingressantes por superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_ingressantes_nivel_sr/3'); ?>">HTML</a> 
+                        Total de Educandos ingressantes por n&iacute;vel e superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_modalidade/3'); ?>">HTML</a> 
+                        Total de Educandos concluintes por modalidade <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel/3'); ?>">HTML</a> 
+                        Total de Educandos concluintes por n&iacute;vel <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_superintendencia/3'); ?>">HTML</a> 
+                        Total de Educandos concluintes por superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_concluintes_nivel_sr/3'); ?>">HTML</a> 
+                        Total de Educandos concluintes por n&iacute;vel e superintend&ecirc;ncia <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_cadastrados_curso/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_cadastrados_curso/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/alunos_cadastrados_curso/3'); ?>">HTML</a> 
+                        <span class="badge badge_novo">NOVO</span> Relação de Total de Educandos cadastrados, ingressantes e concluintes <span class="badge badge-nacional">total nacional</span> 
+                    </li>
+                    
                     <li class="li-rel">
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/educandos_superintendencia/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/educandos_superintendencia/2'); ?>">PDF</a> 
@@ -349,14 +409,14 @@
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/idade_educandos_modalidade/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/idade_educandos_modalidade/2'); ?>">PDF</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/idade_educandos_modalidade/3'); ?>">HTML</a> 
-                        Idade m&eacute;dia dos educandos por modalidade <span class="badge badge-nacional">total nacional</span> 
+                        Idade m&eacute;dia dos Educandos por modalidade <span class="badge badge-nacional">total nacional</span> 
                     </li>
 
                     <li class="li-rel">
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/genero_educandos_modalidade/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/genero_educandos_modalidade/2'); ?>">PDF</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/genero_educandos_modalidade/3'); ?>">HTML</a> 
-                        Participa&ccedil;&atilde;o (%) de genêro como educandos nos cursos por modalidade <span class="badge badge-nacional">total nacional</span> 
+                        Participa&ccedil;&atilde;o (%) de genêro como Educandos nos cursos por modalidade <span class="badge badge-nacional">total nacional</span> 
                     </li>
 
                     <li class="li-rel">
@@ -444,11 +504,9 @@
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/membros_org_demandantes_modalidade/1'); ?>">XLS</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/membros_org_demandantes_modalidade/2'); ?>">PDF</a> 
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/membros_org_demandantes_modalidade/3'); ?>">HTML</a> 
-                        Porcentagem dos membros das Organiza&ccedil;&otilde;es Demandantes em cursos por modalidade
+                        Participação de membros que estudaram no PRONERA por modalidade
                         <span class="badge badge-nacional">total nacional</span> 
                     </li>
-
-
                 </ul>
                 <hr/>
             </li>
@@ -649,7 +707,7 @@
 
         $("#cursoAlunoModal .superintendencia").change(function () {
             var value = this.value;
-            var append = generate_status_url();
+            var append = generate_status_url() + "&vigencia=" + ($('input[name="vigencia"]:checked').val());
 
             $.get("<?php echo site_url('requisicao/get_totaleducandos'); ?>/" + value, function (result) {
                 var count = parseInt(result);
@@ -675,7 +733,7 @@
 
         $("#educandoCursoSRModal .superintendencia").change(function () {
             var value = this.value;
-            var append = generate_status_url();
+            var append = generate_status_url() + "&vigencia=" + ($('input[name="vigencia"]:checked').val());
 
             $.get("<?php echo site_url('requisicao/get_totaleducandos'); ?>/" + value, function (result) {
                 var count = parseInt(result);
@@ -707,6 +765,12 @@
         });
         $(".badge-municipio").each(function () {
             this.innerHTML = '<i class="glyphicon glyphicon-map-marker"></i> ' + this.innerHTML;
+        });
+
+        $(".check_vigencia").change(function (e) {
+            $("a.a-link").each(function () {
+                update_status($(this));
+            });
         });
 
         $(".check_status").change(function (e) {
@@ -743,7 +807,8 @@
             } else {
                 href = href.substr(0, index - 1);
             }
-            dom.attr("href", href);
+
+            dom.attr("href", href + "&vigencia=" + ($('input[name="vigencia"]:checked').val()));
         }
 
         function change_status(value, checked, e) {

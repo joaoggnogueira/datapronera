@@ -58,6 +58,7 @@ class Acesso_publico extends CI_Controller {
                 'id_cidade' => $account_data->id_cidade,
                 'is_logged_in' => true,
                 'publico' => true,
+                'permissao_publica' => false,
                 'curr_content' => 'inicio_publico',
                 'curr_top_menu' => 'menus/publico.php',
                 'curr_course_info' => 'blank.php'

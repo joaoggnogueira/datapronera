@@ -1,17 +1,22 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-/** Include path **/        
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+/** Include path * */
 set_include_path(__DIR__ . '/../third_party/spout-2.7.1/src/Spout/Autoloader');
 
-/** PHPExcel **/
+/** PHPExcel * */
 include_once("autoload.php");
 
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
+use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Style\Color;
 
 class Relatorio_dinamico extends CI_Controller {
 
-	private $access_level;
+    private $access_level;
     private $excel;
 
     public function __construct() {
@@ -26,14 +31,15 @@ class Relatorio_dinamico extends CI_Controller {
     }
 
     /*
-    	Verificar níveis de acesso
+      Verificar níveis de acesso
      */
+
     public function index() {
 
-    	//if ($this->session->userdata('access_level') > 3){
-			$this->session->set_userdata('curr_content', 'rel_dinamico');
-			$this->session->set_userdata('curr_top_menu', 'menus/principal.php');
-    	//}
+        //if ($this->session->userdata('access_level') > 3){
+        $this->session->set_userdata('curr_content', 'rel_dinamico');
+        $this->session->set_userdata('curr_top_menu', 'menus/principal.php');
+        //}
 
         $data['content'] = $this->session->userdata('curr_content');
 
@@ -49,161 +55,208 @@ class Relatorio_dinamico extends CI_Controller {
         echo json_encode($response);
     }
 
-    public function gerarRelatorio(){
-        /** Error reporting **/
+    public function get_cursos() {
+        $where_from_where = $this->relatorio_dinamico_m->stmt_from_where_curso();
+        $lista = $this->relatorio_dinamico_m->list_cursos($where_from_where);
+        if (count($lista) == 0) {
+            echo "<option value='0' disabled selected>Nenhum curso correspondente</option>";
+        } else {
+            echo "<option value='0' disabled selected>Cursos de acordo com os filtros acima</option>";
+            foreach ($lista as $curso) {
+                echo "<option value=" . $curso['id'] . ">" . $curso['title'] . "</option>";
+            }
+        }
+    }
+
+    private function append_header_sheet($writer, $title) {
+
+        $style_border = (new StyleBuilder())
+                ->setBackgroundColor(Color::rgb(170, 255, 128))
+                ->setShouldWrapText(false)
+                ->build();
+
+        $style_body = (new StyleBuilder())
+                ->setBackgroundColor(Color::rgb(230, 230, 230))
+                ->setShouldWrapText(false)
+                ->setFontBold()
+                ->build();
+
+        $writer->addRowWithStyle(array("-------------------------------------------------------------------------------------------------", "", "", "", "", "", "", "", "", "", ""), $style_border);
+        $writer->addRowWithStyle(array("Programa Nacional de Educação na Reforma Agrária (Pronera)", "", "", "", "", "", "", "", "", "", ""), $style_body);
+        $writer->addRowWithStyle(array("Cursos", "", "", "", "", "", "", "", "", "", ""), $style_body);
+        $writer->addRowWithStyle(array("Relatório: " . $title, "", "", "", "", "", "", "", "", "", ""), $style_body);
+        $writer->addRowWithStyle(array("Data de Emissão: " . date('d/m/y') . " Hora da Emissão: " . date("h:i:sa"), "", "", "", "", "", "", "", "", "", ""), $style_body);
+        $writer->addRowWithStyle(array("-------------------------------------------------------------------------------------------------", "", "", "", "", "", "", "", "", "", ""), $style_border);
+        $writer->addRow(array(""));
+    }
+
+    private function append_to_sheet($writer, $currentSheet, $aba) {
+        if ($currentSheet) {
+            $currentSheet->setName($aba['title']);
+        }
+        $style_header = (new StyleBuilder())
+                ->setFontBold()
+                ->setFontSize(13)
+                ->setFontColor(Color::WHITE)
+                ->setBackgroundColor(Color::rgb(91, 183, 91))
+                ->build();
+
+        $this->append_header_sheet($writer, $aba['title']);
+        $writer->addRowWithStyle($aba['header'], $style_header);
+        $writer->addRows($aba['data']);
+    }
+
+    private function write_ods($namefile, $abas) {
+        $writter = WriterFactory::create(Type::ODS);
+        $writter->openToBrowser($namefile . ".ods");
+        $currentSheet = false;
+        foreach ($abas as $aba) {
+            if (!$currentSheet) {
+                $currentSheet = $writter->getCurrentSheet();
+            } else {
+                $currentSheet = $writter->addNewSheetAndMakeItCurrent();
+            }
+            $this->append_to_sheet($writter, $currentSheet, $aba);
+        }
+
+        $writter->close();
+    }
+
+    private function write_xlsx($namefile, $abas) {
+        $writter = WriterFactory::create(Type::XLSX);
+        $writter->openToBrowser($namefile . ".xlsx");
+        $currentSheet = false;
+        foreach ($abas as $aba) {
+            if (!$currentSheet) {
+                $currentSheet = $writter->getCurrentSheet();
+            } else {
+                $currentSheet = $writter->addNewSheetAndMakeItCurrent();
+            }
+            $this->append_to_sheet($writter, $currentSheet, $aba);
+        }
+
+        $writter->close();
+    }
+
+    private function write_json($namefile, $abas) {
+        $saida = array();
+        foreach ($abas as $aba) {
+            $saida[$aba['id']] = $aba['data'];
+        }
+
+        header("Content-disposition: attachment; filename=$namefile.json");
+        echo json_encode($saida, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    public function gerarRelatorio() {
+        session_start();
+        ob_start("ob_gzhandler");
+
         error_reporting(E_ALL);
         ini_set('display_errors', TRUE);
         ini_set('display_startup_errors', TRUE);
         ini_set('memory_limit', '2048M'); // or you could use 1G
-        ini_set('max_execution_time', 123456);
-        date_default_timezone_set('Europe/London');
+        ini_set('max_execution_time', 900000);
+        date_default_timezone_set('America/Sao_Paulo');
 
-        define('EOL',(PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
+        define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
-        /** CRIO ARRAYS PRIMERO **/
-        $array = array();
+        $abas = array();
+        $where_curso = $this->relatorio_dinamico_m->stmt_from_where_curso();
+        if ($this->input->post('check_curso') == "true") {
+            $abas[] = array(
+                "title" => "Cursos",
+                "id" => "cursos",
+                "header" => array('COD', 'NOME', 'SUPERINTENDÊNCIA',
+                    'NÍVEL_CURSO', 'MODALIDADE', 'ÁREA_CONHECIMENTO',
+                    'COORDENADOR_GERAL', 'TITULAÇÃO_COORDENADOR_GERAL', 'COORDENADOR_PROJETO',
+                    'TITULAÇÃO_COORDENADOR_PROJETO', 'VICE_COORDENADOR', 'TITULAÇÃO_VICE_COORDENADOR',
+                    'COORDENADOR_PEDAGÓGICO', 'TITULAÇÃO_COORDENADOR_PEDAGÓGICO', 'DURAÇÃO_CURSO_ANOS',
+                    'MÊS_ANO_PREVISTO_INICIO', 'MÊS_ANO_PREVISTO_TÉRMINO', 'MÊS_ANO_REALIZADO_INICIO',
+                    'MÊS_ANO_REALIZADO_TÉRMINO', 'NÚMERO_TURMAS', 'NÚMERO_INGRESSANTES',
+                    'NÚMERO_CONCLUINTES', 'NÚMERO_BOLSISTAS', 'OBSERVAÇÃO'),
+                "data" => $this->relatorio_dinamico_m->abaCursos($where_curso)
+            );
+        }
 
-        /** SUPERINTENDÊNCIAS **/
-        array_push($array, $this->relatorio_dinamico_m->abaSuperIntendencias($this->input->post('where_superintendencias')));
-        array_unshift($array[0], array('ID', 'NOME', 'RESPONSÁVEL', 'STATUS', 'ESTADO'));
+        if ($this->input->post('check_municipio_curso') == "true") {
+            $abas[] = array(
+                "title" => "Localização dos cursos",
+                "id" => "cursos_cidades",
+                "header" => array('ID_CURSO', 'GEOCODE', 'MUNICÍPIO DE REALIZAÇÃO', 'ESTADO'),
+                "data" => $this->relatorio_dinamico_m->abaCidadeCursos($where_curso)
+            );
+        }
 
-        /** CURSOS **/
-        array_push($array, $this->relatorio_dinamico_m->abaCursos($this->input->post('where_curso')));
-        array_unshift($array[1], array('ID', 'NOME', 'SUPERINTENDÊNCIA', 'NÍVEL_CURSO', 'MODALIDADE', 'OBSERVAÇÃO', 'ÁREA_CONHECIMENTO', 'COORDENADOR_GERAL', 'TITULAÇÃO_COORDENADOR_GERAL', 'COORDENADOR_PROJETO', 'TITULAÇÃO_COORDENADOR_PROJETO', 'VICE_COORDENADOR', 'TITULAÇÃO_VICE_COORDENADOR', 'COORDENADOR_PEDAGÓGICO', 'TITULAÇÃO_COORDENADOR_PEDAGÓGICO', 'DURAÇÃO_CURSO_ANOS', 'MÊS_ANO_PREVISTO_INICIO', 'MÊS_ANO_PREVISTO_TÉRMINO', 'MÊS_ANO_REALIZADO_INICIO', 'MÊS_ANO_REALIZADO_TÉRMINO', 'NÚMERO_TURMAS', 'NÚMERO_INGRESSANTES', 'NÚMERO_CONCLUINTES', 'NÚMERO_BOLSISTAS'));
+        if ($this->input->post('check_educando') == "true") {
+            $abas[] = array(
+                "title" => "Educandos",
+                "id" => "educandos",
+                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'CPF', 'RG', 'GÊNERO', 'DATA_NASCIMENTO', 'IDADE', 'TIPO_TERRITÓRIO', 'NOME_TERRITÓRIO', 'CONCLUINTE', 'GEOCODE', 'MUNICÍPIO DE ORIGEM', 'ESTADO'),
+                "data" => $this->relatorio_dinamico_m->abaEducandos($where_curso)
+            );
+        }
 
-        /** CIDADES_CURSOS **/
-        array_push($array, $this->relatorio_dinamico_m->abaCidadeCursos($this->input->post('where_cidade_cursos')));
-        array_unshift($array[2], array('ID_CURSO', 'GEOCODE', 'CIDADE', 'ESTADO'));
+        if ($this->input->post('check_professores') == "true") {
+            $abas[] = array(
+                "title" => "Professores",
+                "id" => "professores",
+                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'CPF', 'RG', 'GÊNERO', 'TITULAÇÃO'),
+                "data" => $this->relatorio_dinamico_m->abaProfessores($where_curso)
+            );
+        }
 
-        /** EDUCANDOS **/
-        array_push($array, $this->relatorio_dinamico_m->abaEducandos($this->input->post('where_educandos')));
-        array_unshift($array[3], array('CURSO_VINCULADO', 'ID', 'NOME', 'GÊNERO', 'DATA_NASCIMENTO', 'IDADE', 'TIPO_TERRITÓRIO', 'NOME_TERRITÓRIO', 'CONCLUINTE'));
+        if ($this->input->post('check_disciplinas') == "true") {
+            $abas[] = array(
+                "title" => "Disciplina",
+                "id" => "disciplinas",
+                "header" => array('CURSO_VINCULADO', 'NOME', 'PROFESSOR_RESPONSÁVEL'),
+                "data" => $this->relatorio_dinamico_m->abaDisciplinas($where_curso)
+            );
+        }
 
-        /** CIDADES_EDUCANDOS **/
-        array_push($array, $this->relatorio_dinamico_m->abaCidadeEducandos($this->input->post('where_cidade_educandos')));
-        array_unshift($array[4], array('CURSO_VINCULADO', 'ID_EDUCANDO', 'GEOCODE', 'NOME_CIDADE', 'ESTADO'));
+        if ($this->input->post('check_instituicao_ensino') == "true") {
+            $abas[] = array(
+                "title" => "Instituições de Ensino",
+                "id" => "instituicoes_de_ensino",
+                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'SIGLA', 'UNIDADE', 'DEPARTAMENTO', 'LOGRADOURO', 'Nº', 'COMPLEMENTO', 'BAIRRO', 'CEP', 'TELEFONE_1', 'TELEFONE_2', 'PÁGINA_WEB', 'CÂMPUS', 'NATUREZA_INSTITUIÇÃO', 'GEOCODE', 'CIDADE', 'ESTADO'),
+                "data" => $this->relatorio_dinamico_m->abaInstituicoesEnsino($where_curso)
+            );
+        }
 
-        /** PROFESSORES **/
-        array_push($array, $this->relatorio_dinamico_m->abaProfessores($this->input->post('where_professores')));
-        array_unshift($array[5], array('CURSO_VINCULADO', 'ID', 'NOME', 'GÊNERO', 'TITULAÇÃO'));
+        if ($this->input->post('check_organizacao_demandante') == "true") {
+            $abas[] = array(
+                "title" => "Organizações Demandantes",
+                "id" => "organizacoes_demandantes",
+                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'ABRANGÊNCIA', 'DATA_FUNDAÇÃO_NACIONAL', 'DATA_FUNDAÇÃO_ESTADUAL', 'Nº_ACAMPAMENTOS', 'Nº_ASSENTAMENTOS', 'Nº_FAMÍLIAS_ASSENTADAS', 'Nº_PESSOAS_ENVOLVIDAS_CURSO', 'FONTE_INFORMAÇÕES'),
+                "data" => $this->relatorio_dinamico_m->abaOrganizacoesDemandantes($where_curso)
+            );
+        }
 
-        /** DISCIPLINAS **/
-        array_push($array, $this->relatorio_dinamico_m->abaDisciplinas($this->input->post('where_disciplinas')));
-        array_unshift($array[6], array('CURSO_VINCULADO', 'ID', 'NOME', 'PROFESSOR_RESPONSÁVEL'));
+        if ($this->input->post('check_parceiros') == "true") {
+            $abas[] = array(
+                "title" => "Parcerias",
+                "id" => "parceiros",
+                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'SIGLA', 'LOGRADOURO', 'Nº', 'COMPLEMENTO', 'BAIRRO', 'CEP', 'TELEFONE_1', 'TELEFONE_2', 'PAGINA_WEB', 'NATUREZA_INSTITUIÇÃO', 'ABRANGÊNCIA', 'GEOCODE', 'CIDADE', 'ESTADO', 'REALIZAÇÃO_CURSO', 'CERTIFICAÇÃO_CURSO', 'GESTÃO_ORÇAMENTÁRIA', 'OUTRAS', 'COMPLEMENTO'),
+                "data" => $this->relatorio_dinamico_m->abaParceiros($where_curso)
+            );
+        }
 
-        /** INSTITUICOES DE ENSINO **/
-        array_push($array, $this->relatorio_dinamico_m->abaInstituicoesEnsino($this->input->post('where_ie')));
-        array_unshift($array[7], array('CURSO_VINCULADO', 'ID', 'NOME', 'SIGLA', 'UNIDADE', 'DEPARTAMENTO', 'LOGRADOURO', 'Nº', 'COMPLEMENTO', 'BAIRRO', 'CEP', 'TELEFONE_1', 'TELEFONE_2', 'PÁGINA_WEB', 'CÂMPUS', 'NATUREZA_INSTITUIÇÃO'));
+        $fileformat = $this->input->post("format");
 
-        /** CIDADES_INSTITUICOES_DE_ENSINO **/
-        array_push($array, $this->relatorio_dinamico_m->abaCidadesInstituicoesEnsino($this->input->post('where_cidades_ie')));
-        array_unshift($array[8], array('CURSO_VINCULADO', 'ID_INSTITUIÇÃO_ENSINO', 'GEOCODE', 'CIDADE', 'ESTADO'));
+        $time = date("h:i:sa");
+        $date = date("d_m_Y");
+        $writer = false;
+        $name = "REL_DINAMICO-DPRNRA-$time-$date";
+        if ($fileformat == "ODS") {
+            $this->write_ods($name, $abas);
+        } else if ($fileformat == "XLSX") {
+            $this->write_xlsx($name, $abas);
+        } else if ($fileformat == "JSON") {
+            $this->write_json($name, $abas);
+        }
 
-        /** ORGANIZAÇÕES DEMANDANTES **/
-        array_push($array, $this->relatorio_dinamico_m->abaOrganizacoesDemandantes($this->input->post('where_org_demandantes')));
-        array_unshift($array[9], array('CURSO_VINCULADO', 'ID', 'NOME', 'ABRANGÊNCIA', 'DATA_FUNDAÇÃO_NACIONAL', 'DATA_FUNDAÇÃO_ESTADUAL', 'Nº_ACAMPAMENTOS Nº_ASSENTAMENTOS', 'Nº_FAMÍLIAS_ASSENTADAS', 'Nº_PESSOAS_ENVOLVIDAS_CURSO', 'FONTE_INFORMAÇÕES'));
-
-        /** COORDENADORES DAS ORGANIZAÇÕES **/
-        array_push($array, $this->relatorio_dinamico_m->abaCoordenadoresOrganizacoesDemandantes($this->input->post('where_coord_org_demandantes')));
-        array_unshift($array[10], array('CURSO_VINCULADO', 'ORGANIZAÇÃO_DEMANDANTE_VINCULADA', 'ID', 'NOME', 'GRAU_ESCOLARIDADE_EPOCA_CURSO', 'GRAU_ESCOLARIDADE_ATUAL', 'ESTUDOU_CURSO_PRONERA'));
-
-        /** PARCEIROS **/
-        array_push($array, $this->relatorio_dinamico_m->abaParceiros($this->input->post('where_parceiros')));
-        array_unshift($array[11], array('CURSO_VINCULADO', 'ID', 'NOME', 'SIGLA', 'LOGRADOURO', 'Nº', 'COMPLEMENTO', 'BAIRRO', 'CEP', 'TELEFONE_1', 'TELEFONE_2', 'PAGINA_WEB', 'NATUREZA_INSTITUIÇÃO', 'ABRANGÊNCIA'));
-
-        /** CIDADES PARCEIROS **/
-        array_push($array, $this->relatorio_dinamico_m->abaCidadesParceiros($this->input->post('where_cidades_parceiros')));
-        array_unshift($array[12], array('ID_PARCEIRO', 'GEOCODE', 'CIDADE', 'ESTADO'));
-
-        /** TIPOS DE PARCERIA **/
-        array_push($array, $this->relatorio_dinamico_m->abaTiposParceiros($this->input->post('where_tipos_parceiros')));
-        array_unshift($array[13], array('ID_PARCEIRO', 'REALIZAÇÃO_CURSO', 'CERTIFICAÇÃO_CURSO', 'GESTÃO_ORÇAMENTÁRIA', 'OUTRAS', 'COMPLEMENTO'));
-
-        /** FIM ARRAY **/
-
-        /** GERO XLS **/
-
-        $writer = WriterFactory::create(Type::XLSX); // for XLSX files
-        //$writer = WriterFactory::create(Type::CSV); // for CSV files
-        //$writer = WriterFactory::create(Type::ODS); // for ODS files
-
-        //$writer->openToFile($filePath); // write data to a file or to a PHP stream
-        $writer->openToBrowser('rel_dinamico.xlsx'); // stream data directly to the browser
-
-        /** SUPERINTENDENCIAS **/
-        $currentSheet = $writer->getCurrentSheet();
-        $currentSheet->setName('Superintendências');
-        $writer->addRows($array[0]);
-
-        /** CURSOS **/
-
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Cursos');
-        $writer->addRows($array[1]); // writes the row to the new sheet
-
-        /** CIDADES_CURSOS **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Cidades Cursos');
-        $writer->addRows($array[2]); // writes the row to the new sheet
-
-        /** EDUCANDOS **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Educandos');
-        $writer->addRows($array[3]); // writes the row to the new sheet
-
-        /** CIDADES_EDUCANDOS **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Cidades Educandos');
-        $writer->addRows($array[4]); // writes the row to the new sheet
-
-        /** PROFESSORES **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Professores');
-        $writer->addRows($array[5]); // writes the row to the new sheet
-
-        /** DISCIPLINAS **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Disciplinas');
-        $writer->addRows($array[6]); // writes the row to the new sheet
-
-        /** INSTITUICOES DE ENSINO **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Instituições de Ensino');
-        $writer->addRows($array[7]); // writes the row to the new sheet
-
-        /** CIDADES_INSTITUICOES_DE_ENSINO **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Cidades Instituições de Ensino');
-        $writer->addRows($array[8]); // writes the row to the new sheet
-
-        /** ORGANIZAÇÕES DEMANDANTES **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Organizações Demandantes');
-        $writer->addRows($array[9]); // writes the row to the new sheet
-
-        /** COORDENADORES DAS ORGANIZAÇÕES **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Coordenadores Organizações');
-        $writer->addRows($array[10]); // writes the row to the new sheet
-
-        /** PARCEIROS **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Parceiros');
-        $writer->addRows($array[11]); // writes the row to the new sheet
-
-        /** CIDADES PARCEIROS **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Cidades Parceiros');
-        $writer->addRows($array[12]); // writes the row to the new sheet
-
-        /** TIPOS DE PARCERIA **/
-        $currentSheet = $writer->addNewSheetAndMakeItCurrent();
-        $currentSheet->setName('Tipos Parceria');
-        $writer->addRows($array[13]); // writes the row to the new sheet
-
-
-        $writer->close();
-
+        $init_sheet = true;
     }
 
 }

@@ -12,7 +12,15 @@
         });
 
         table.hideColumns([0]);
-
+        $("#export").click(function(){
+            var url = "<?php echo site_url('relatorio_dinamico') . '/'; ?>";
+           $('<form target="" action="' + url + 'gerarRelatorio" method="POST">' +
+                    "<textarea name='format'>XLSX</textarea>" +
+                    "<textarea name='curso'><?= $this->session->userdata('id_curso') ?></textarea>" +
+                    "<textarea name='check_professores'>true</textarea>" +
+                    "<textarea name='check_disciplinas'>true</textarea>" +
+                "</form>").appendTo('body').submit().remove(); 
+        });
         //TABLE CONTROLS
 
             // HANDLER TO ADD A NEW PARTNER
@@ -89,11 +97,12 @@
 <div id="grid">
     <ul id="professor_controls" class="nav nav-pills buttons">        
     <?php if ($this->session->userdata('status_curso') != '2P' && $this->session->userdata('status_curso') != 'CC') { ?>
-        <li class+"buttons"><button type="button" class="btn btn-primary" id="inserir">Inserir</button></li>
-        <li class+"buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="alterar">Alterar</button></li>
-        <li class+"buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="remover">Remover</button></li>
+        <li class="buttons"><button type="button" class="btn btn-primary" id="inserir">Inserir</button></li>
+        <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="alterar">Alterar</button></li>
+        <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="remover">Remover</button></li>
     <?php } ?>
         <li class="buttons"><button type="button" class="btn btn-primary btn-disabled disabled" id="visualizar">Visualizar</button></li>
+        <li class="buttons" style="float: right"><button type="button" class="btn btn-success" id="export">Exportar XSLX</button></li>
     </ul>    
 
     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="professor_table">

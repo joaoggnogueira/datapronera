@@ -9,7 +9,7 @@
 		?>
 			<tr>
 				<td><?php echo $row['nivel']; ?></td>
-				<td style="text-align:center"><?php echo $row['alunos']; ?></td>
+				<td style="text-align:center"><?php echo ($row['alunos']!=""?$row['alunos']:"-"); ?></td>
 			</tr>
 		<?php
 			}

@@ -68,6 +68,10 @@ Table.prototype.appendEvent = function (event) {
     };
 };
 
+Table.prototype.update = function () {
+    this.oTable.fnDraw();
+};
+
 Table.prototype.destroy = function () {
     this.oTable.fnDestroy();
 };
@@ -163,11 +167,9 @@ Table.prototype.getDeletedRows = function (_index) {
     _index = _index || 0;
 
     var aReturn = new Array();
-
     for (var i = 0; i < this.deletedRows.length; i++) {
         aReturn.push(this.deletedRows[i][_index]);
     }
-
     return aReturn;
 }
 

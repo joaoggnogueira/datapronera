@@ -2,7 +2,35 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 ?>
-
+<style>
+    #header{
+        border-bottom: none;
+        max-height: 0px;
+        overflow: hidden;
+        display: none;
+    }
+    #middle{
+        margin-top: 50px;
+        margin-bottom: 20px;
+        border-top: 10px solid #5cb85c;
+        border-radius: 5px;
+    }
+    #status{
+        top: 0px;
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        -webkit-text-fill-color: black;
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+    }
+</style>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -59,22 +87,31 @@ if (!defined('BASEPATH'))
             $.ajax({
                 url: "<?php echo site_url('ctrl_conta/index_acesso_publico'); ?>",
                 success: function (data) {
-                    $('#content').fadeOut(400,function(){
+                    $('#content').fadeOut(400, function () {
                         $(this).html(data).fadeIn(400);
                     });
                 }
             });
         });
-        
-        $("#cpf").keypress(function(e){preventChar(e);});
+
+        $("#cpf").keypress(function (e) {
+            preventChar(e);
+        });
+
+        $("#senha").keypress(function (e) {
+            if(e.originalEvent.key == "Enter"){
+                $("#login").click();
+            }
+        });
 
     });
 </script>
 
-<div class="box-control">
+<div class="box-control" style="margin-top: 20px;">
     <h2><strong>Acesso Restrito</strong></h2>
-
-    <form class="form-horizontal">
+    <br/>
+    <hr/>
+    <form class="form-horizontal" id="formlogin">
         <div class="form-group">
             <div class="col-lg-12">
                 <label>CPF</label>
@@ -99,7 +136,7 @@ if (!defined('BASEPATH'))
         </div>
     </form>
 </div>
-<div class="logo">
+<div class="logo" style="margin-top: 30px">
     <img src="<?php echo base_url(); ?>css/img/logo2.png">
 </div>
 <?php

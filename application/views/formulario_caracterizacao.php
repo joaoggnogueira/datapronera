@@ -259,7 +259,10 @@ if (empty($dados)) {
                     {
                         'id': 'nome_coord_geral',
                         'message': 'Informe o nome do coordenador geral do curso',
-                        'extra': null
+                        'extra': {
+                            'operation': 'pattern',
+                            'message': 'O nome possui caracteres inválidos'
+                        }
                     },
                     {
                         'name': 'rtitulo_coord_geral',
@@ -271,7 +274,10 @@ if (empty($dados)) {
                         'id': 'nome_coord',
                         'ni': $('#ckCoord_proj_nome').prop('checked'),
                         'message': 'Informe o nome do coordenador do curso',
-                        'extra': null
+                        'extra': {
+                            'operation': 'pattern',
+                            'message': 'O nome possui caracteres inválidos'
+                        }
                     },
                     {
                         'name': 'rtitulo_coord',
@@ -284,7 +290,10 @@ if (empty($dados)) {
                         'id': 'vice_nome',
                         'ni': $('#ckVice_naplica').prop('checked'),
                         'message': 'Informe o nome do vice-coordenador do curso',
-                        'extra': null
+                        'extra': {
+                            'operation': 'pattern',
+                            'message': 'O nome possui caracteres inválidos'
+                        }
                     },
                     {
                         'name': 'rvice_titulo',
@@ -297,7 +306,10 @@ if (empty($dados)) {
                         'id': 'nome_coord_pedag',
                         'ni': $('#ckCoord_ped_naplica').prop('checked'),
                         'message': 'Informe o nome do coordenador pedagógico do curso',
-                        'extra': null
+                        'extra': {
+                            'operation': 'pattern',
+                            'message': 'O nome possui caracteres inválidos'
+                        }
                     },
                     {
                         'name': 'rTit_coord_pedag',
@@ -564,6 +576,18 @@ if (empty($dados)) {
             request(urlRequest, null, 'hide');
         });
         
+        $("#ckCoord_proj_nome").click(function(){
+            $("#ckTitulo_coord_na")[0].checked = this.checked;
+            $("#ckTitulo_coord_na").change();
+        });
+        $("#ckVice_naplica").click(function(){
+            $("#ckVice_titulo_naplica")[0].checked = this.checked;
+            $("#ckVice_titulo_naplica").change();
+        });
+        $("#ckCoord_ped_naplica").click(function(){
+            $("#ckTit_coord_pedag_naplica")[0].checked = this.checked;
+            $("#ckTit_coord_pedag_naplica").change();
+        });
         $("#duracao").keypress(function (e) {
             preventChar(e);
         });
@@ -648,7 +672,7 @@ if (empty($dados)) {
         <div class="form-group">
             <label>3. Nome do(a) coordenador(a) geral do curso</label>
             <div>
-                <input type="text" class="form-control tamanho-lg" id="nome_coord_geral" name="nome_coord_geral"
+                <input pattern="^[^-\s][a-zA-ZÀ-ú ]*" type="text" class="form-control tamanho-lg" id="nome_coord_geral" name="nome_coord_geral"
                        value="<?php echo $dados[0]->nome_coordenador_geral; ?>">
                 <label class="control-label form" for="nome_coord_geral"></label>
             </div>
@@ -687,7 +711,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-lg" id="nome_coord" name="nome_coord"
+                    <input pattern="^[^-\s][a-zA-ZÀ-ú ]*" type="text" class="form-control tamanho-lg" id="nome_coord" name="nome_coord"
                            value="<?php if ($dados[0]->nome_coordenador != "NAOAPLICA") echo $dados[0]->nome_coordenador; ?>">
                     <label class="control-label form" for="nome_coord"></label>
                 </div>
@@ -720,7 +744,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-lg" id="vice_nome" name="vice_nome"
+                    <input pattern="^[^-\s][a-zA-ZÀ-ú ]*" type="text" class="form-control tamanho-lg" id="vice_nome" name="vice_nome"
                            value="<?php if ($dados[0]->nome_vice_coordenador != "NAOAPLICA") echo $dados[0]->nome_vice_coordenador; ?>">
                     <label class="control-label form" for="nome_coord"></label>
                 </div>
@@ -753,7 +777,7 @@ if (empty($dados)) {
 
             <div class="form-group">
                 <div>
-                    <input type="text" class="form-control tamanho-lg" id="nome_coord_pedag" name="nome_coord_pedag"
+                    <input pattern="^[^-\s][a-zA-ZÀ-ú ]*" type="text" class="form-control tamanho-lg" id="nome_coord_pedag" name="nome_coord_pedag"
                            value="<?php if ($dados[0]->nome_coordenador_pedagogico != "NAOAPLICA") echo $dados[0]->nome_coordenador_pedagogico; ?>">
                     <label class="control-label form" for="nome_coord_pedag"></label>
                 </div>
@@ -867,7 +891,7 @@ if (empty($dados)) {
 
                 <div class="checkbox negacao-smaller">
                     <label class="negacao-smaller"> <input type="checkbox" name="ckCurso_realizado_termino" id="ckCurso_realizado_termino" value="NI" <?php if ($dados[0]->termino_realizado == "NI") echo "checked"; ?>> N&atilde;o encontrado </label>
-                    <label class="negacao-sm"> <input type="checkbox" name="ckCurso_finalizado" id="ckCurso_finalizado" value="NAOCONCLUIDO" <?php if ($dados[0]->curso_descricao != "") echo "checked"; ?>> Curso n&atilde;o conclu&iacute;do </label>
+                    <label class="negacao-sm"> <input type="checkbox" name="ckCurso_finalizado" id="ckCurso_finalizado" value="NAOCONCLUIDO" <?php if ($dados[0]->termino_realizado == "") echo "checked"; ?>> Curso n&atilde;o conclu&iacute;do </label>
                 </div>
                 <div class="form-group">
                     <div>

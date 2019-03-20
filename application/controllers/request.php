@@ -15,11 +15,10 @@ class Request extends CI_Controller {
     function acessar_curso() {
 
         $this->load->model('curso_m');
-
+        header('Content-Type: application/json; charset=utf-8');
+        
         $this->session->set_userdata('id_curso', $this->input->post('id_curso'));
-
         if ($status = $this->curso_m->get_status($this->input->post('id_curso'))) {
-
             if ($result = $this->caracterizacao_m->get_record($this->session->userdata('id_curso'))) {
 
                 $this->log->save("CURSO ACESSADO: ID '" . $this->input->post('id_curso') . "'");
@@ -38,10 +37,13 @@ class Request extends CI_Controller {
                 //$values['informer'] = $this->responsavel_m->get_informers($this->session->userdata('id_curso'));
 
                 $course['cod'] = $this->input->post('codigo');
-
-                $course['name'] = (strlen($this->input->post('nome')) > 60) ?
-                        substr($this->input->post('nome'), 0, 55) . " [...]" :
-                        $this->input->post('nome');
+                $nome = $this->input->post('nome');
+                if(strlen($nome) > 60) {
+                    $nome = substr($nome, 0, 55) . " [...]";
+                }
+                $nome = str_replace("ª", "a", $nome);
+                $course['name'] = $nome;
+                
                 $course['data'] = $this->input->post('data');
                 $this->session->set_userdata('cod_course', $course['cod']);
                 $this->session->set_userdata('name_course', $course['name']);
@@ -51,11 +53,11 @@ class Request extends CI_Controller {
                     'top_menu' => $this->load->view($data['top_menu'], '', true),
                     'course_info' => $this->load->view($data['course_info'], '', true)
                 );
-
                 $response = array(
                     'success' => true,
                     'html' => $html
                 );
+
             } else {
 
                 $response = array(
@@ -111,10 +113,15 @@ class Request extends CI_Controller {
 
     function get_curso($sts_1, $sts_2 = null) {
 
-        $this->db->select('c.id curso_id, c.id_superintendencia superintendencia, c.nome curso_nome, p.nome responsavel, cr.inicio_realizado');
+        $this->db->select(""
+                . "CONCAT(LPAD(c.id_superintendencia,(2),(0)),('.'),LPAD(c.id,(3),(0))),"
+                . " nome,"
+                . " IF(c.nprocesso IS NULL,CONCAT(c.ninstrumento,('(SICONV)')),(c.nprocesso)), "
+                . " IF(ca.inicio_realizado IS NULL,IF(ca.inicio_previsto IS NULL,(''),CONCAT(ca.inicio_previsto,(' (PREVISTO)'))),(ca.inicio_realizado)) AS inicio, "
+                . " IF(ca.termino_realizado IS NULL,IF(ca.termino_previsto IS NULL,(''),CONCAT(ca.termino_previsto,(' (PREVISTO)'))),(ca.termino_realizado)) as termino "
+        );
         $this->db->from('curso c');
-        $this->db->join('caracterizacao cr', 'c.id = cr.id_curso', 'left');
-        $this->db->join('pessoa p', 'c.id_pesquisador = p.id', 'left');
+        $this->db->join("caracterizacao ca", "ca.id_curso = c.id");
         $this->db->where('c.ativo_inativo', 'A');
 
         // COORD. CURSO, CPN, ASSEGURADOR
@@ -128,10 +135,11 @@ class Request extends CI_Controller {
             $this->db->or_where('c.status', $sts_2);
         }
 
-        $this->db->order_by('c.id_superintendencia, c.id, cr.inicio_realizado');
+        $this->db->order_by('c.id_superintendencia, c.id, c.nprocesso');
         $query = $this->db->get();
 
         $dados = $query->result();
+
 
         /** Output * */
         $output = array(
@@ -144,42 +152,13 @@ class Request extends CI_Controller {
         foreach ($dados as $item) {
             $row = array();
 
-            $super = "";
-            $codigo = "";
-
-            if ($item->superintendencia < 10) {
-                $super = "0";
+            foreach ($item as $cell) {
+                $row[] = $cell;
             }
-            if ($item->curso_id < 100) {
-                $codigo = "0";
-            }
-            if ($item->curso_id < 10) {
-                $codigo .= "0";
-            }
-
-            $codigo .= $item->curso_id;
-            $super .= $item->superintendencia;
-
-            $row[0] = ($super . "." . $codigo);
-            $row[1] = ($item->curso_nome);
-            $row[2] = ($item->responsavel);
-
-            if ($item->inicio_realizado == 'NI') {
-                $row[3] = "NÃO INFORMADO";
-            } else {
-                $row[3] = ($item->inicio_realizado);
-            }
-
-            /* switch ($item->status) {
-
-              case "AN" : $row[3] = ("EM ANDAMENTO"); break;
-              case "CO" : $row[3] = ("EM CONFERÊNCIA"); break;
-              case "CC" :
-              case "2P" : $row[3] = ("CONCLUÍDO"); break;
-              } */
 
             $output['aaData'][] = $row;
         }
+
         echo json_encode($output);
     }
 
@@ -267,7 +246,7 @@ class Request extends CI_Controller {
             $codigo .= $item->curso_id;
             $super .= $item->superintendencia;
 
-            $row[0] = ( $item->curso_id);
+            $row[0] = ($item->curso_id);
             $row[1] = ($super . "." . $codigo);
             $row[2] = ($item->curso_nome);
             $row[3] = ($item->super_nome);
@@ -278,6 +257,35 @@ class Request extends CI_Controller {
         echo json_encode($output);
     }
 
+    function get_assentamento_cadastro(){
+        $this->db->select('a.idAssentamento id, a.codigo sipra, a.nome nome, a.estado uf, s.nome sr');
+        $this->db->from('assentamentos a');
+        $this->db->join('superintendencia s','s.id = a.id_superintendencia');
+        $query = $this->db->get();
+
+        $dados = $query->result();
+
+        /** Output * */
+        $output = array(
+            "sEcho" => 1,
+            "iTotalRecords" => 0,
+            "iTotalDisplayRecords" => 0,
+            "aaData" => array()
+        );
+
+        foreach ($dados as $item) {
+            $row = array();
+            $row[0] = ($item->id);
+            $row[1] = ($item->sipra);
+            $row[2] = ($item->nome);
+            $row[3] = ($item->uf);
+            $row[4] = ($item->sr);
+
+            $output['aaData'][] = $row;
+        }
+        echo json_encode($output);
+    }
+    
     function get_super_cadastro($ativo_inativo) {
 
         $this->db->select('s.id, s.nome nome, s.nome_responsavel responsavel, s.id_estado estado');
@@ -428,7 +436,7 @@ class Request extends CI_Controller {
 
     function get_professor() {
 
-        $this->db->select('p.id professor_id, p.nome professor, p.genero professor_sexo, p.titulacao professor_titulacao');
+        $this->db->select('p.id professor_id, UPPER(p.nome) professor, p.genero professor_sexo, p.titulacao professor_titulacao');
         $this->db->from('professor p');
         $this->db->where('p.id_curso', $this->session->userdata('id_curso'));
         $this->db->order_by('p.nome');
@@ -503,11 +511,14 @@ class Request extends CI_Controller {
 
     function get_educando() {
 
-
-        $this->db->select('e.id educando_id, e.nome educando, e.genero educando_sexo, e.data_nascimento educando_datanasc, e.idade educando_idade, e.nome_territorio nome_acampamento');
+        $this->db->select("e.id educando_id, UPPER(e.nome) educando, CONCAT((c.nome),(' ('),(est.sigla),(')')) educando_cidade, e.data_nascimento educando_datanasc, e.nome_territorio nome_acampamento");
         $this->db->from('educando e');
+        $this->db->join('educando_cidade ec', 'ec.id_educando = e.id', 'left');
+        $this->db->join('cidade c', 'c.id = ec.id_cidade', 'left');
+        $this->db->join('estado est', 'est.id = c.id_estado', 'left');
         $this->db->where('e.id_curso', $this->session->userdata('id_curso'));
         $this->db->order_by('e.nome');
+
         $query = $this->db->get();
 
         $dados = $query->result();
@@ -523,32 +534,17 @@ class Request extends CI_Controller {
         foreach ($dados as $item) {
             $row = array();
 
-            $sexo = "NÂO INFORMADO";
-
-            if ($item->educando_sexo == 'M') {
-                $sexo = "MASCULINO";
-            } else if ($item->educando_sexo == 'F') {
-                $sexo = "FEMININO";
-            }
-
-            $idade = $item->educando_idade;
-
-            if ($idade == -1) {
-                $idade = "NÃO INFORMADO";
-            }
-
             $data = implode("/", array_reverse(explode("-", $item->educando_datanasc), true));
 
-            if ($data == '01/01/1900') {
+            if ($data == '01/01/1900' || $data == '00/00/0000') {
                 $data = "NÃO INFORMADO";
             }
 
             $row[0] = utf8_encode($item->educando_id);
             $row[1] = ($item->educando);
-            $row[2] = utf8_encode($sexo);
+            $row[2] = ($item->educando_cidade);
             $row[3] = $data;
-            $row[4] = $idade;
-            $row[5] = ($item->nome_acampamento);
+            $row[4] = ($item->nome_acampamento);
 
             $output['aaData'][] = $row;
         }
@@ -1640,7 +1636,7 @@ class Request extends CI_Controller {
         }
         echo json_encode($output);
     }
-    
+
 }
 
 ?>

@@ -5,48 +5,48 @@
 <script type="text/javascript">
 
  	$.get("<?php echo site_url('requisicao/get_estados'); ?>", function (estados) {
-		$('#estado').html(estados);
+            $('#estado').html(estados);
 
-		var estado = "<?php if ($operacao != 'add') echo $dados[0]->id_estado; ?>";
-		$('#estado option[value="'+estado+'"]').attr("selected", true);
-	});
+            var estado = "<?php if ($operacao != 'add') echo $dados[0]->id_estado; ?>";
+            $('#estado option[value="' + estado + '"]').attr("selected", true);
+            $('#estado').change();
+        });
 
- 	$(document).ready(function () {
+    $(document).ready(function () {
 
         var id = "<?php echo $superintendencia['id']; ?>";
 
         $('#salvar').click(function () {
 
             var form = Array(
-                {
-                    'id'      : 'nome',
-                    'message' : 'Informe o nome da superintendência',
-                    'extra'   : null
-                },
-
-                {
-                    'id'      : 'responsavel',
-                    'message' : 'Informe o nome do responsável pela superintendência',
-                    'extra'   : null
-                },
-
-                {
-                    'id'      : 'estado',
-                    'message' : 'Selecione o estado a qual a superintendência pertence',
-                    'extra'   : null
-                }
+                    {
+                        'id': 'nome',
+                        'message': 'Informe o nome da superintendência',
+                        'extra': null
+                    },
+                    {
+                        'id': 'responsavel',
+                        'message': 'Informe o nome do responsável pela superintendência',
+                        'extra': null
+                    },
+                    {
+                        'id': 'estado',
+                        'message': 'Selecione o estado a qual a superintendência pertence',
+                        'extra': null
+                    }
             );
 
             if (isFormComplete(form)) {
 
                 var formData = {
-                    id : id,
-                    nome : $('#nome').val().toUpperCase(),
+                    id: id,
+                    nome: $('#nome').val().toUpperCase(),
                     responsavel: $("#responsavel").val().toUpperCase(),
-                    estado : $('#estado').val()
+                    estado: $('#estado').val()
                 };
 
-                var urlRequest = "<?php if ($operacao == 'add') echo site_url('superintendencia/add/'); else if ($operacao == 'update') echo site_url('superintendencia/update/'); ?>";
+                var urlRequest = "<?php if ($operacao == 'add') echo site_url('superintendencia/add/');
+    else if ($operacao == 'update') echo site_url('superintendencia/update/'); ?>";
 
                 request(urlRequest, formData);
             }
@@ -58,8 +58,28 @@
 
             request(urlRequest, null, 'hide');
         });
-
-	});
+    <?PHP if ($operacao == 'view'): ?>
+            function preventAll(e) {
+                e.preventDefault();
+            }
+            $("input").on('keydown', preventAll).on('keyup', preventAll);
+            $("textarea").on('keydown', preventAll).on('keyup', preventAll);
+            $("select").each(function (key, object) {
+                const select = $(object);
+                var atual_value = select.val();
+                select.change(function (event) {
+                    console.log(event);
+                    if (atual_value !== null) {
+                        $(event.target).val(atual_value);
+                    } else {
+                        atual_value = $(event.target).val();
+                    }
+                });
+            });
+            $("#equipe_superintendencia_controls").hide();
+            $("input").click(preventAll);
+    <?PHP endif; ?>
+    });
 </script>
 
 <form>
@@ -70,6 +90,8 @@
             <?php
                 if ($operacao != 'view') {
                     echo "<input type=\"button\" id=\"salvar\" class=\"btn btn-success\" value=\"Salvar\"> <hr/>";
+                } else {
+                    echo "<h4>Visualizando<h4/>";
                 }
             ?>
             <input type="button" id="reset" class="btn btn-default" value="Voltar">

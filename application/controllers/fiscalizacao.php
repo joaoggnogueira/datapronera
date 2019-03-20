@@ -128,7 +128,7 @@ class Fiscalizacao extends CI_Controller {
         if ($this->input->post('tipo') == 'OUTRO') {
 
             $tipo = array(
-                'nome' => trim($this->input->post('tipo_descricao')),
+                'nome' => strtoupper(trim($this->input->post('tipo_descricao'))),
             );
 
             // Inserts course's genre
@@ -157,8 +157,8 @@ class Fiscalizacao extends CI_Controller {
                     return;
                 }
             }
-            if (($membros = $this->input->post('membros'))) {
-
+            if (($membros_json = $this->input->post('membros'))) {
+                $membros = json_decode($membros_json);
                 foreach ($membros as $membro) {
 
                     $coord = array(
@@ -265,7 +265,7 @@ class Fiscalizacao extends CI_Controller {
         if ($this->input->post('tipo') == 'OUTRO') {
 
             $tipo = array(
-                'nome' => trim($this->input->post('tipo_descricao')),
+                'nome' => strtoupper(trim($this->input->post('tipo_descricao'))),
             );
 
             // Inserts course's genre
@@ -282,8 +282,8 @@ class Fiscalizacao extends CI_Controller {
             // Algoritmo BURRO!
             // $this->organizacao_m->delete_record_coordenadores($this->input->post('id'));
 
-            if ($membros_excluidos = $this->input->post('membros_excluidos')) {
-
+            if ($membros_excluidos_json = $this->input->post('membros_excluidos')) {
+                $membros_excluidos = json_decode($membros_excluidos_json);
                 foreach ($membros_excluidos as $membros_excl) {
 
                     $this->log->save("MEMBRO '" . $membros_excl . "' REMOVIDO: FISCALIZACAO ID '" . $this->input->post('id') . "'");
@@ -293,8 +293,8 @@ class Fiscalizacao extends CI_Controller {
                 }
             }
 
-            if ($membros = $this->input->post('membros')) {
-
+            if (($membros_json = $this->input->post('membros'))) {
+                $membros = json_decode($membros_json);
                 foreach ($membros as $membro) {
 
                     if ($membro[0] == 'N') {

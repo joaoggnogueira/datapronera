@@ -49,6 +49,29 @@ copied
 http://200.145.184.175/svn/newpnera/application/models/conta.php
 136
 
+assentamento_m.php
+file
+
+
+
+add
+
+8fd304c8eefb9ae75d77c6c5042fc55a
+
+
+
+
+
+
+
+
+
+
+
+copied
+http://200.145.184.175/svn/newpnera/application/models/superintendencia_m.php
+136
+
 barchart.php
 file
 
@@ -621,7 +644,7 @@ file
 
 
 
-
+delete
 2014-11-19T11:42:20.000000Z
 17838a3bb62377ec1506654d7d66f01b
 2014-11-06T11:06:05.601044Z
@@ -655,7 +678,7 @@ file
 
 
 
-
+delete
 2014-11-19T11:42:20.000000Z
 a99c19c9f1726307095e3bacdd84d7c0
 2014-11-06T11:06:05.601044Z

@@ -11,11 +11,33 @@ if (!defined('BASEPATH')) {
         $.get("<?php echo site_url('requisicao/get_municipio_desc'); ?>/<?= $this->session->userdata('id_cidade') ?>", function (result) {
             $("#municipio-up-label").html(result);
         });
-
+        <?PHP 
+            if($this->session->userdata('permissao_publica')): 
+                $token = $this->session->userdata('token');
+                $record_token = $this->session->userdata('record_token');
+            endif; 
+        ?>
     });
 </script>
 <h3>Bem-vindo ao Acesso Público!</h3>
 <hr/>
+<?PHP if($this->session->userdata('permissao_publica')): ?>
+    <div class="row">
+        <span class="col-md-9" style="text-align: left">
+            O Link utilizado é uma chave para acessar algumas <b>informações protegidas</b>.<br/>
+            Tais informações não são acessíveis sem o link, ou seja, <b style="color:red">não compartilhe essa chave sem autorização</b>.
+        </span>
+    </div>
+    <br/>
+    <div class="row">
+    <?PHP if(isset($token->mapa)): ?>
+        <span class="col-md-9" style="text-align: left">
+            <button type="button" onclick="request('<?= site_url('relatorio_mapas/index/');?>', {sr:<?= $record_token['sr']->id ?>}, 'hide');"  class="btn btn-primary" id="acessar_token"><i class="fa fa-map"></i> Acessar Mapa da SR <?= $record_token['sr']->id ?> - <?= $record_token['sr']->nome ?></button>
+        </span>
+    <?PHP endif; ?>
+    </div>
+<br/>
+<?PHP endif; ?>
 <div class="row" style="width:400px;">
     <div class="form-group" style="margin:10px;">
         <label>Seus Dados Cadastrais:</label>

@@ -1,350 +1,361 @@
-<?php 
-	
+<?php
+
 class Professor extends CI_Controller {
 
-	public function __construct() {
-        parent::__construct(); 
+    public function __construct() {
+        parent::__construct();
 
-        $this->load->database();		 // Loading Database 
+        $this->load->database();   // Loading Database 
         $this->load->library('session'); // Loading Session
-        $this->load->helper('url'); 	// Loading Helper
-        
-		$this->load->model('professor_m');
+        $this->load->helper('url');  // Loading Helper
+
+        $this->load->model('professor_m');
     }
 
-	function index() {
-    	
-    	$this->session->set_userdata('curr_content', 'professor');
-    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+    function index() {
 
-    	$data['content'] = $this->session->userdata('curr_content');		
-		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        $this->session->set_userdata('curr_content', 'professor');
+        $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-		$html = array(
-			'content' => $this->load->view($data['content'], '', true)
-			//'top_menu' => $this->load->view($data['top_menu'], '', true)
-		);
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		$response = array(
-			'success' => true,
-			'html' => $html
-		);
+        $html = array(
+            'content' => $this->load->view($data['content'], '', true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
 
-		echo json_encode($response);
-	}	
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
 
-	function index_add() {
+        echo json_encode($response);
+    }
 
-		$professor['id'] = 0;
+    function index_add() {
 
-		$this->session->set_userdata('curr_content', 'formulario_professor');
-    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+        $professor['id'] = 0;
 
-    	$data['content'] = $this->session->userdata('curr_content');		
-		//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+        $this->session->set_userdata('curr_content', 'formulario_professor');
+        $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-		$valores['dados'] = null;
-		$valores['professor'] = $professor;
-		$valores['operacao'] =  $this->input->post('operacao');
+        $data['content'] = $this->session->userdata('curr_content');
+        //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		$html = array(
-			'content' => $this->load->view($data['content'], $valores, true)
-			//'top_menu' => $this->load->view($data['top_menu'], '', true)
-		);
+        $valores['dados'] = null;
+        $valores['professor'] = $professor;
+        $valores['operacao'] = $this->input->post('operacao');
 
-		$response = array(
-			'success' => true,
-			'html' => $html
-		);
+        $html = array(
+            'content' => $this->load->view($data['content'], $valores, true)
+                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+        );
 
-		echo json_encode($response);
-	}
+        $response = array(
+            'success' => true,
+            'html' => $html
+        );
 
-	function index_update() {
+        echo json_encode($response);
+    }
 
-		$professor['id'] = $this->input->post('id_professor');
+    function index_update() {
 
-		if ($dados = $this->professor_m->get_record($professor['id'])) {
+        $professor['id'] = $this->input->post('id_professor');
 
-			$this->session->set_userdata('curr_content', 'formulario_professor');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+        if ($dados = $this->professor_m->get_record($professor['id'])) {
 
-	    	$data['content'] = $this->session->userdata('curr_content');		
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+            $this->session->set_userdata('curr_content', 'formulario_professor');
+            $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-			$valores['dados'] = $dados;
-			$valores['professor'] = $professor;
-			$valores['operacao'] =  $this->input->post('operacao');
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-			$html = array(
-				'content' => $this->load->view($data['content'], $valores, true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true)
-			);
+            $valores['dados'] = $dados;
+            $valores['professor'] = $professor;
+            $valores['operacao'] = $this->input->post('operacao');
 
-			$response = array(
-				'success' => true,
-				'html' => $html
-			);
+            $html = array(
+                'content' => $this->load->view($data['content'], $valores, true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            );
 
-		}  else {
+            $response = array(
+                'success' => true,
+                'html' => $html
+            );
+        } else {
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha na requisição, tente novamente em instantes'
-			);
-		}
+            $response = array(
+                'success' => false,
+                'message' => 'Falha na requisição, tente novamente em instantes'
+            );
+        }
 
-		echo json_encode($response);
-	}
+        echo json_encode($response);
+    }
 
-	function add() {
+    function add() {
 
-		$disciplinas_ni = ($this->input->post('ckDisciplinas_ni') == 'true') ? 'V' : 'F';
+        $disciplinas_ni = ($this->input->post('ckDisciplinas_ni') == 'true') ? 'V' : 'F';
 
-		$sexo = ($this->input->post('ckSexo_ni') == 'true') ? "N" :
-					trim($this->input->post('rprof_sexo'));
-		
-		$titulacao = ($this->input->post('ckTitulacao_ni') == 'true') ? "NAOINFORMADO" :
-						trim($this->input->post('rprof_escola'));
+        $sexo = ($this->input->post('ckSexo_ni') == 'true') ? "N" :
+                trim($this->input->post('rprof_sexo'));
 
-		$cpf = ($this->input->post('ckCPF_ni') =='true') ? 'NAOINFORMADO' : 
-			trim($this->input->post('professor_cpf'));
+        $titulacao = ($this->input->post('ckTitulacao_ni') == 'true') ? "NAOINFORMADO" :
+                trim($this->input->post('rprof_escola'));
 
-		$cpf = ($this->input->post('ckCPF_na') =='true') ? 'NAOAPLICA' : 
-			$cpf;
+        $cpf = ($this->input->post('ckCPF_ni') == 'true') ? 'NAOINFORMADO' :
+                trim($this->input->post('professor_cpf'));
 
-		$rg = ($this->input->post('ckRg_ni') =='true') ? 'NAOINFORMADO' : 
-			trim($this->input->post('professor_rg'));
+        $cpf = ($this->input->post('ckCPF_na') == 'true') ? 'NAOAPLICA' :
+                $cpf;
 
-		$rg = ($this->input->post('ckRg_na') =='true') ? 'NAOAPLICA' : 
-			$rg;
+        $rg = ($this->input->post('ckRg_ni') == 'true') ? 'NAOINFORMADO' :
+                trim($this->input->post('professor_rg'));
 
-		$data = array(
-			'nome' => trim($this->input->post('professor_nome')),
-			'rg' =>  $rg,
-			'cpf' => $cpf,
-			'genero' => $sexo,
-			'titulacao' => $titulacao,
-			'id_curso' => $this->session->userdata('id_curso'),
-			'disciplina_ni' => $disciplinas_ni
-		);
+        $rg = ($this->input->post('ckRg_na') == 'true') ? 'NAOAPLICA' :
+                $rg;
 
-		// Starts transaction
-		$this->db->trans_begin();
-		
-		if ($inserted_id = $this->professor_m->add_record($data)) {
+        $data = array(
+            'nome' => trim($this->input->post('professor_nome')),
+            'rg' => $rg,
+            'cpf' => $cpf,
+            'genero' => $sexo,
+            'titulacao' => $titulacao,
+            'id_curso' => $this->session->userdata('id_curso'),
+            'disciplina_ni' => $disciplinas_ni
+        );
 
-			if ($disciplinas = $this->input->post('disciplinas')) {
+        // Starts transaction
+        $this->db->trans_begin();
 
-			    foreach ($disciplinas as $disciplina) {
-					
-					if ($disciplina[0] == 'N'){
-						$disc = array(	
-							'nome' => $disciplina[2],
-							'id_professor' => $inserted_id,
-							'id_curso' => $this->session->userdata('id_curso')
-						);
+        if (($inserted_id = $this->professor_m->add_record($data))) {
 
-						if (! $this->professor_m->add_record_disciplina($disc)) break;
+            if (($disciplinas = $this->input->post('disciplinas'))) {
 
-						$this->log->save("DISCIPLINA '".$disc['nome']."' ADICIONADA: PROFESSOR ID '".$inserted_id."'");
-					}
-				}
-			}
+                foreach ($disciplinas as $disciplina) {
 
-			if ($this->db->trans_status() !== false) {
+                    if ($disciplina[0] == 'N') {
+                        $disc = array(
+                            'nome' => $disciplina[2],
+                            'id_professor' => $inserted_id,
+                            'id_curso' => $this->session->userdata('id_curso')
+                        );
 
-				$this->log->save("PROFESSOR ADICIONADO: ID '".$inserted_id."'");
+                        if (!$this->professor_m->add_record_disciplina($disc))
+                            break;
 
-				$this->db->trans_commit();
+                        $this->log->save("DISCIPLINA '" . $disc['nome'] . "' ADICIONADA: PROFESSOR ID '" . $inserted_id . "'");
+                    }
+                }
+            }
 
-				$this->session->set_userdata('curr_content', 'professor');
-		    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+            if ($this->db->trans_status() !== false) {
 
-		    	$data['content'] = $this->session->userdata('curr_content');		
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+                $this->log->save("PROFESSOR ADICIONADO: ID '" . $inserted_id . "'");
 
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true),
-				);
+                $this->db->trans_commit();
 
-				$response = array(
-					'success' => true,
-					'html'	  => $html,
-					'message' => 'Cadastro efetuado'
-				);
+                $this->session->set_userdata('curr_content', 'professor');
+                $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-			} else {
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-				$this->db->trans_rollback();
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true),
+                );
 
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao efetuar cadastro'
-				);
-			}
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro efetuado'
+                );
+            } else {
 
-		} else {
+                $this->db->trans_rollback();
 
-			$this->db->trans_rollback();
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao efetuar cadastro'
+                );
+            }
+        } else {
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao efetuar cadastro'
-			);
-		}
+            $this->db->trans_rollback();
 
-		echo json_encode($response);
-	}
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao efetuar cadastro'
+            );
+        }
 
-	function update() {
+        echo json_encode($response);
+    }
 
-		$disciplinas_ni = ($this->input->post('ckDisciplinas_ni') =='true') ? 1 : 0;
+    function update() {
 
-		$sexo = ($this->input->post('ckSexo_ni') == 'true') ? "N" :
-					trim($this->input->post('rprof_sexo'));
-		
-		$titulacao = ($this->input->post('ckTitulacao_ni') == 'true') ? "NAOINFORMADO" :
-						trim($this->input->post('rprof_escola'));
+        $disciplinas_ni = ($this->input->post('ckDisciplinas_ni') == 'true') ? 1 : 0;
 
-		$cpf = ($this->input->post('ckCPF_ni') =='true') ? 'NAOINFORMADO' : 
-			trim($this->input->post('professor_cpf'));
+        $sexo = ($this->input->post('ckSexo_ni') == 'true') ? "N" :
+                trim($this->input->post('rprof_sexo'));
 
-		$cpf = ($this->input->post('ckCPF_na') =='true') ? 'NAOAPLICA' : 
-			$cpf;
+        $titulacao = ($this->input->post('ckTitulacao_ni') == 'true') ? "NAOINFORMADO" :
+                trim($this->input->post('rprof_escola'));
 
-		$rg = ($this->input->post('ckRg_ni') =='true') ? 'NAOINFORMADO' : 
-			trim($this->input->post('professor_rg'));
+        $cpf = ($this->input->post('ckCPF_ni') == 'true') ? 'NAOINFORMADO' :
+                trim($this->input->post('professor_cpf'));
 
-		$rg = ($this->input->post('ckRg_na') =='true') ? 'NAOAPLICA' : 
-			$rg;
+        $cpf = ($this->input->post('ckCPF_na') == 'true') ? 'NAOAPLICA' :
+                $cpf;
 
-		$data = array(
-			'nome' => trim($this->input->post('professor_nome')),
-			'rg' =>  $rg,
-			'cpf' => $cpf,
-			'genero' => $sexo,
-			'titulacao' => $titulacao,
-			'id_curso' => $this->session->userdata('id_curso'),
-			'disciplina_ni' => $disciplinas_ni
-		);
+        $rg = ($this->input->post('ckRg_ni') == 'true') ? 'NAOINFORMADO' :
+                trim($this->input->post('professor_rg'));
 
-		// Starts transaction
-		$this->db->trans_begin();
-		
-		if ($this->professor_m->update_record($data, $this->input->post('id'))) {
+        $rg = ($this->input->post('ckRg_na') == 'true') ? 'NAOAPLICA' :
+                $rg;
 
-			// Algoritmo BURRO!
-			// $this->professor_m->delete_record_disciplinas($this->input->post('id'));
+        $data = array(
+            'nome' => trim($this->input->post('professor_nome')),
+            'rg' => $rg,
+            'cpf' => $cpf,
+            'genero' => $sexo,
+            'titulacao' => $titulacao,
+            'id_curso' => $this->session->userdata('id_curso'),
+            'disciplina_ni' => $disciplinas_ni
+        );
 
-			if ($disciplinas_excl = $this->input->post('disc_excluidas')) {
+        // Starts transaction
+        $this->db->trans_begin();
 
-			    foreach ($disciplinas_excl as $disciplina_exc) {					
+        if ($this->professor_m->update_record($data, $this->input->post('id'))) {
 
-			    	$this->log->save("DISCIPLINA '".$disciplina_exc."' REMOVIDA: PROFESSOR ID '".$this->input->post('id')."'");
+            // Algoritmo BURRO!
+            // $this->professor_m->delete_record_disciplinas($this->input->post('id'));
 
-					if (! $this->professor_m->delete_record_disciplinas($disciplina_exc, $this->input->post('id'))) break;					
-				}
-			}
+            if ($disciplinas_excl = $this->input->post('disc_excluidas')) {
 
-			if ($disciplinas = $this->input->post('disciplinas')) {
+                foreach ($disciplinas_excl as $disciplina_exc) {
 
-			    foreach ($disciplinas as $disciplina) {
-					
-					if ($disciplina[0] == 'N'){
-						$disc = array(	
-							'nome' => $disciplina[2],
-							'id_professor' => $this->input->post('id'),
-							'id_curso' => $this->session->userdata('id_curso')
-						);
+                    $this->log->save("DISCIPLINA '" . $disciplina_exc . "' REMOVIDA: PROFESSOR ID '" . $this->input->post('id') . "'");
 
-						if (! $this->professor_m->add_record_disciplina($disc)) break;
+                    if (!$this->professor_m->delete_record_disciplinas($disciplina_exc, $this->input->post('id')))
+                        break;
+                }
+            }
 
-						$this->log->save("DISCIPLINA '".$disc['nome']."' ADICIONADA: PROFESSOR ID '".$this->input->post('id')."'");
-					}
-				}
-			}
+            if ($disciplinas = $this->input->post('disciplinas')) {
 
-			if ($this->db->trans_status() !== false) {
+                foreach ($disciplinas as $disciplina) {
 
-				$this->log->save("PROFESSOR ATUALIZADO: ID '".$this->input->post('id')."'");
+                    if ($disciplina[0] == 'N') {
+                        $disc = array(
+                            'nome' => $disciplina[2],
+                            'id_professor' => $this->input->post('id'),
+                            'id_curso' => $this->session->userdata('id_curso')
+                        );
 
-				$this->db->trans_commit();
+                        if (!$this->professor_m->add_record_disciplina($disc))
+                            break;
 
-				$this->session->set_userdata('curr_content', 'professor');
-		    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+                        $this->log->save("DISCIPLINA '" . $disc['nome'] . "' ADICIONADA: PROFESSOR ID '" . $this->input->post('id') . "'");
+                    }
+                }
+            }
 
-		    	$data['content'] = $this->session->userdata('curr_content');		
-				//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+            if ($this->db->trans_status() !== false) {
 
-				$html = array(
-					'content' => $this->load->view($data['content'], '', true)
-					//'top_menu' => $this->load->view($data['top_menu'], '', true),
-				);
+                $this->log->save("PROFESSOR ATUALIZADO: ID '" . $this->input->post('id') . "'");
 
-				$response = array(
-					'success' => true,
-					'html'	  => $html,
-					'message' => 'Cadastro atualizado'
-				);
+                $this->db->trans_commit();
 
-			} else {
+                $this->session->set_userdata('curr_content', 'professor');
+                $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-				$this->db->trans_rollback();
+                $data['content'] = $this->session->userdata('curr_content');
+                //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-				$response = array(
-					'success' => false,
-					'message' => 'Falha ao atualizar cadastro'
-				);
-			}
+                $html = array(
+                    'content' => $this->load->view($data['content'], '', true)
+                        //'top_menu' => $this->load->view($data['top_menu'], '', true),
+                );
 
-		} else {
+                $response = array(
+                    'success' => true,
+                    'html' => $html,
+                    'message' => 'Cadastro atualizado'
+                );
+            } else {
 
-			$this->db->trans_rollback();
+                $this->db->trans_rollback();
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao atualizar cadastro'
-			);
-		}
+                $response = array(
+                    'success' => false,
+                    'message' => 'Falha ao atualizar cadastro'
+                );
+            }
+        } else {
 
-		echo json_encode($response);
-	}
+            $this->db->trans_rollback();
 
-	function remove() {
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao atualizar cadastro'
+            );
+        }
 
-		if ($this->professor_m->delete_record($this->input->post('id_professor'))) {
+        echo json_encode($response);
+    }
 
-			$this->log->save("PROFESSOR REMOVIDO: ID '".$this->input->post('id_professor')."'");
+    function remove() {
 
-			$this->session->set_userdata('curr_content', 'professor');
-	    	$this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
+        if ($this->professor_m->delete_record($this->input->post('id_professor'))) {
 
-	    	$data['content'] = $this->session->userdata('curr_content');		
-			//$data['top_menu'] = $this->session->userdata('curr_top_menu');
+            $this->log->save("PROFESSOR REMOVIDO: ID '" . $this->input->post('id_professor') . "'");
 
-			$html = array(
-				'content' => $this->load->view($data['content'], '', true)
-				//'top_menu' => $this->load->view($data['top_menu'], '', true),
-			);
+            $this->session->set_userdata('curr_content', 'professor');
+            $this->session->set_userdata('curr_top_menu', 'menus/cursos.php');
 
-			$response = array(
-				'success' => true,
-				'html'	  => $html,
-				'message' => 'Cadastro removido'
-			);
+            $data['content'] = $this->session->userdata('curr_content');
+            //$data['top_menu'] = $this->session->userdata('curr_top_menu');
 
-		} else {
+            $html = array(
+                'content' => $this->load->view($data['content'], '', true)
+                    //'top_menu' => $this->load->view($data['top_menu'], '', true),
+            );
 
-			$response = array(
-				'success' => false,
-				'message' => 'Falha ao remover cadastro'
-			);
-		}
+            $response = array(
+                'success' => true,
+                'html' => $html,
+                'message' => 'Cadastro removido'
+            );
+        } else {
 
-		echo json_encode($response);
-	}
+            $response = array(
+                'success' => false,
+                'message' => 'Falha ao remover cadastro'
+            );
+        }
+
+        echo json_encode($response);
+    }
+    
+    function sugestao_genero(){
+        $result = $this->professor_m->sugestao_genero($this->uri->segment(3));
+        if($result == "I"){
+            $this->load->model('educando_m');
+            $result = $this->educando_m->sugestao_genero($this->uri->segment(3));
+        }
+        echo $result;
+    }
+    
+    function sugestao_disciplina(){
+        echo $this->professor_m->sugestao_disciplina($this->uri->segment(3));
+    }
+
 }
- 
+
 ?>

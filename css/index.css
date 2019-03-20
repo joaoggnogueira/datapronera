@@ -338,6 +338,14 @@
 		margin-top: 10px;
 		border-color: #333;
 	}
+        
+        #course_info > nav > .container > .navbar-header a {
+            padding: 10px;
+        }
+        #course_info > .navbar{
+            min-height: 30px !important;
+        }
+
 
 /* FORMS */
 

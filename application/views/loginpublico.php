@@ -10,10 +10,37 @@ if (!defined('BASEPATH'))
     .modal-backdrop.fade.in{
         z-index: 10000;
     }
+    #header{
+        border-bottom: none;
+        max-height: 0px;
+        overflow: hidden;
+    }
+    #middle{
+        margin-top: 83px;
+        border-top: 10px solid #5cb85c;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+    #status{
+        top: 0px;
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+        -webkit-text-fill-color: black;
+        -webkit-box-shadow: 0 0 0px 1000px #EEF inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
-        
+
         // Botão de login
         $('#login-btn').click(function () {
 
@@ -44,7 +71,7 @@ if (!defined('BASEPATH'))
 
                 urlResquest = "<?php echo site_url('acesso_publico/sign_in'); ?>";
 
-                request(urlResquest, formData,'hide');
+                request(urlResquest, formData, 'hide');
             }
         });
 
@@ -148,12 +175,39 @@ if (!defined('BASEPATH'))
 <script src="https://apis.google.com/js/api:client.js"></script>
 
 <div class="row">
+    <?PHP
+//    $key = "e228c23d3a6e078f20e43bb0a6e5bc32";
+//    for ($i = 1; $i < 31; $i++) {
+//        $plaintext = json_encode(array("mapa" => array("sr" => $i)));
+//        $ivlen = openssl_cipher_iv_length($cipher = "AES-128-CBC");
+//        $iv = substr("token_datapronera", 0, $ivlen);
+//        $ciphertext_raw = openssl_encrypt($plaintext, $cipher, $key, $options = OPENSSL_RAW_DATA, $iv);
+//        $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary = true);
+//        $ciphertext = base64_encode($iv . $hmac . $ciphertext_raw);
+//        $ciphertext = urlencode($ciphertext);
+//        echo "<br/><br/>".$i." : ".$ciphertext;
+//    }
+//    $key = "e228c23d3a6e078f20e43bb0a6e5bc32";
+//    if (isset($_GET['token'])) {
+//        $token = $_GET['token'];
+//        $c = base64_decode($token);
+//        $ivlen = openssl_cipher_iv_length($cipher = "AES-128-CBC");
+//        $iv = substr($c, 0, $ivlen);
+//        $hmac = substr($c, $ivlen, $sha2len = 32);
+//        $ciphertext_raw = substr($c, $ivlen + $sha2len);
+//        $original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $key, $options = OPENSSL_RAW_DATA, $iv);
+//        $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary = true);
+//        if (hash_equals($hmac, $calcmac)) {
+//            echo "<br/>" . $original_plaintext;
+//        }
+//    }
+    ?>
     <div class="col-md-7">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#login">Entrar</a></li>
             <li><a data-toggle="tab" href="#signup">Cadastrar-se</a></li>
         </ul>
-        
+
         <div class="tab-content">
             <div id="login" class="tab-pane fade in active">
                 <div class="col-md-2"></div>

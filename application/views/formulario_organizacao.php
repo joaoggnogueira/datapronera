@@ -51,7 +51,6 @@ $this->session->set_userdata('curr_content', 'organizacao');
             'id': ['movimento_fonte_inform']
         });
 
-        contador = 0;
         $('#botao_movim_coord').click(function () {
 
             var form = Array(
@@ -192,14 +191,12 @@ $this->session->set_userdata('curr_content', 'organizacao');
                     membros_excluidos: table.getDeletedRows(1)
                 };
 
-                console.log(formData);
-
                 var urlRequest = url_operacao = "<?php
-if ($operacao == 'add')
-    echo site_url('organizacao/add/');
-if ($operacao == 'update')
-    echo site_url('organizacao/update/');
-?>";
+                    if ($operacao == 'add')
+                        echo site_url('organizacao/add/');
+                    if ($operacao == 'update')
+                        echo site_url('organizacao/update/');
+                ?>";
 
                 request(urlRequest, formData);
             }

@@ -1,4 +1,4 @@
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
 };
@@ -164,7 +164,7 @@ $.fn.scrollable = function () {
     });
 }
 
-function request(_url, _data, _fn) {
+function request(_url, _data, _fn, _callback) {
 
     _fn = _fn || 'show';
 
@@ -186,6 +186,7 @@ function request(_url, _data, _fn) {
 
                 _fn == 'show' ? showMessage('status', data) : hideMessage('status');
 
+                $("#desc-course").fadeOut(400);
                 // Carrega conteúdo da nova view
                 $('#content').fadeOut().queue(function (next) {
                     $(this)
@@ -219,6 +220,10 @@ function request(_url, _data, _fn) {
                     });
                 }
 
+                if (_callback && _callback.success) {
+                    _callback.success();
+                }
+
                 // Login não autorizado
             } else {
                 showMessage('status', data); // Exibe mensagem de erro
@@ -240,7 +245,7 @@ function request(_url, _data, _fn) {
     });
 }
 
-function requestMultipart(_url, _idform, _fn) {
+function requestMultipart(_url, _idform, _fn, _append) {
 
     _fn = _fn || 'show';
 
@@ -248,6 +253,15 @@ function requestMultipart(_url, _idform, _fn) {
 
     // Exibe mensagem de processamento
     processMessage('status');
+    if (_append) {
+        for (var key in _append) {
+            var value = _append[key];
+            console.log(key);
+            console.log(value);
+            _data.append(key, value);
+        }
+    }
+    console.log(_data);
 
     // Faz requisição de login ao servidor (retorna um objeto JSON)
     $.ajax({
@@ -1004,7 +1018,7 @@ $.fn.dialogInit = function (_function, _size) {
 $.fn.listCities = function (_url, _elem_city_id) {
     var $this = $(this);
     var $elemCity = $('#' + _elem_city_id);
-
+    
     $this.change(function () {
         var state_id = $this.val();
         $elemCity.html("<option>Aguarde...</option>");
@@ -1016,6 +1030,27 @@ $.fn.listCities = function (_url, _elem_city_id) {
     }).change();
 
 };
+
+$.fn.listFallbackJson = function (_url, _elem_city_id) {
+    var $this = $(this);
+    var $elemCity = $('#' + _elem_city_id);
+    var atual_request = false;
+
+    $this.change(function () {
+        var state_id = $this.val();
+        $elemCity.html("<option>Aguarde...</option>");
+        if (atual_request !== false) {
+            atual_request.abort();
+        }
+        atual_request = $.get(_url + '/' + state_id, function (cities) {
+            atual_request = false;
+            $elemCity.html(cities);
+        });
+
+    }).change();
+
+};
+
 
 $.fn.listCourses = function (_url, _elem_course_id) {
     var $this = $(this);
@@ -1131,8 +1166,8 @@ function getCheckedRadio(radio_group) {
  *	@return	Char 	Caracter válido
  */
 function preventChar(event) {
-    if ((event.key >= "0" && event.key <= "9") 
-            || event.key === "Backspace" 
+    if ((event.key >= "0" && event.key <= "9")
+            || event.key === "Backspace"
             || (event.keyCode >= 37 && event.keyCode <= 40)
             || event.ctrlKey) {
     } else {

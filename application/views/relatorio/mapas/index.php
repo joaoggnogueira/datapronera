@@ -4,22 +4,22 @@ if ($this->session->userdata("publico")) {
 } else {
     $publico = false;
 }
-if (!isset($modalidades)):
-    ?> 
+if (!isset($modalidades)) :
+    ?>
     <script>
         request('<?php echo site_url('relatorio_mapas/index'); ?>', null, 'hide');
-    </script>    
-    <?PHP
+    </script>
+<?PHP
     return;
 endif;
 ?>
-<link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/mapa.css"/>
-<link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/tagify.css"/>
+<link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/mapa.css" />
+<link async type="text/css" rel="stylesheet" href="<?php echo base_url(); ?>css/tagify.css" />
 <script type="text/javascript" src="<?php echo base_url(); ?>js/tagify.min.js"></script>
 <div class="panel panel-default" style="margin-bottom: 0px">
     <div class="panel-heading" style="height: 50px !important;">
         <div class="col-md-7">
-            <?PHP $this->load->view('relatorio/mapas/toolbar.php', array("srAtual" => $sr, "modalidades" => $modalidades, "superintendencias" => $superintendencias)); ?>
+            <?PHP $this->load->view('relatorio/mapas/toolbar.php', array("srAtual" => $sr, "tipo_instrumentos" => $tipo_instrumentos, "modalidades" => $modalidades, "superintendencias" => $superintendencias)); ?>
         </div>
         <div style="text-align: right;" class="col-md-5">
             <span class="btn btn-primary" id="loadingmarkers">
@@ -40,14 +40,14 @@ endif;
         <div id="map-wrapper">
             <div id="input-group-search" style="display: none" class="input-group">
                 <span class="input-group-addon controls"><i class="glyphicon glyphicon-search"></i></span>
-                <input id="pac-input" class="controls" type="text" placeholder="Pesquise o município aqui"/>
+                <input id="pac-input" class="controls" type="text" placeholder="Pesquise o município aqui" />
             </div>
 
             <div id="map">
                 <p id="loading" style="color:white;padding-top: 90px;text-align: center">
-                    <i class="glyphicon glyphicon-map-marker"></i> 
-                    Carregando<br/><br/>
-                    <i style="text-decoration: none;font-size: 30px">Google Maps</i><br/><br/>
+                    <i class="glyphicon glyphicon-map-marker"></i>
+                    Carregando<br /><br />
+                    <i style="text-decoration: none;font-size: 30px">Google Maps</i><br /><br />
                     <span class="lds-dual-ring"></span> Aguarde ...
                     <b class="problem"></b>
                 </p>
@@ -59,7 +59,7 @@ endif;
 <div id="footer_relacoes">
     <h3>Relações</h3>
     <a class='relacao' href="#" id="relacao_sr_cursos_button" data-toggle="modal" data-target="#relacao_sr_cursos_modal">
-        <b>Cursos e Educandos</b><br/>
+        <b>Cursos e Educandos</b><br />
         Visualize as informações das Superintendências do Incra</br>
         E seus respectivos cursos
     </a>
@@ -75,7 +75,7 @@ endif;
     var lastType = "";
 
     function enableZoomCluster() {
-        setTimeout(function () {
+        setTimeout(function() {
             if (markerCluster) {
                 markerCluster.zoomOnClick_ = true;
             }
@@ -90,7 +90,10 @@ endif;
 
     function setCity(data) {
         var idCity = data[0];
-        var position = {lat: parseFloat(data[3]), lng: parseFloat(data[4])};
+        var position = {
+            lat: parseFloat(data[3]),
+            lng: parseFloat(data[4])
+        };
         map.setCenter(position);
         map.setZoom(10);
         var trigger = new google.maps.event.trigger(hashMarkers[idCity], 'click');
@@ -99,7 +102,10 @@ endif;
     function initMap() {
         var initialpos = {
             zoom: 4,
-            center: {lat: -13.9731974397433545, lng: -51.92527999999999},
+            center: {
+                lat: -13.9731974397433545,
+                lng: -51.92527999999999
+            },
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             disableDefaultUI: true,
             zoomControl: true,
@@ -123,13 +129,15 @@ endif;
 
         var options = {
             types: ['(cities)'],
-            componentRestrictions: {country: 'br'}
+            componentRestrictions: {
+                country: 'br'
+            }
         };
         var autocomplete = new google.maps.places.Autocomplete(input, options);
 
         autocomplete.bindTo('bounds', map);
 
-        autocomplete.addListener('place_changed', function () {
+        autocomplete.addListener('place_changed', function() {
             var place = autocomplete.getPlace();
             if (!place.geometry) {
                 $.ajax({
@@ -137,7 +145,7 @@ endif;
                     type: 'POST',
                     dataType: 'json',
                     timeout: 20000,
-                    success: function (data) {
+                    success: function(data) {
                         if (data.results.length !== 0) {
                             place = data.results[0];
                             input.value = place.formatted_address;
@@ -147,7 +155,7 @@ endif;
                             window.alert("Nenhum município encontrado com" + input.value);
                         }
                     },
-                    error: function (data) {
+                    error: function(data) {
                         window.alert("Falha na busca");
                         console.log(data);
                     }
@@ -184,20 +192,20 @@ endif;
         if ($("#modo-visualizacao").eq(0).attr("value") == "normal") {
             var dialog = $("#confirm-normal-mode");
             dialog.modal()
-                    .one('click', '#confirm-normal-mode-continue', function (e) {
-                        updateMap();
-                        dialog.modal("hide");
-                    }).one("click", '#confirm-normal-mode-cancel', function (e) {
-                $("#modo-visualizacao").eq(0).trigger("revert");
-                dialog.modal("hide");
-            });
+                .one('click', '#confirm-normal-mode-continue', function(e) {
+                    updateMap();
+                    dialog.modal("hide");
+                }).one("click", '#confirm-normal-mode-cancel', function(e) {
+                    $("#modo-visualizacao").eq(0).trigger("revert");
+                    dialog.modal("hide");
+                });
             return;
         }
         updateMap();
     }
 
     function updateMap() {
-        if (typeof (google) !== "undefined") {
+        if (typeof(google) !== "undefined") {
             hide_shape();
 
             if (map === null) {
@@ -254,12 +262,12 @@ endif;
         show_shape(node.cod);
         var id = node.id;
 
-        var createButton = function (buttonspec) {
+        var createButton = function(buttonspec) {
             var li = document.createElement("li");
             var a = document.createElement("a");
             a.style.cursor = "pointer";
             a.innerHTML = buttonspec.title;
-            li.addEventListener("click", function () {
+            li.addEventListener("click", function() {
                 buttonspec.action(id, li);
             });
             li.appendChild(a);
@@ -298,20 +306,18 @@ endif;
         option.appendChild(table);
         pai.appendChild(option);
         var div = $("<div/>").
-                css("width", "700px").
-                css("box-shadow", "2px 2px 5px rgba(0,0,0,0.3)").
-                css("background", "white").
-                css("position", "absolute").
-                css("margin", "5px").
-                css("right", "0px").
-                addClass("panel").addClass("panel-default")
-                .append(
-                        $("<div/>").
-                        addClass("panel-heading").css("margin-left", "auto").css("margin-right", "auto").css("width", "100%").addClass("row").
-                        html("<h5 class='col-md-11' style='margin-top:0px;margin-bottom:0px'><i class='glyphicon glyphicon-map-marker'></i> " + node.municipio + " (" + node.estado + ") - <b>" + node.total + " " + value_title + "</b></h5>\
+        css("width", "700px").
+        css("box-shadow", "2px 2px 5px rgba(0,0,0,0.3)").
+        css("background", "white").
+        css("position", "absolute").
+        css("margin", "5px").
+        css("right", "0px").
+        addClass("panel").addClass("panel-default")
+            .append(
+                $("<div/>").addClass("panel-heading").css("margin-left", "auto").css("margin-right", "auto").css("width", "100%").addClass("row").html("<h5 class='col-md-11' style='margin-top:0px;margin-bottom:0px'><i class='glyphicon glyphicon-map-marker'></i> " + node.municipio + " (" + node.estado + ") - <b>" + node.total + " " + value_title + "</b></h5>\
                          <div class='col-md-1'><button class='close' aria-label='Close' onclick='closeWindow()'><span aria-hidden='true'>&times;</span></button></div>")
-                        )
-                .append(pai);
+            )
+            .append(pai);
 
         closeWindow();
         if (marker.setIcon) {
@@ -351,7 +357,10 @@ endif;
                 labelOrigin: new google.maps.Point(24, 16)
             };
             var marker_data = {
-                position: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
+                position: {
+                    lng: parseFloat(node.lng),
+                    lat: parseFloat(node.lat)
+                },
                 icon: icon,
                 label: {
                     text: node.total,
@@ -371,7 +380,7 @@ endif;
         } else {
             var total = Math.pow(node.total / max, 0.6) * max; //POW da maior contraste entre numeros pequenos, e menor entre numeros grandes
             //var total = node.total;
-            
+
             switch ($("#select-mapa").eq(0).attr("value")) {
                 case "educando":
                     var radius = total * 50 + 1000;
@@ -391,7 +400,10 @@ endif;
                     text: node.total
                 },
                 map: map,
-                center: {lng: parseFloat(node.lng), lat: parseFloat(node.lat)},
+                center: {
+                    lng: parseFloat(node.lng),
+                    lat: parseFloat(node.lat)
+                },
                 radius: radius
             });
 
@@ -430,14 +442,19 @@ endif;
 
     //desabilitado
     function prepareMapaInstituicao() {
-        atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_instituicoes'); ?>", {filters: getFilter()}, function (instituicoes) {
+        atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_instituicoes'); ?>", {
+            filters: getFilter()
+        }, function(instituicoes) {
             atual_request = false;
             hashMarkers = [];
-            var markers = instituicoes.map(function (instituicao) {
-                if (typeof (google) !== "undefined") {
+            var markers = instituicoes.map(function(instituicao) {
+                if (typeof(google) !== "undefined") {
 
                     var marker = new google.maps.Marker({
-                        position: {lng: parseFloat(instituicao.lng), lat: parseFloat(instituicao.lat)},
+                        position: {
+                            lng: parseFloat(instituicao.lng),
+                            lat: parseFloat(instituicao.lat)
+                        },
                         icon: "<?= base_url('css/images/marker.png') ?>",
                         label: {
                             text: instituicao.total,
@@ -448,14 +465,19 @@ endif;
                         }
                     });
                     hashMarkers[instituicao.id] = marker;
-                    marker.addListener('click', function () {
-                        openWindow([{title: "<i class='glyphicon glyphicon-education'></i> Listar instituições", action: getInstituicoes}], marker, instituicao);
+                    marker.addListener('click', function() {
+                        openWindow([{
+                            title: "<i class='glyphicon glyphicon-education'></i> Listar instituições",
+                            action: getInstituicoes
+                        }], marker, instituicao);
                     });
                 }
                 return marker;
             });
-            if (typeof (google) !== "undefined") {
-                markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+            if (typeof(google) !== "undefined") {
+                markerCluster = new MarkerClusterer(map, markers, {
+                    imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+                });
             }
         }, "json");
 
@@ -463,30 +485,38 @@ endif;
 
     function prepareMapaCurso() {
 
-        atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", {filters: getFilter()}, function (cursos) {
+        atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_cursos'); ?>", {
+            filters: getFilter()
+        }, function(cursos) {
             atual_request = false;
             hashMarkers = [];
-            var max = Math.max.apply(Math, cursos.map(function (o) {
+            var max = Math.max.apply(Math, cursos.map(function(o) {
                 return o.total;
             }));
-            var markers = cursos.map(function (curso) {
-                if (typeof (google) !== "undefined") {
+            var markers = cursos.map(function(curso) {
+                if (typeof(google) !== "undefined") {
                     var marker = createMarker(curso, max);
                     hashMarkers[curso.id] = marker;
-                    marker.addListener('click', function () {
-                        var data = [
-                            {title: "<i class='glyphicon glyphicon-book'></i> Listar cursos", action: getCursos}
-                        ];
-<?PHP if (!$publico): ?>
-                            data.push({title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos", action: getEducandosCursos});
-<?PHP endif; ?>
+                    marker.addListener('click', function() {
+                        var data = [{
+                            title: "<i class='glyphicon glyphicon-book'></i> Listar cursos",
+                            action: getCursos
+                        }];
+                        <?PHP if (!$publico) : ?>
+                            data.push({
+                                title: "<i class='glyphicon glyphicon-education'></i> Para estes <b>CURSOS</b> listar educandos",
+                                action: getEducandosCursos
+                            });
+                        <?PHP endif; ?>
                         openWindow(data, marker, curso);
                     });
                 }
                 return marker;
             });
-            if (typeof (google) !== "undefined" && typeMarkerIs("group")) {
-                markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+            if (typeof(google) !== "undefined" && typeMarkerIs("group")) {
+                markerCluster = new MarkerClusterer(map, markers, {
+                    imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+                });
             }
             $("#loadingmarkers").hide();
             $(".filter-checkbox").removeAttr("disabled");
@@ -498,9 +528,11 @@ endif;
     }
 
     function prepareMapaEducando() {
-        atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>", {filters: getFilter()}, function (educandos) {
+        atual_request = $.get("<?php echo site_url('relatorio_mapas/get_municipios_educandos'); ?>", {
+            filters: getFilter()
+        }, function(educandos) {
 
-            var max = Math.max.apply(Math, educandos.map(function (o) {
+            var max = Math.max.apply(Math, educandos.map(function(o) {
                 return o.total;
             }));
 
@@ -508,25 +540,32 @@ endif;
             hashMarkers = [];
             console.log(max);
 
-            var markers = educandos.map(function (educando) {
-                if (typeof (google) !== "undefined") {
+            var markers = educandos.map(function(educando) {
+                if (typeof(google) !== "undefined") {
                     var marker = createMarker(educando, max);
                     hashMarkers[educando.id] = marker;
-<?PHP if (!$publico): ?>
-                        marker.addListener('click', function () {
-                            openWindow([
-                                {title: "<i class='glyphicon glyphicon-user'></i> Listar educandos", action: getEducandos},
-                                {title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos", action: getCursosEducandos}
+                    <?PHP if (!$publico) : ?>
+                        marker.addListener('click', function() {
+                            openWindow([{
+                                    title: "<i class='glyphicon glyphicon-user'></i> Listar educandos",
+                                    action: getEducandos
+                                },
+                                {
+                                    title: "<i class='glyphicon glyphicon-book'></i> Para estes <b>EDUCANDOS</b> listar cursos oferecidos",
+                                    action: getCursosEducandos
+                                }
                             ], marker, educando);
                         });
-<?PHP endif; ?>
+                    <?PHP endif; ?>
                 }
                 return marker;
             });
             //MarkerClusterer is not defined
-            if (typeof (google) !== "undefined" && typeMarkerIs("group")) {
+            if (typeof(google) !== "undefined" && typeMarkerIs("group")) {
                 if (typeof MarkerClusterer !== "undefined") {
-                    markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+                    markerCluster = new MarkerClusterer(map, markers, {
+                        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+                    });
                 } else {
                     alert("Lentidão da rede causou erro ocorreu ao carregar a página!\nAtualize a página");
                 }
@@ -534,10 +573,10 @@ endif;
             $("#loadingmarkers").hide();
             $(".filter-checkbox").removeAttr("disabled");
             $(".select-all").removeAttr("disabled");
-<?PHP if (!$publico): ?>
+            <?PHP if (!$publico) : ?>
                 var searchEducandoBtn = document.getElementById('search-educando');
                 searchEducandoBtn.style.display = "inline-block";
-<?PHP endif; ?>
+            <?PHP endif; ?>
         }, "json");
     }
 
@@ -546,8 +585,10 @@ endif;
 
     function hide_shape() {
         if (map) {
-            map.data.setStyle(function (feature) {
-                return {visible: false};
+            map.data.setStyle(function(feature) {
+                return {
+                    visible: false
+                };
             });
         }
     }
@@ -556,14 +597,14 @@ endif;
         var uf_id = ("" + codmun).substr(0, 2);
         if (uf_id != atualStateMun) {
             if (atualStateMun != false) {
-                map.data.forEach(function (feature) {
+                map.data.forEach(function(feature) {
                     map.data.remove(feature);
                 });
             }
             atualStateMun = uf_id;
-            $.getJSON('<?php echo base_url(); ?>shapes/geojs-' + uf_id + '-mun.json', function (data) {
+            $.getJSON('<?php echo base_url(); ?>shapes/geojs-' + uf_id + '-mun.json', function(data) {
                 map.data.addGeoJson(data);
-                map.data.setStyle(function (feature) {
+                map.data.setStyle(function(feature) {
                     var geocodigo = feature.getProperty('id');
                     return {
                         fillColor: "#0000FF",
@@ -576,7 +617,7 @@ endif;
                 });
             });
         } else {
-            map.data.setStyle(function (feature) {
+            map.data.setStyle(function(feature) {
                 var geocodigo = feature.getProperty('id');
                 return {
                     fillColor: "#0000FF",
@@ -608,7 +649,9 @@ endif;
         }
         table.html(innerHTML);
         tableopened = new Table({
-            data: {filters: getFilter()},
+            data: {
+                filters: getFilter()
+            },
             url: url,
             table: table,
             controls: null
@@ -621,46 +664,47 @@ endif;
 
     function getCursos(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_cursos/") ?>/" + id_municipio,
-                ['codigo', 'curso', 'modalidade', 'instituição', 'total educandos <span class="badge">nacional</span>'],
-                ['60px', '150px', '100px', '125px', '100px'],
-                btn, function (data) {
-                    getEducandosCursos(id_municipio, $(".option li:nth-child(2)").get(0), data[0]);
-                });
+            ['codigo', 'curso', 'modalidade', 'instituição', 'total educandos <span class="badge">nacional</span>'],
+            ['60px', '150px', '100px', '125px', '100px'],
+            btn,
+            function(data) {
+                getEducandosCursos(id_municipio, $(".option li:nth-child(2)").get(0), data[0]);
+            });
     }
 
     function getInstituicoes(id_municipio, btn) {
         appendTable("<?= site_url("relatorio_mapas/get_instituicoes/") ?>/" + id_municipio,
-                ['id', 'nome', 'sigla', 'unidade', 'curso'],
-                ['60px', '200px', '50px', '125px', '100px'], btn);
+            ['id', 'nome', 'sigla', 'unidade', 'curso'],
+            ['60px', '200px', '50px', '125px', '100px'], btn);
     }
 
-<?PHP if (!$publico): ?>
+    <?PHP if (!$publico) : ?>
 
         function getEducandos(id_municipio, btn, search) {
             appendTable("<?= site_url("relatorio_mapas/get_educandos/") ?>/" + id_municipio,
-                    ['nome', 'assentamento', 'código sipra', 'código curso'],
-                    ['200px', '135px', '100px', '100px'], btn, false, search);
+                ['nome', 'assentamento', 'código sipra', 'código curso'],
+                ['200px', '135px', '100px', '100px'], btn, false, search);
         }
 
         //Lista Educandos do mapa Curso
         function getEducandosCursos(id_municipio, btn, search) {
             appendTable("<?= site_url("relatorio_mapas/get_educandos_cursos/") ?>/" + id_municipio,
-                    ["educando", "Cidade", "nome do território", "tipo do território", "código curso"],
-                    ['60px', '150px', '120px', '100px', '100px'], btn, false, search);
+                ["educando", "Cidade", "nome do território", "tipo do território", "código curso"],
+                ['60px', '150px', '120px', '100px', '100px'], btn, false, search);
         }
 
         //Lista Cursos do mapa Educando
         function getCursosEducandos(id_municipio, btn) {
             appendTable("<?= site_url("relatorio_mapas/get_cursos_educandos/") ?>/" + id_municipio,
-                    ['codigo', 'curso', 'modalidade', 'vigência', 'total educandos <span class="badge">município / país</span>'],
-                    ['60px', '200px', '100px', '75px', '100px'],
-                    btn,
-                    function (data) {
-                        getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
-                    });
+                ['codigo', 'curso', 'modalidade', 'vigência', 'total educandos <span class="badge">município / país</span>'],
+                ['60px', '200px', '100px', '75px', '100px'],
+                btn,
+                function(data) {
+                    getEducandos(id_municipio, $(".option li:nth-child(1)").get(0), data[0]);
+                });
         }
 
-<?PHP endif; ?>
+    <?PHP endif; ?>
 
     function map_recenter(latlng, offsetx, offsety) {
         var scale = Math.pow(2, map.getZoom());
@@ -669,15 +713,14 @@ endif;
         var pixelOffset = new google.maps.Point((offsetx / scale) || 0, (offsety / scale) || 0);
 
         var worldCoordinateNewCenter = new google.maps.Point(
-                worldCoordinateCenter.x - pixelOffset.x,
-                worldCoordinateCenter.y + pixelOffset.y
-                );
+            worldCoordinateCenter.x - pixelOffset.x,
+            worldCoordinateCenter.y + pixelOffset.y
+        );
 
         var newCenter = map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
 
         map.panTo(newCenter);
     }
-
 </script>
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6A2l8RrNfmBdbVI-kMjRHBoZmBa1e4IU&libraries=places&callback=init"></script>

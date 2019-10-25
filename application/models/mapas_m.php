@@ -1,8 +1,10 @@
 <?php
 
-class Mapas_m extends CI_Model {
+class Mapas_m extends CI_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->load->database();   // Loading Database 
@@ -10,17 +12,19 @@ class Mapas_m extends CI_Model {
         $this->load->helper('url');  // Loading Helper
     }
 
-    function stringfy($array) {
+    function stringfy($array)
+    {
         $array = json_encode($array);
         $array = str_replace("[", "(", $array);
         $array = str_replace("]", ")", $array);
         return $array;
     }
 
-    function get_sugestao_assentamento($search) {
-        
+    function get_sugestao_assentamento($search)
+    {
+
         $search = urldecode($search);
-        
+
         $this->db->select("CONCAT((a.codigo),(' - '),(a.nome)) as busca");
         $this->db->from("assentamentos a");
         $this->db->join("educando e", "e.code_sipra_assentamento = a.codigo");
@@ -30,9 +34,9 @@ class Mapas_m extends CI_Model {
         $this->db->distinct();
 
         $query = $this->db->get();
-        
+
         //echo $this->db->last_query();
-        
+
         $dados = $query->result();
         $result = array();
         foreach ($dados as $value) {
@@ -42,7 +46,8 @@ class Mapas_m extends CI_Model {
         return $result;
     }
 
-    function relacao_sr_curso($sr) {
+    function relacao_sr_curso($sr)
+    {
 
         $sr_id = (int) $sr;
 
@@ -74,65 +79,67 @@ class Mapas_m extends CI_Model {
         return $result;
     }
 
-    function get_curso_details($id_curso) {
+    function get_curso_details($id_curso)
+    {
         $sr_id = (int) $id_curso;
 
         $stmt = "SELECT "
-                . "c.nome as 'nome', "
-                . "sr.nome as 'sr', "
-                . "IF(c.nprocesso LIKE '' OR c.nprocesso IS NULL,'<i>Não informado</i>',c.nprocesso) as 'sei', "
-                . "CONCAT(IF(c.ninstrumento IS NULL OR cti.`id` = 8,'',CONCAT(c.ninstrumento,' - ')),IF(cti.`id` = 8,'<i>Não informado</i>',cti.nome)) as 'instrumento', "
-                . "cm.nome as 'modalidade', "
-                . "IFNULL(IF(
+            . "c.nome as 'nome', "
+            . "sr.nome as 'sr', "
+            . "IF(c.nprocesso LIKE '' OR c.nprocesso IS NULL,'<i>Não informado</i>',c.nprocesso) as 'sei', "
+            . "CONCAT(IF(c.ninstrumento IS NULL OR cti.`id` = 8,'',CONCAT(c.ninstrumento,' - ')),IF(cti.`id` = 8,'<i>Não informado</i>',cti.nome)) as 'instrumento', "
+            . "cm.nome as 'modalidade', "
+            . "IFNULL(IF(
                     ca.`inicio_realizado` IS NULL OR ca.`inicio_realizado` = 'NI',
                     CONCAT(ca.`inicio_previsto`,' - ',ca.`termino_previsto`,' (PREVISTO)'),
                     CONCAT(ca.`inicio_realizado`,' - ',ca.`termino_realizado`, ' (REALIZADO)')
                     ),'<i>Não informado</i>') as 'vigencia', "
-                . "IF(ci.id IS NOT NULL, GROUP_CONCAT(' ',ci.nome,' (',e.sigla,')'), '<i>Não informado</i>') as 'municipios', "
-                . "CONCAT(CASE ca.`titulacao_coordenador_geral`
+            . "IF(ci.id IS NOT NULL, GROUP_CONCAT(' ',ci.nome,' (',e.sigla,')'), '<i>Não informado</i>') as 'municipios', "
+            . "CONCAT(CASE ca.`titulacao_coordenador_geral`
                             WHEN 'ESPECIALISTA' THEN 'Esp. '
                             WHEN 'MESTRE(A)' THEN 'Mr(a). '
                             WHEN 'DOUTOR(A)' THEN 'Dr(a). '
                             WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
                             ELSE ''
                           END,IF(ca.`nome_coordenador_geral` = '' OR ca.`nome_coordenador_geral` IS NULL,'<i>Não informado</i>',ca.`nome_coordenador_geral`)) as 'c_geral', "
-                . "CONCAT(CASE ca.`titulacao_coordenador`
+            . "CONCAT(CASE ca.`titulacao_coordenador`
                             WHEN 'ESPECIALISTA' THEN 'Esp. '
                             WHEN 'MESTRE(A)' THEN 'Mr(a). '
                             WHEN 'DOUTOR(A)' THEN 'Dr(a). '
                             WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
                             ELSE ''
                           END,IF(ca.`nome_coordenador` = '' OR ca.`nome_coordenador` IS NULL,'<i>Não informado</i>',ca.`nome_coordenador`)) as 'c_curso', "
-                . "CONCAT(CASE ca.`titulacao_vice_coordenador`
+            . "CONCAT(CASE ca.`titulacao_vice_coordenador`
                             WHEN 'ESPECIALISTA' THEN 'Esp. '
                             WHEN 'MESTRE(A)' THEN 'Mr(a). '
                             WHEN 'DOUTOR(A)' THEN 'Dr(a). '
                             WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
                             ELSE ''
                           END,IF(ca.`nome_vice_coordenador` = '' OR ca.`nome_vice_coordenador` IS NULL,'<i>Não informado</i>',ca.`nome_vice_coordenador`)) as 'vc_curso', "
-                . "CONCAT(CASE ca.`titulacao_coordenador_pedagogico`
+            . "CONCAT(CASE ca.`titulacao_coordenador_pedagogico`
                             WHEN 'ESPECIALISTA' THEN 'Esp. '
                             WHEN 'MESTRE(A)' THEN 'Mr(a). '
                             WHEN 'DOUTOR(A)' THEN 'Dr(a). '
                             WHEN 'GRADUADO(A)' THEN 'Graduado(a). '
                             ELSE ''
                           END,IF(ca.`nome_coordenador_pedagogico` = '' OR ca.`nome_coordenador_pedagogico` IS NULL,'<i>Não informado</i>',ca.`nome_coordenador_pedagogico`)) as 'cp_curso' "
-                . "FROM `curso` c "
-                . "INNER JOIN `superintendencia` sr ON sr.id = c.id_superintendencia "
-                . "INNER JOIN `curso_tipo_instrumento` cti ON cti.id = c.id_superintendencia "
-                . "INNER JOIN `curso_modalidade` cm ON cm.id = c.id_modalidade "
-                . "INNER JOIN `caracterizacao` ca ON ca.id_curso = c.id "
-                . "LEFT JOIN `caracterizacao_cidade` cc ON cc.`id_caracterizacao` = ca.`id` "
-                . "LEFT JOIN `cidade` ci ON ci.`id` = cc.`id_cidade` "
-                . "LEFT JOIN `estado` e ON e.`id` = ci.`id_estado` "
-                . "WHERE c.id = $id_curso";
+            . "FROM `curso` c "
+            . "INNER JOIN `superintendencia` sr ON sr.id = c.id_superintendencia "
+            . "INNER JOIN `curso_tipo_instrumento` cti ON cti.id = c.id_superintendencia "
+            . "INNER JOIN `curso_modalidade` cm ON cm.id = c.id_modalidade "
+            . "INNER JOIN `caracterizacao` ca ON ca.id_curso = c.id "
+            . "LEFT JOIN `caracterizacao_cidade` cc ON cc.`id_caracterizacao` = ca.`id` "
+            . "LEFT JOIN `cidade` ci ON ci.`id` = cc.`id_cidade` "
+            . "LEFT JOIN `estado` e ON e.`id` = ci.`id_estado` "
+            . "WHERE c.id = $id_curso";
 
         $query = $this->db->query($stmt);
         $result = $query->result();
         return $result[0];
     }
 
-    function list_educandos($id_curso) {
+    function list_educandos($id_curso)
+    {
         $sr_id = (int) $id_curso;
 
         $stmt = "SELECT 
@@ -155,10 +162,12 @@ class Mapas_m extends CI_Model {
     }
 
     //mapas
-    function get_municipios_cursos($filtros) {
+    function get_municipios_cursos($filtros)
+    {
 
         $status = $this->stringfy($filtros['status']);
         $sr = $this->stringfy($filtros['sr']);
+        $tipo_instrumento = $this->stringfy($filtros['tipo_instrumento']);
 
         $modalidade = $filtros['modalidade'];
 
@@ -206,6 +215,10 @@ class Mapas_m extends CI_Model {
             $stmt .= " AND c.id_superintendencia in $sr ";
         }
 
+        if (count($filtros['tipo_instrumento']) < 9) {
+            $stmt .= " AND c.id_instrumento in $tipo_instrumento ";
+        }
+
         if (count($filtros['status']) < 3) {
             $stmt .= " AND c.status in $status ";
         }
@@ -227,10 +240,12 @@ class Mapas_m extends CI_Model {
         return $query->result();
     }
 
-    function get_municipios_educandos($filtros) {
+    function get_municipios_educandos($filtros)
+    {
 
         $status = $this->stringfy($filtros['status']);
         $sr = $this->stringfy($filtros['sr']);
+        $tipo_instrumento = $this->stringfy($filtros['tipo_instrumento']);
 
         $modalidade = $filtros['modalidade'];
 
@@ -279,6 +294,10 @@ class Mapas_m extends CI_Model {
             $stmt .= " AND c.id_superintendencia in $sr ";
         }
 
+        if (count($filtros['tipo_instrumento']) < 9) {
+            $stmt .= " AND c.id_instrumento in $tipo_instrumento ";
+        }
+
         if (count($filtros['status']) < 3) {
             $stmt .= " AND c.status in $status ";
         }
@@ -309,29 +328,14 @@ class Mapas_m extends CI_Model {
         return $query->result();
     }
 
-    //desabilitado
-    function get_municipios_instituicoes($filtros) {
-
-        $status = $this->stringfy($filtros['status']);
-
-        $query = $this->db->query("
-            SELECT m.id as id,COUNT(m.id) as total,m.nome as municipio,est.nome as estado,lg.latitude as lat, lg.longitude as lng 
-            FROM `instituicao_ensino` ie
-            INNER JOIN cidade m ON m.id = ie.id_cidade 
-            INNER JOIN estado est ON est.id = m.id_estado  
-            INNER JOIN cidades_lat_long lg ON lg.id_geocode = m.cod_municipio 
-            GROUP BY m.id
-        ");
-
-        return $query->result();
-    }
-
     //tabelas
     //Lista Cursos do mapa Educando
-    function get_cursos_educandos($id_municipio, $filtros) {
+    function get_cursos_educandos($id_municipio, $filtros)
+    {
         $status = $this->stringfy($filtros->status);
         $sr = $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
+        $tipo_instrumento = $this->stringfy($filtros->tipo_instrumento);
 
         $modalidade_nil = $modalidade['nil'];
         if (isset($modalidade['ids'])) {
@@ -375,6 +379,10 @@ class Mapas_m extends CI_Model {
             }
         }
 
+        if (count($filtros->tipo_instrumento) < 9) {
+            $stmt .= " AND c.id_instrumento IN $tipo_instrumento ";
+        }
+
         if (count($filtros->vigencia) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
 
@@ -384,7 +392,7 @@ class Mapas_m extends CI_Model {
                 $stmt .= " AND ($atual NOT BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050'))) ";
             }
         }
-        
+
         $query = $this->db->query($stmt);
 
         $result = $this->get_table($query);
@@ -401,7 +409,7 @@ class Mapas_m extends CI_Model {
             if (isset($filtros->assentamento)) {
                 $sipra = $filtros->assentamento;
                 if ($sipra != "NULL") {
-                    $this->db->where('e.code_sipra_assentamento',$sipra);
+                    $this->db->where('e.code_sipra_assentamento', $sipra);
                 } else {
                     $this->db->where('e.code_sipra_assentamento IS NULL');
                 }
@@ -433,11 +441,13 @@ class Mapas_m extends CI_Model {
     }
 
     //Lista Educandos do mapa Curso
-    function get_educandos_cursos($id_municipio, $filtros) {
+    function get_educandos_cursos($id_municipio, $filtros)
+    {
 
         $status = $this->stringfy($filtros->status);
         $sr = $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
+        $tipo_instrumento = $this->stringfy($filtros->tipo_instrumento);
 
         $modalidade_nil = $modalidade['nil'];
         if (isset($modalidade['ids'])) {
@@ -464,6 +474,10 @@ class Mapas_m extends CI_Model {
             LEFT JOIN cidade m ON m.id = ec.id_cidade 
             LEFT JOIN estado est ON est.id = m.id_estado 
             WHERE c.id_superintendencia IN $sr AND c.ativo_inativo = 'A' AND ccr.id_cidade = $id AND `c`.`status` IN $status ";
+
+        if (count($filtros->tipo_instrumento) < 9) {
+            $stmt .= " AND c.id_instrumento IN $tipo_instrumento ";
+        }
 
         if (count($filtros->vigencia) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
@@ -492,10 +506,12 @@ class Mapas_m extends CI_Model {
         return $this->get_table($query);
     }
 
-    function get_educandos($id_municipio, $filtros) {
+    function get_educandos($id_municipio, $filtros)
+    {
         $status = $this->stringfy($filtros->status);
         $sr = $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
+        $tipo_instrumento = $this->stringfy($filtros->tipo_instrumento);
 
         $modalidade_nil = $modalidade['nil'];
         if (isset($modalidade['ids'])) {
@@ -516,6 +532,9 @@ class Mapas_m extends CI_Model {
 
         $complemento_vigencia = "";
         $complemento_assentamento = "";
+        $complemento_instrumento = "";
+        $complemento_status = "";
+        $complemento_final = "";
 
         if (count($filtros->vigencia) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
@@ -527,6 +546,14 @@ class Mapas_m extends CI_Model {
             }
         }
 
+        if (count($filtros->tipo_instrumento) < 9) {
+            $complemento_instrumento = " AND c.id_instrumento in $tipo_instrumento ";
+        }
+
+        if (count($filtros->status) < 3) {
+            $complemento_status = " AND c.status in $status ";
+        }
+
         if (isset($filtros->assentamento)) {
             $sipra = $filtros->assentamento;
             if ($sipra != "NULL") {
@@ -536,20 +563,24 @@ class Mapas_m extends CI_Model {
             }
         }
 
+        $complemento_final = "c.id_superintendencia IN $sr $complemento_instrumento $complemento_status $complemento_vigencia $complemento_assentamento";
+
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
-                $this->db->where("c.id_superintendencia IN $sr AND c.status IN $status AND (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL) $complemento_vigencia $complemento_assentamento");
+                $this->db->where("$complemento_final AND (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL)");
             } else {
-                $this->db->where("c.id_superintendencia IN $sr AND c.status IN $status AND c.id_modalidade IN $modalidade_ids $complemento_vigencia $complemento_assentamento");
+                $this->db->where("$complemento_final AND c.id_modalidade IN $modalidade_ids");
             }
         } else if ($modalidade_nil != 'false') {
-            $this->db->where("c.id_superintendencia IN $sr AND c.status IN $status && c.id_modalidade IS NULL $complemento_vigencia $complemento_assentamento");
+            $this->db->where("$complemento_final AND c.id_modalidade IS NULL");
         }
+        $get = $this->db->get();
 
-        return $this->get_table($this->db->get());
+        return $this->get_table($get);
     }
 
-    function get_instituicoes($id_municipio, $filtros) {
+    function get_instituicoes($id_municipio, $filtros)
+    {
         $status = $this->stringfy($filtros->status);
 
         $this->db->select('ie.id,ie.nome,ie.sigla,ie.unidade,c.nome as curso');
@@ -560,11 +591,13 @@ class Mapas_m extends CI_Model {
         return $this->get_table($this->db->get());
     }
 
-    function get_cursos($id_municipio, $filtros) {
+    function get_cursos($id_municipio, $filtros)
+    {
 
         $status = $this->stringfy($filtros->status);
         $sr = $this->stringfy($filtros->sr);
         $modalidade = (array) $filtros->modalidade;
+        $tipo_instrumento = $this->stringfy($filtros->tipo_instrumento);
 
         $modalidade_nil = $modalidade['nil'];
         if (isset($modalidade['ids'])) {
@@ -602,6 +635,10 @@ class Mapas_m extends CI_Model {
             }
         }
 
+        if (count($filtros->tipo_instrumento) < 3) {
+            $stmt .= " AND c.id_instrumento in $tipo_instrumento ";
+        }
+
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
                 $stmt .= " AND (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL)";
@@ -634,7 +671,8 @@ class Mapas_m extends CI_Model {
     }
 
     //Buscas
-    function search_educando($search, $filtros) {
+    function search_educando($search, $filtros)
+    {
 
         $search = urldecode($search);
 
@@ -678,7 +716,8 @@ class Mapas_m extends CI_Model {
         return $this->get_table($this->db->get());
     }
 
-    function search_curso($search, $filtros) {
+    function search_curso($search, $filtros)
+    {
 
         $search = urldecode($search);
 
@@ -716,9 +755,13 @@ class Mapas_m extends CI_Model {
         return $this->get_table($this->db->get());
     }
 
-    function get_table($query) {
-//        print_r($_GET);
-        //var_dump($this->db->last_query());
+    function get_table($query)
+    {
+        if ($query == false) {
+            echo ($this->db->last_query());
+        }
+        //        print_r($_GET);
+        // 
 
         $dados = $query->result_array();
 
@@ -742,7 +785,4 @@ class Mapas_m extends CI_Model {
 
         return $output;
     }
-
 }
-
-?>

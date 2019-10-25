@@ -1,8 +1,10 @@
 <?php
 
-class Requisicao_m extends CI_Model {
+class Requisicao_m extends CI_Model
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->load->database();   // Loading Database 
@@ -10,7 +12,8 @@ class Requisicao_m extends CI_Model {
         $this->load->helper('url');  // Loading Helper
     }
 
-    function get_tipo_fiscalizacao() {
+    function get_tipo_fiscalizacao()
+    {
         $this->db->where(array(
             'nome <>' => ''
         ));
@@ -30,7 +33,8 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_tipo_instrumento_curso() {
+    function get_tipo_instrumento_curso()
+    {
         $this->db->where(array(
             'nome <>' => ''
         ));
@@ -50,12 +54,28 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function list_modalidades() {
+    function list_tipo_instrumento()
+    {
+        $this->db->order_by('nome');
+        $query = $this->db->get('curso_tipo_instrumento');
+        $saida = array();
+
+        foreach ($query->result() as $row) {
+            $saida[] = $row;
+        }
+
+        $saida[] = (object) array("id" => 0, "nome" => "NÃO CADASTRADO");
+
+        return $saida;
+    }
+
+    function list_modalidades()
+    {
         $this->db->where(
-                array(
-                    'nome <>' => '',
-                    'nome <>' => 'OUTROS'
-                )
+            array(
+                'nome <>' => '',
+                'nome <>' => 'OUTROS'
+            )
         );
         $this->db->order_by('nome');
         $query = $this->db->get('curso_modalidade');
@@ -65,16 +85,17 @@ class Requisicao_m extends CI_Model {
         foreach ($query->result() as $row) {
             $saida[] = $row;
         }
-        
-        $saida[] = (object) array("id"=>"NULL","nome"=>"NÃO IDENTIFICADO");
+
+        $saida[] = (object) array("id" => "NULL", "nome" => "NÃO IDENTIFICADO");
 
         return $saida;
     }
-    function list_superintendencias() {
+    function list_superintendencias()
+    {
         $this->db->where(
-                array(
-                    'id <>' => '31',
-                )
+            array(
+                'id <>' => '31',
+            )
         );
         $this->db->order_by('id');
         $query = $this->db->get('superintendencia');
@@ -84,16 +105,17 @@ class Requisicao_m extends CI_Model {
         foreach ($query->result() as $row) {
             $saida[] = $row;
         }
-        
+
         return $saida;
     }
 
-    function get_modalidades() {
+    function get_modalidades()
+    {
         $this->db->where(
-                array(
-                    'nome <>' => '',
-                    'nome <>' => 'OUTROS'
-                )
+            array(
+                'nome <>' => '',
+                'nome <>' => 'OUTROS'
+            )
         );
         $this->db->order_by('nome');
         $query = $this->db->get('curso_modalidade');
@@ -110,37 +132,19 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_assentamentos_sugestao(){
+    function get_assentamentos_sugestao()
+    {
         $this->db->select('a.codigo, a.nome');
         $this->db->from('assentamentos a');
         $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
-        if($estado!="0"){
+        if ($estado != "0") {
             $this->db->where('s.id_estado', $estado);
-        }
-        
-        $query = $this->db->get();
-        
-        $resultado = "";
-        
-        foreach ($query->result() as $row) {
-            $resultado .= "<option value='" . $row->codigo . "' title='" . $row->nome . "'>" . $row->codigo . " - " . $row->nome . "</option>";
         }
 
-        echo $resultado;
-    }
-    
-    function get_assentamentos($estado) {
-        $this->db->select('a.codigo, a.nome');
-        $this->db->from('assentamentos a');
-        $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
-        if($estado!="0"){
-            $this->db->where('s.id_estado', $estado);
-        }
-        
         $query = $this->db->get();
-        
+
         $resultado = "";
-        
+
         foreach ($query->result() as $row) {
             $resultado .= "<option value='" . $row->codigo . "' title='" . $row->nome . "'>" . $row->codigo . " - " . $row->nome . "</option>";
         }
@@ -148,19 +152,41 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_estados() {
+    function get_assentamentos($estado)
+    {
+        $this->db->select('a.codigo, a.nome');
+        $this->db->from('assentamentos a');
+        $this->db->join('superintendencia s', 's.id = a.id_superintendencia', 'left');
+        if ($estado != "0") {
+            $this->db->where('s.id_estado', $estado);
+        }
+
+        $query = $this->db->get();
+
+        $resultado = "";
+
+        foreach ($query->result() as $row) {
+            $resultado .= "<option value='" . $row->codigo . "' title='" . $row->nome . "'>" . $row->codigo . " - " . $row->nome . "</option>";
+        }
+
+        echo $resultado;
+    }
+
+    function get_estados()
+    {
         $this->db->order_by('sigla');
         $query = $this->db->get('estado');
         $resultado = "<option value=\"0\" disabled selected> Selecione o Estado </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">".$row->nome." (" . $row->sigla . ")</option>";
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . " (" . $row->sigla . ")</option>";
         }
 
         echo $resultado;
     }
 
-    function get_municipios($id_estado) {
+    function get_municipios($id_estado)
+    {
         $this->db->where('id_estado', $id_estado);
         $this->db->order_by('nome');
         $query = $this->db->get('cidade');
@@ -173,14 +199,15 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_pesquisadores($id_sr) {
+    function get_pesquisadores($id_sr)
+    {
         $this->db->select('id, nome');
         $this->db->from('pessoa');
         $this->db->where(
-                array(
-                    'id_superintendencia' => $id_sr,
-                    'ativo_inativo' => 'A'
-                )
+            array(
+                'id_superintendencia' => $id_sr,
+                'ativo_inativo' => 'A'
+            )
         );
         $this->db->order_by('nome');
 
@@ -195,13 +222,14 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_all_pesquisadores() {
+    function get_all_pesquisadores()
+    {
         $this->db->select('id, nome');
         $this->db->from('pessoa');
         $this->db->where(
-                array(
-                    'ativo_inativo' => 'A'
-                )
+            array(
+                'ativo_inativo' => 'A'
+            )
         );
         $this->db->order_by('nome');
 
@@ -216,19 +244,21 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_superintendencias() {
+    function get_superintendencias()
+    {
         $query = $this->db->get('superintendencia');
         $this->db->order_by('nome');
         $resultado = "<option value=\"0\" disabled selected> Selecione a Superintendência </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . "> SR ".$row->id." - " . $row->nome . "</option>";
+            $resultado .= "<option value=" . $row->id . "> SR " . $row->id . " - " . $row->nome . "</option>";
         }
 
         echo $resultado;
     }
 
-    function get_totaleducandos($id) {
+    function get_totaleducandos($id)
+    {
         $sr = (int) $id;
         $this->db->select('c.id as id_curso, c.nome as curso, e.nome as educando, c.id_superintendencia AS id_superintendencia');
         $this->db->from('educando e');
@@ -242,7 +272,8 @@ class Requisicao_m extends CI_Model {
         return $query->num_rows();
     }
 
-    function get_superintendencias_nome($id, $super) {
+    function get_superintendencias_nome($id, $super)
+    {
         $this->db->where('id', $super);
         $query = $this->db->get('superintendencia');
 
@@ -257,7 +288,8 @@ class Requisicao_m extends CI_Model {
         return $resultado;
     }
 
-    function get_cursos_nome($id) {
+    function get_cursos_nome($id)
+    {
         $this->db->select('c.id, c.nome, c.id_superintendencia super');
         $this->db->from('curso c');
         $this->db->where('c.ativo_inativo', 'A');
@@ -290,7 +322,8 @@ class Requisicao_m extends CI_Model {
         return $resultado;
     }
 
-    function get_pesquisador_nome($id_pesquisador) {
+    function get_pesquisador_nome($id_pesquisador)
+    {
         $this->db->select('nome');
         $this->db->where('id', $id_pesquisador);
         $query = $this->db->get('pessoa');
@@ -300,7 +333,8 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_modalidade_nome($modalidade) {
+    function get_modalidade_nome($modalidade)
+    {
         $this->db->select('nome');
         $this->db->where('id', $modalidade);
         $query = $this->db->get('curso_modalidade');
@@ -312,7 +346,8 @@ class Requisicao_m extends CI_Model {
         return $resultado;
     }
 
-    function get_superintendencias_cursos() {
+    function get_superintendencias_cursos()
+    {
         $this->db->not_like('id', '31');
         $this->db->order_by('nome');
         $query = $this->db->get('superintendencia');
@@ -325,7 +360,8 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_superintendencias_cursos_clear($super) {
+    function get_superintendencias_cursos_clear($super)
+    {
         $this->db->select('id, nome');
 
         if ($super == 0)
@@ -341,7 +377,8 @@ class Requisicao_m extends CI_Model {
         return $query->result();
     }
 
-    function get_cursos_by_super($super) {
+    function get_cursos_by_super($super)
+    {
         $this->db->select('c.id, c.nome, c.id_superintendencia super');
         $this->db->from('curso c');
         $this->db->where('c.ativo_inativo', 'A');
@@ -376,7 +413,8 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_modalidade_by_super($super) {
+    function get_modalidade_by_super($super)
+    {
         $this->db->select('cm.*');
         $this->db->distinct();
         $this->db->from('curso_modalidade cm');
@@ -397,7 +435,8 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_funcoes() {
+    function get_funcoes()
+    {
 
         $where = array(
             'nivel_acesso <=' => $this->session->userdata('access_level')
@@ -418,19 +457,21 @@ class Requisicao_m extends CI_Model {
 
     /* RELATORIO DINAMICO */
 
-    function get_estados_rel() {
+    function get_estados_rel()
+    {
         $this->db->order_by('sigla');
         $query = $this->db->get('estado');
         $resultado = "<option value=\"0\" selected> Todos os Estados </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">" . $row->nome .' ('. $row->sigla . ") </option>";
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . ' (' . $row->sigla . ") </option>";
         }
 
         echo $resultado;
     }
 
-    function get_municipio_desc($id_cidade) {
+    function get_municipio_desc($id_cidade)
+    {
         $this->db->select('c.nome, e.sigla');
         $this->db->from('cidade c');
         $this->db->join('estado e', 'c.id_estado = e.id');
@@ -441,7 +482,8 @@ class Requisicao_m extends CI_Model {
         echo $fetch[0]->nome . " (" . $fetch[0]->sigla . ")";
     }
 
-    function get_estado_do_municipio($id) {
+    function get_estado_do_municipio($id)
+    {
         $this->db->select('id_estado');
         $this->db->where('id', $id);
         $query = $this->db->get('cidade');
@@ -449,7 +491,8 @@ class Requisicao_m extends CI_Model {
         echo $fetch[0]->id_estado;
     }
 
-    function get_municipios_rel($id_estado) {
+    function get_municipios_rel($id_estado)
+    {
         $this->db->where('id_estado', $id_estado);
         $this->db->order_by('nome');
         $query = $this->db->get('cidade');
@@ -462,20 +505,22 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_superintendencias_cursos_rel() {
+    function get_superintendencias_cursos_rel()
+    {
         $this->db->not_like('id', '31');
         $this->db->order_by('nome');
         $query = $this->db->get('superintendencia');
         $resultado = "<option value=\"0\" selected> Todas as Superintendências </option>";
 
         foreach ($query->result() as $row) {
-            $resultado .= "<option value=" . $row->id . ">" . $row->nome . " (".$row->sigla.") </option>";
+            $resultado .= "<option value=" . $row->id . ">" . $row->nome . " (" . $row->sigla . ") </option>";
         }
 
         echo $resultado;
     }
 
-    function get_cursos_by_super_rel($super) {
+    function get_cursos_by_super_rel($super)
+    {
         $this->db->select('c.id, c.nome, c.id_superintendencia super');
         $this->db->from('curso c');
         $this->db->where('c.ativo_inativo', 'A');
@@ -510,13 +555,14 @@ class Requisicao_m extends CI_Model {
         echo $resultado;
     }
 
-    function get_modalidades_rel() {
+    function get_modalidades_rel()
+    {
         $this->db->where(
-                array(
-                    'nome <>' => '',
-                    'id <>' => '27',
-                    'nome <>' => 'OUTROS'
-                )
+            array(
+                'nome <>' => '',
+                'id <>' => '27',
+                'nome <>' => 'OUTROS'
+            )
         );
         $this->db->order_by('nome');
         $query = $this->db->get('curso_modalidade');
@@ -532,7 +578,4 @@ class Requisicao_m extends CI_Model {
 
         echo $resultado;
     }
-
 }
-
-?>

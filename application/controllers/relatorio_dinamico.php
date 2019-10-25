@@ -14,12 +14,14 @@ use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\Style\Color;
 
-class Relatorio_dinamico extends CI_Controller {
+class Relatorio_dinamico extends CI_Controller
+{
 
     private $access_level;
     private $excel;
 
-    public function __construct() {
+    public function __construct()
+    {
 
         parent::__construct();
 
@@ -34,7 +36,8 @@ class Relatorio_dinamico extends CI_Controller {
       Verificar níveis de acesso
      */
 
-    public function index() {
+    public function index()
+    {
 
         //if ($this->session->userdata('access_level') > 3){
         $this->session->set_userdata('curr_content', 'rel_dinamico');
@@ -55,7 +58,8 @@ class Relatorio_dinamico extends CI_Controller {
         echo json_encode($response);
     }
 
-    public function get_cursos() {
+    public function get_cursos()
+    {
         $where_from_where = $this->relatorio_dinamico_m->stmt_from_where_curso();
         $lista = $this->relatorio_dinamico_m->list_cursos($where_from_where);
         if (count($lista) == 0) {
@@ -68,18 +72,19 @@ class Relatorio_dinamico extends CI_Controller {
         }
     }
 
-    private function append_header_sheet($writer, $title) {
+    private function append_header_sheet($writer, $title)
+    {
 
         $style_border = (new StyleBuilder())
-                ->setBackgroundColor(Color::rgb(170, 255, 128))
-                ->setShouldWrapText(false)
-                ->build();
+            ->setBackgroundColor(Color::rgb(170, 255, 128))
+            ->setShouldWrapText(false)
+            ->build();
 
         $style_body = (new StyleBuilder())
-                ->setBackgroundColor(Color::rgb(230, 230, 230))
-                ->setShouldWrapText(false)
-                ->setFontBold()
-                ->build();
+            ->setBackgroundColor(Color::rgb(230, 230, 230))
+            ->setShouldWrapText(false)
+            ->setFontBold()
+            ->build();
 
         $writer->addRowWithStyle(array("-------------------------------------------------------------------------------------------------", "", "", "", "", "", "", "", "", "", ""), $style_border);
         $writer->addRowWithStyle(array("Programa Nacional de Educação na Reforma Agrária (Pronera)", "", "", "", "", "", "", "", "", "", ""), $style_body);
@@ -90,23 +95,25 @@ class Relatorio_dinamico extends CI_Controller {
         $writer->addRow(array(""));
     }
 
-    private function append_to_sheet($writer, $currentSheet, $aba) {
+    private function append_to_sheet($writer, $currentSheet, $aba)
+    {
         if ($currentSheet) {
             $currentSheet->setName($aba['title']);
         }
         $style_header = (new StyleBuilder())
-                ->setFontBold()
-                ->setFontSize(13)
-                ->setFontColor(Color::WHITE)
-                ->setBackgroundColor(Color::rgb(91, 183, 91))
-                ->build();
+            ->setFontBold()
+            ->setFontSize(13)
+            ->setFontColor(Color::WHITE)
+            ->setBackgroundColor(Color::rgb(91, 183, 91))
+            ->build();
 
         $this->append_header_sheet($writer, $aba['title']);
         $writer->addRowWithStyle($aba['header'], $style_header);
         $writer->addRows($aba['data']);
     }
 
-    private function write_ods($namefile, $abas) {
+    private function write_ods($namefile, $abas)
+    {
         $writter = WriterFactory::create(Type::ODS);
         $writter->openToBrowser($namefile . ".ods");
         $currentSheet = false;
@@ -122,7 +129,8 @@ class Relatorio_dinamico extends CI_Controller {
         $writter->close();
     }
 
-    private function write_xlsx($namefile, $abas) {
+    private function write_xlsx($namefile, $abas)
+    {
         $writter = WriterFactory::create(Type::XLSX);
         $writter->openToBrowser($namefile . ".xlsx");
         $currentSheet = false;
@@ -138,7 +146,8 @@ class Relatorio_dinamico extends CI_Controller {
         $writter->close();
     }
 
-    private function write_json($namefile, $abas) {
+    private function write_json($namefile, $abas)
+    {
         $saida = array();
         foreach ($abas as $aba) {
             $saida[$aba['id']] = $aba['data'];
@@ -148,7 +157,8 @@ class Relatorio_dinamico extends CI_Controller {
         echo json_encode($saida, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
-    public function gerarRelatorio() {
+    public function gerarRelatorio()
+    {
         session_start();
         ob_start("ob_gzhandler");
 
@@ -167,14 +177,16 @@ class Relatorio_dinamico extends CI_Controller {
             $abas[] = array(
                 "title" => "Cursos",
                 "id" => "cursos",
-                "header" => array('COD', 'NOME', 'SUPERINTENDÊNCIA',
+                "header" => array(
+                    'COD', 'NOME', 'SUPERINTENDÊNCIA',
                     'NÍVEL_CURSO', 'MODALIDADE', 'ÁREA_CONHECIMENTO',
                     'COORDENADOR_GERAL', 'TITULAÇÃO_COORDENADOR_GERAL', 'COORDENADOR_PROJETO',
                     'TITULAÇÃO_COORDENADOR_PROJETO', 'VICE_COORDENADOR', 'TITULAÇÃO_VICE_COORDENADOR',
                     'COORDENADOR_PEDAGÓGICO', 'TITULAÇÃO_COORDENADOR_PEDAGÓGICO', 'DURAÇÃO_CURSO_ANOS',
                     'MÊS_ANO_PREVISTO_INICIO', 'MÊS_ANO_PREVISTO_TÉRMINO', 'MÊS_ANO_REALIZADO_INICIO',
                     'MÊS_ANO_REALIZADO_TÉRMINO', 'NÚMERO_TURMAS', 'NÚMERO_INGRESSANTES',
-                    'NÚMERO_CONCLUINTES', 'NÚMERO_BOLSISTAS', 'OBSERVAÇÃO'),
+                    'NÚMERO_CONCLUINTES', 'NÚMERO_BOLSISTAS', 'OBSERVAÇÃO'
+                ),
                 "data" => $this->relatorio_dinamico_m->abaCursos($where_curso)
             );
         }
@@ -192,7 +204,7 @@ class Relatorio_dinamico extends CI_Controller {
             $abas[] = array(
                 "title" => "Educandos",
                 "id" => "educandos",
-                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'CPF', 'RG', 'GÊNERO', 'DATA_NASCIMENTO', 'IDADE', 'TIPO_TERRITÓRIO', 'NOME_TERRITÓRIO', 'CONCLUINTE', 'GEOCODE', 'MUNICÍPIO DE ORIGEM', 'ESTADO'),
+                "header" => array('CURSO_VINCULADO', 'ID', 'NOME', 'CPF', 'RG', 'GÊNERO', 'DATA_NASCIMENTO', 'IDADE', 'TIPO_TERRITÓRIO', 'NOME_TERRITÓRIO', "COD_SIPRA", 'CONCLUINTE', 'GEOCODE', 'MUNICÍPIO DE ORIGEM', 'ESTADO'),
                 "data" => $this->relatorio_dinamico_m->abaEducandos($where_curso)
             );
         }
@@ -258,7 +270,6 @@ class Relatorio_dinamico extends CI_Controller {
 
         $init_sheet = true;
     }
-
 }
 
 /* End of file relatorio_dinamico.php */

@@ -214,6 +214,22 @@
                     </li>
                 </ul>
             </li>
+            <li class="dropdown-submenu filter-type" value="curso">
+                <a href="#" class="title-filter" count="<?= (is_bool($srAtual) ? "0" : count($superintendencias)) ?>">
+                    Curso
+                </a>
+                <div class="dropdown-menu no-close" style="width: 350px;">
+                    &nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i>
+                    Use com outros filtros desativados
+                    <div class="lds-ring" id="loading-curso" style='display: none'>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <input id="tags-curso" name='tags-outside' class='tagify--outside no-close' placeholder='Código ou nome do Curso' />
+                </div>
+            </li>
             <li class="dropdown-submenu filter-type" value="assentamento">
                 <a href="#" class="title-filter" count="<?= (is_bool($srAtual) ? "0" : count($superintendencias)) ?>">
                     Assentamento
@@ -256,10 +272,8 @@
             $("body").toggleClass("fullscreen");
         });
 
-        $(document.body).ready(function() {
-            var controller;
-            var input = document.getElementById("tags-assentamento");
-
+        function CustomTagify(id, inputId) {
+            var input = document.getElementById(inputId);
             var tagify = new Tagify(input, {
                 whitelist: [],
                 dropdown: {
@@ -272,58 +286,75 @@
                 enforceWhitelist: true
             }).on('add', function(e, tagName) {
                 $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).addClass("hide");
-                $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 1);
+                $(".filter-type[value='" + id + "']").find(".title-filter").attr("count", 1);
                 updateMap();
             }).on('remove', function(e, tagName) {
                 $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).removeClass("hide");
-                $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 0);
+                $(".filter-type[value='" + id + "']").find(".title-filter").attr("count", 0);
                 updateMap();
             });
+            const context = this;
 
-            tagify.on('input', function(e) {
-                var value = e.detail;
-                tagify.settings.whitelist.length = 0;
-                if (value.value.length >= 3) {
-                    $("#loading-assentamentos").show();
-                    controller && controller.abort();
-                    controller = new AbortController();
+            this.checkNull = function(checkNullId) {
+                $("#" + checkNullId).change(function() {
+                    var valueAssentamento = $("#" + inputId).val();
+                    if (valueAssentamento != "[]" && valueAssentamento != "" && valueAssentamento) {
+                        tagify.removeAllTags();
+                        $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).removeClass("hide");
+                        $(".filter-type[value='" + id + "']").find(".title-filter").attr("count", 0);
+                    }
+                    if (this.checked) {
+                        $(input).siblings(".tagify--outside").addClass("disabled").find(".tagify__input").removeAttr("contenteditable");
+                    } else {
+                        $(input).siblings(".tagify--outside").removeClass("disabled").find(".tagify__input").attr("contenteditable", 'true');
+                        $(".filter-type[value='" + id + "']").find(".title-filter").attr("count", 0);
+                    }
+                    updateMap();
+                });
+                return context;
+            }
 
-                    var term = value.value;
-                    term = term.replace("'", '0X2019');
+            this.fetchUrl = function(url, loadingId) {
+                var controller;
+                tagify.on('input', function(e) {
+                    var value = e.detail;
+                    tagify.settings.whitelist.length = 0;
+                    if (value.value.length >= 3) {
+                        $("#" + loadingId).show();
+                        controller && controller.abort();
+                        controller = new AbortController();
 
-                    //não tem compatibilidade com IE
-                    fetch('<?php echo site_url('relatorio_mapas/get_sugestao_assentamento/'); ?>/' + term, {
-                            signal: controller.signal
-                        })
-                        .then(RES => RES.json())
-                        .then(function(whitelist) {
+                        var term = value.value;
+                        term = term.replace("'", '0X2019');
 
-                            whitelist.sort(function(a, b) {
-                                return ('' + a).localeCompare(b);
+                        //não tem compatibilidade com IE
+                        fetch('<?php echo site_url(''); ?>/' + url + "/" + term, {
+                                signal: controller.signal
+                            })
+                            .then(RES => RES.json())
+                            .then(function(whitelist) {
+
+                                whitelist.sort(function(a, b) {
+                                    return ('' + a).localeCompare(b);
+                                });
+
+                                tagify.settings.whitelist = whitelist;
+                                tagify.dropdown.show.call(tagify, "");
+                                $("#" + loadingId).hide();
                             });
+                    }
+                });
+                return context;
+            }
+        }
 
-                            tagify.settings.whitelist = whitelist;
-                            tagify.dropdown.show.call(tagify, "");
-                            $("#loading-assentamentos").hide();
-                        });
-                }
-            });
+        $(document.body).ready(function() {
+            new CustomTagify("assentamento", "tags-assentamento")
+                .checkNull("null_assentamento")
+                .fetchUrl('relatorio_mapas/get_sugestao_assentamento/', "loading-assentamentos");
 
-            $("#null_assentamento").change(function() {
-                var valueAssentamento = $("#tags-assentamento").val();
-                if (valueAssentamento != "[]" && valueAssentamento != "" && valueAssentamento) {
-                    tagify.removeAllTags();
-                    $(input).siblings(".tagify--outside").find(".tagify__input").eq(0).removeClass("hide");
-                    $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 0);
-                }
-                if (this.checked) {
-                    $(input).siblings(".tagify--outside").addClass("disabled").find(".tagify__input").removeAttr("contenteditable");
-                } else {
-                    $(input).siblings(".tagify--outside").removeClass("disabled").find(".tagify__input").attr("contenteditable", 'true');
-                    $(".filter-type[value='assentamento']").find(".title-filter").attr("count", 0);
-                }
-                updateMap();
-            });
+            new CustomTagify("curso", "tags-curso")
+                .fetchUrl('relatorio_mapas/get_sugestao_curso/', "loading-curso");
         });
 
         <?= (is_bool($srAtual) ? "" : "$('#superintendencia_all')[0].indeterminate = true;") ?>
@@ -460,6 +491,13 @@
                 data.assentamento = assentamento;
             } else if ($("#null_assentamento")[0].checked) {
                 data.assentamento = "NULL";
+            }
+
+            var valueCurso = $("#tags-curso").val();
+            if (valueCurso != "[]" && valueCurso != "" && valueCurso) {
+                var array = JSON.parse($("#tags-curso").val());
+                var curso = parseInt(array[0].value.split(" ")[0].split(".")[1]);
+                data.curso = curso;
             }
 
             var parent = $("#filters-config");

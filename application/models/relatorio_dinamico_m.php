@@ -211,6 +211,7 @@ class Relatorio_dinamico_m extends CI_Model {
                 if(ed.idade=-1,('NAO INFORMADO'),(ed.idade)) as IDADE,
                 ed.tipo_territorio as TIPO_TERRITÓRIO,
                 ed.nome_territorio as NOME_TERRITÓRIO,
+                ed.code_sipra_assentamento as COD_SIPRA,
                 CASE ed.concluinte
                     WHEN 'I' THEN 'NÃO INFORMADO'
                     WHEN 'S' THEN 'SIM'

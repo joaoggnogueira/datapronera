@@ -20,6 +20,29 @@ class Mapas_m extends CI_Model
         return $array;
     }
 
+    function get_sugestao_curso($search)
+    {
+        $search = urldecode($search);
+
+        $this->db->select("CONCAT(LPAD(c.id_superintendencia, (2), (0) ),('.'), LPAD(c.id, (3), (0) ),(' - '),(c.nome)) as busca");
+        $this->db->from("curso c");
+        $this->db->where("CONCAT(LPAD(c.id_superintendencia, (2), (0) ),('.'), LPAD(c.id, (3), (0) )) LIKE '$search%' OR c.nome LIKE '%$search%'");
+        $this->db->limit(10);
+        $this->db->distinct();
+
+        $query = $this->db->get();
+
+        // echo $this->db->last_query();
+
+        $dados = $query->result();
+        $result = array();
+        foreach ($dados as $value) {
+            $result[] = $value->busca;
+        }
+
+        return $result;
+    }
+
     function get_sugestao_assentamento($search)
     {
 
@@ -201,6 +224,11 @@ class Mapas_m extends CI_Model
                 c.ativo_inativo = 'A' 
             ";
 
+        if (isset($filtros['curso'])) {
+            $cursoId = $filtros['curso'];
+            $stmt .= " AND c.id LIKE '$cursoId' ";
+        }
+
         if (count($filtros['vigencia']) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
 
@@ -279,6 +307,11 @@ class Mapas_m extends CI_Model
             WHERE 
                 c.ativo_inativo = 'A'
         ";
+
+        if (isset($filtros['curso'])) {
+            $cursoId = $filtros['curso'];
+            $stmt .= " AND c.id LIKE '$cursoId' ";
+        }
 
         if (count($filtros['vigencia']) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
@@ -360,6 +393,12 @@ class Mapas_m extends CI_Model
             INNER JOIN caracterizacao cr ON c.id = cr.id_curso
             WHERE c.id_superintendencia IN $sr AND `ec`.`id_cidade` = '" . $id_municipio . "'  AND `c`.`ativo_inativo` = 'A' AND `c`.`status` IN $status
         ";
+
+        if (isset($filtros->curso)) {
+            $cursoId = $filtros->curso;
+            $stmt .= " AND c.id LIKE '$cursoId' ";
+        }
+
         if ($modalidade_ids) {
             if ($modalidade_nil != 'false') {
                 $stmt .= " AND (c.id_modalidade IN $modalidade_ids OR c.id_modalidade IS NULL)";
@@ -475,6 +514,11 @@ class Mapas_m extends CI_Model
             LEFT JOIN estado est ON est.id = m.id_estado 
             WHERE c.id_superintendencia IN $sr AND c.ativo_inativo = 'A' AND ccr.id_cidade = $id AND `c`.`status` IN $status ";
 
+        if (isset($filtros->curso)) {
+            $cursoId = $filtros->curso;
+            $stmt .= " AND c.id LIKE '$cursoId' ";
+        }
+
         if (count($filtros->tipo_instrumento) < 9) {
             $stmt .= " AND c.id_instrumento IN $tipo_instrumento ";
         }
@@ -535,6 +579,11 @@ class Mapas_m extends CI_Model
         $complemento_instrumento = "";
         $complemento_status = "";
         $complemento_final = "";
+
+        if (isset($filtros->curso)) {
+            $cursoId = $filtros->curso;
+            $this->db->where("c.id LIKE $cursoId");
+        }
 
         if (count($filtros->vigencia) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
@@ -625,6 +674,11 @@ class Mapas_m extends CI_Model
             INNER JOIN instituicao_ensino ie ON ie.id_curso = c.id 
             WHERE c.id_superintendencia IN $sr AND c.ativo_inativo = 'A' AND c.status IN $status AND m.id = $id";
 
+        if (isset($filtros->curso)) {
+            $cursoId = $filtros->curso;
+            $stmt .= " AND c.id LIKE '$cursoId' ";
+        }
+        
         if (count($filtros->vigencia) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
 

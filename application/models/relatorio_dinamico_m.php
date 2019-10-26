@@ -138,11 +138,13 @@ class Relatorio_dinamico_m extends CI_Model {
                 if((ca.numero_turmas=-1),('NAO INFORMADO'),(ca.numero_turmas)) as NÚMERO_TURMAS,
                 if((ca.numero_ingressantes=-1),('NAO INFORMADO'),(ca.numero_ingressantes)) as NÚMERO_INGRESSANTES,
                 if((ca.numero_concluintes=-1),('NAO INFORMADO'),(ca.numero_concluintes)) as NÚMERO_CONCLUINTES,
-                if((ca.numero_bolsistas=-1),('NAO INFORMADO'),(ca.numero_bolsistas)) as NÚMERO_BOLSISTAS,    
+                if((ca.numero_bolsistas=-1),('NAO INFORMADO'),(ca.numero_bolsistas)) as NÚMERO_BOLSISTAS,   
+                if((c.id_instrumento=0),('NAO CADASTRADO'),(cti.nome)) as TIPO_INSTRUMENTO,   
                 c.obs as OBSERVAÇÃO_CURSO
             FROM  $stmt_from
             INNER JOIN `curso_modalidade` cm ON cm.id = c.id_modalidade
             INNER JOIN `superintendencia` s ON s.id = c.id_superintendencia
+            INNER JOIN `curso_tipo_instrumento` cti ON cti.id = c.id_instrumento
             WHERE $stmt_where ORDER BY c.id");
         $result = $query->result_array();
         return $result;

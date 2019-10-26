@@ -185,7 +185,7 @@ class Relatorio_dinamico extends CI_Controller
                     'COORDENADOR_PEDAGÓGICO', 'TITULAÇÃO_COORDENADOR_PEDAGÓGICO', 'DURAÇÃO_CURSO_ANOS',
                     'MÊS_ANO_PREVISTO_INICIO', 'MÊS_ANO_PREVISTO_TÉRMINO', 'MÊS_ANO_REALIZADO_INICIO',
                     'MÊS_ANO_REALIZADO_TÉRMINO', 'NÚMERO_TURMAS', 'NÚMERO_INGRESSANTES',
-                    'NÚMERO_CONCLUINTES', 'NÚMERO_BOLSISTAS', 'OBSERVAÇÃO'
+                    'NÚMERO_CONCLUINTES', 'NÚMERO_BOLSISTAS', 'TIPO_INSTRUMENTO', 'OBSERVAÇÃO'
                 ),
                 "data" => $this->relatorio_dinamico_m->abaCursos($where_curso)
             );

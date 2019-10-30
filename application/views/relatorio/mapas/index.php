@@ -236,7 +236,13 @@ endif;
                 atual_request = false;
                 console.log("Request aborted");
             }
-            switch ($("#select-mapa").eq(0).attr("value")) {
+            var val = $("#select-mapa").eq(0).attr("value");
+            if (val === "educando") {
+                $(".only-educando-filter").show();
+            } else {
+                $(".only-educando-filter").hide();
+            }
+            switch (val) {
                 case "educando":
                     prepareMapaEducando();
                     break;

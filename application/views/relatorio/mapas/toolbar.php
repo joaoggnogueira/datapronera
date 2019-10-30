@@ -230,7 +230,21 @@
                     <input id="tags-curso" name='tags-outside' class='tagify--outside no-close' placeholder='Código ou nome do Curso' />
                 </div>
             </li>
-            <li class="dropdown-submenu filter-type" value="assentamento">
+            <li class="dropdown-submenu filter-type only-educando-filter" value="municipio">
+                <a href="#" class="title-filter" count="<?= (is_bool($srAtual) ? "0" : count($superintendencias)) ?>">
+                    Município do educando
+                </a>
+                <div class="dropdown-menu no-close" style="width: 350px;">
+                    &nbsp;&nbsp;<i class="fa fa-exclamation-triangle"></i> Válido somente para o Mapa Educandos <div class="lds-ring" id="loading-municipio" style='display: none'>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <input id="tags-municipio" name='tags-outside' class='tagify--outside no-close' placeholder='Nome do município' />
+                </div>
+            </li>
+            <li class="dropdown-submenu filter-type only-educando-filter" value="assentamento">
                 <a href="#" class="title-filter" count="<?= (is_bool($srAtual) ? "0" : count($superintendencias)) ?>">
                     Assentamento
                 </a>
@@ -352,6 +366,9 @@
             new CustomTagify("assentamento", "tags-assentamento")
                 .checkNull("null_assentamento")
                 .fetchUrl('relatorio_mapas/get_sugestao_assentamento/', "loading-assentamentos");
+
+            new CustomTagify("municipio", "tags-municipio")
+                .fetchUrl('relatorio_mapas/get_sugestao_municipio/', "loading-municipio");
 
             new CustomTagify("curso", "tags-curso")
                 .fetchUrl('relatorio_mapas/get_sugestao_curso/', "loading-curso");
@@ -498,6 +515,13 @@
                 var array = JSON.parse($("#tags-curso").val());
                 var curso = parseInt(array[0].value.split(" ")[0].split(".")[1]);
                 data.curso = curso;
+            }
+
+            var valueMunicipio = $("#tags-municipio").val();
+            if (valueMunicipio != "[]" && valueMunicipio != "" && valueMunicipio) {
+                var array = JSON.parse($("#tags-municipio").val());
+                var municipio = parseInt(array[0].value.split(" - ")[0]);
+                data.municipio = municipio;
             }
 
             var parent = $("#filters-config");

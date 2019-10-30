@@ -20,6 +20,28 @@ class Mapas_m extends CI_Model
         return $array;
     }
 
+    function get_sugestao_municipio($search)
+    {
+        $search = urldecode($search);
+
+        $this->db->select("CONCAT((c.cod_municipio),(' - '),(c.nome)) as busca");
+        $this->db->from("cidade c");
+        $this->db->where("c.cod_municipio LIKE '$search%' OR c.nome LIKE '$search%'");
+        $this->db->limit(10);
+
+        $query = $this->db->get();
+
+        //echo $this->db->last_query();
+
+        $dados = $query->result();
+        $result = array();
+        foreach ($dados as $value) {
+            $result[] = $value->busca;
+        }
+
+        return $result;
+    }
+
     function get_sugestao_curso($search)
     {
         $search = urldecode($search);
@@ -28,7 +50,6 @@ class Mapas_m extends CI_Model
         $this->db->from("curso c");
         $this->db->where("CONCAT(LPAD(c.id_superintendencia, (2), (0) ),('.'), LPAD(c.id, (3), (0) )) LIKE '$search%' OR c.nome LIKE '%$search%'");
         $this->db->limit(10);
-        $this->db->distinct();
 
         $query = $this->db->get();
 
@@ -311,6 +332,11 @@ class Mapas_m extends CI_Model
         if (isset($filtros['curso'])) {
             $cursoId = $filtros['curso'];
             $stmt .= " AND c.id LIKE '$cursoId' ";
+        }
+
+        if (isset($filtros['municipio'])) {
+            $municipioId = $filtros['municipio'];
+            $stmt .= " AND m.cod_municipio LIKE '$municipioId' ";
         }
 
         if (count($filtros['vigencia']) < 2) {
@@ -678,7 +704,7 @@ class Mapas_m extends CI_Model
             $cursoId = $filtros->curso;
             $stmt .= " AND c.id LIKE '$cursoId' ";
         }
-        
+
         if (count($filtros->vigencia) < 2) {
             $atual = (((int) date("Y")) - 1950) * 12 + ((int) date("m"));
 

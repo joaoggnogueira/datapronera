@@ -32,7 +32,7 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             } else if ($vigencia == "CC") {
                 $this->db->where("($atual >= date_to_number(cr.`termino_realizado`,('01/2050')))");
             } else if($vigencia == "NI"){
-                $this->db->where("($atual <= date_to_number(cr.`inicio_previsto`,('01/1950')))");
+                $this->db->where("($atual <= date_to_number(cr.`inicio_previsto`,('01/1950')) AND cr.`inicio_realizado` IS NULL)");
             }
         }
     }

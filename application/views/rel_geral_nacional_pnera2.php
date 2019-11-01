@@ -156,6 +156,10 @@
                             <label for="vigencia_checkbox_an"> Em andamento</label>
                         </div>
                         <div class="row_checkbox form-check">
+                            <input type="radio" name="vigencia" value="NI" class="check_vigencia" id="vigencia_checkbox_ni"/>
+                            <label for="vigencia_checkbox_ni"> Não iniciados</label>
+                        </div>
+                        <div class="row_checkbox form-check">
                             <input type="radio" name="vigencia" value="CC" class="check_vigencia" id="vigencia_checkbox_cc"/>
                             <label for="vigencia_checkbox_cc"> Encerrado</label>
                         </div>
@@ -239,6 +243,13 @@
                                     </ul></i>
                             </a>
                     </li>-->
+                    
+                    <li class="li-rel">
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_cadastrados/1'); ?>">XLS</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_cadastrados/2'); ?>">PDF</a> 
+                        <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_cadastrados/3'); ?>">HTML</a> 
+                        Lista de cursos cadastrados<span class="badge badge-nominal">nominal</span>  
+                    </li>
 
                     <li class="li-rel">
                         <a class="btn btn-success a-link" rel="noopener" target="_blank" href="<?php echo site_url('relatorio_geral_pnera2/lista_cursos_modalidade/1'); ?>">XLS</a> 

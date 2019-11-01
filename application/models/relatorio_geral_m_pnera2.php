@@ -30,7 +30,9 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
             if ($vigencia == "AN") {
                 $this->db->where("($atual BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
             } else if ($vigencia == "CC") {
-                $this->db->where("($atual NOT BETWEEN date_to_number(cr.`inicio_realizado`,('01/1950')) AND date_to_number(cr.`termino_realizado`,('01/2050')))");
+                $this->db->where("($atual >= date_to_number(cr.`termino_realizado`,('01/2050')))");
+            } else if($vigencia == "NI"){
+                $this->db->where("($atual <= date_to_number(cr.`inicio_previsto`,('01/1950')))");
             }
         }
     }
@@ -525,6 +527,35 @@ class Relatorio_geral_m_pnera2 extends CI_Model {
         $this->db->group_by('cd.cod_municipio, cd.nome, e.sigla')->order_by('e.sigla, cd.nome');
 
         return $this->db_result();
+    }
+
+    function lista_cursos_cadastrados($access_level, $vigencia, $status) {
+        $this->db->select('
+                    CONCAT(" ",LPAD(c.id_superintendencia, (2), (0) ),("."), LPAD(c.id, (3), (0) )) AS id_curso, 
+                    c.nome AS curso, 
+                    cm.nome AS modalidade, 
+                    s.nome as superintendencia, 
+                    c.nprocesso as nprocesso, 
+                    c.ninstrumento as ninstrumento,
+                    cti.nome as tinstrumento,
+                    cr.inicio_realizado as inicio_realizado,
+                    cr.termino_realizado as termino_realizado
+                    ')
+                ->from('curso c')
+                ->join('curso_modalidade cm', 'c.id_modalidade = cm.id', 'left')
+                ->join('superintendencia s', 'c.id_superintendencia = s.id', 'left')
+                ->join('curso_tipo_instrumento cti', 'c.id_instrumento = cti.id', 'left')
+                ->join('caracterizacao cr', 'c.id = cr.id_curso', 'left');
+                
+        $this->db_join_and_where_vigencia_filter($vigencia, false);
+        $this->db_where_status_filter($status);
+        $this->db_where_sr_filter($access_level);
+
+        $this->db->order_by('s.id, c.id');
+
+        $result = $this->db_result();
+        
+        return $result;
     }
 
     function lista_cursos_modalidade($access_level, $vigencia, $status) {

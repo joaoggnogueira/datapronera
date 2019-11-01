@@ -1,10 +1,12 @@
 <?php
 
-class Relatorio_geral_pnera2 extends CI_Controller {
+class Relatorio_geral_pnera2 extends CI_Controller
+{
 
     private $access_level;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->load->database();            // Loading Database
@@ -16,7 +18,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         $this->load->model('barchart');              // Loading Model
     }
 
-    public function index() {
+    public function index()
+    {
         $valores = array();
         // Administradores e Pesquisadores Nacionais
         if ($this->session->userdata('access_level') > 3) {
@@ -34,7 +37,7 @@ class Relatorio_geral_pnera2 extends CI_Controller {
 
         $html = array(
             'content' => $this->load->view($data['content'], '', true)
-                //'top_menu' => $this->load->view($data['top_menu'], '', true)
+            //'top_menu' => $this->load->view($data['top_menu'], '', true)
         );
 
         $response = array(
@@ -45,7 +48,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         echo json_encode($response);
     }
 
-    private function create_header($name, $title_status) {
+    private function create_header($name, $title_status)
+    {
         $xls = array();
         $access_level = $this->session->userdata('access_level');
         if ($access_level <= 3) {
@@ -79,7 +83,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         return $xls;
     }
 
-    private function append_xls_data($xls, $data, $header) {
+    private function append_xls_data($xls, $data, $header)
+    {
         array_push($xls, $header);
 
         foreach ($data as $row) {
@@ -89,7 +94,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         return $xls;
     }
 
-    private function write_pdf($titulo, $result, $title_status, $model) {
+    private function write_pdf($titulo, $result, $title_status, $model)
+    {
         error_reporting(E_ALL ^ E_DEPRECATED);
         $this->load->library('pdf');
         $pdf = $this->pdf->load();
@@ -108,7 +114,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         $pdf->Output($pdfFilePath, 'I');
     }
 
-    private function write_html($titulo, $result, $title_status, $model) {
+    private function write_html($titulo, $result, $title_status, $model)
+    {
         $data = array();
         $data['titulo_relatorio'] = $titulo;
         $data['title_status'] = $title_status;
@@ -124,7 +131,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         echo utf8_decode($this->load->view($model, $dataResult, true));
     }
 
-    private function write_xls($xls_data, $title) {
+    private function write_xls($xls_data, $title)
+    {
         $this->barchart->set_chart_data($xls_data);
         $this->barchart->set_filename($title);
         $this->barchart->set_excelFile();
@@ -132,15 +140,18 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         $this->barchart->create_chart();
     }
 
-    private function handle_error() {
+    private function handle_error()
+    {
         echo $this->load->view('relatorio/2pnera/error', array(), true);
     }
 
-    private function handle_empty() {
+    private function handle_empty()
+    {
         echo $this->load->view('relatorio/2pnera/empty', array(), true);
     }
 
-    private function get_status() {
+    private function get_status()
+    {
         $status = $this->input->get("status");
         if ($status == false) {
             return array("AN", "CC", "2P");
@@ -148,19 +159,25 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         return $status;
     }
 
-    private function get_vigencia() {
+    private function get_vigencia()
+    {
         return $this->input->get("vigencia");
     }
 
-    private function switch_status($stat) {
+    private function switch_status($stat)
+    {
         switch ($stat) {
-            case "AN": return "Em Andamento";
-            case "CC": return "Concluído";
-            case "2P": return "II PNERA";
+            case "AN":
+                return "Em Andamento";
+            case "CC":
+                return "Concluído";
+            case "2P":
+                return "II PNERA";
         }
     }
 
-    private function title_status($status) {
+    private function title_status($status)
+    {
         $title = false;
         foreach ($status as $stat) {
             if ($title == false) {
@@ -172,7 +189,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         return $title;
     }
 
-    public function municipios_curso_modalidade($tipo) {
+    public function municipios_curso_modalidade($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -204,7 +222,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function municipios_curso($tipo) {
+    public function municipios_curso($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -233,7 +252,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function cursos_modalidade($tipo) {
+    public function cursos_modalidade($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -266,7 +286,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function cursos_nivel($tipo) {
+    public function cursos_nivel($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -299,7 +320,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function cursos_nivel_superintendencia($tipo) {
+    public function cursos_nivel_superintendencia($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -328,7 +350,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function cursos_superintendencia($tipo) {
+    public function cursos_superintendencia($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -364,7 +387,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_ingressantes_modalidade($tipo) {
+    public function alunos_ingressantes_modalidade($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -399,7 +423,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_ingressantes_nivel($tipo) {
+    public function alunos_ingressantes_nivel($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -434,7 +459,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_ingressantes_superintendencia($tipo) {
+    public function alunos_ingressantes_superintendencia($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -472,7 +498,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_ingressantes_nivel_sr($tipo) {
+    public function alunos_ingressantes_nivel_sr($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -501,7 +528,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_concluintes_modalidade($tipo) {
+    public function alunos_concluintes_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -534,7 +562,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_concluintes_nivel($tipo) {
+    public function alunos_concluintes_nivel($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -569,7 +598,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_concluintes_superintendencia($tipo) {
+    public function alunos_concluintes_superintendencia($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -605,7 +635,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_concluintes_nivel_sr($tipo) {
+    public function alunos_concluintes_nivel_sr($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -633,11 +664,12 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_cadastrados_curso($tipo) {
+    public function alunos_cadastrados_curso($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
-        $result = $this->relatorio_geral_m_pnera2->alunos_cadastrados_curso($this->session->userdata('access_level'),$vigencia, $status);
+        $result = $this->relatorio_geral_m_pnera2->alunos_cadastrados_curso($this->session->userdata('access_level'), $vigencia, $status);
         if (is_array($result)) {
             if (count($result) != 0) {
                 if ($tipo == 1) {
@@ -660,7 +692,36 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function lista_cursos_modalidade($tipo) { //nominal
+    public function lista_cursos_cadastrados($tipo)
+    {
+        $status = $this->get_status();
+        $vigencia = $this->get_vigencia();
+        $title_status = $this->title_status($status);
+        $result = $this->relatorio_geral_m_pnera2->lista_cursos_cadastrados($this->session->userdata('access_level'), $vigencia, $status);
+        if (is_array($result)) {
+            if (count($result) != 0) {
+                if ($tipo == 1) {
+                    $xls = $this->create_header("Lista de Cursos cadastrados", $title_status);
+                    $xls = $this->append_xls_data($xls, $result, array("Código", "Nome", "Modalidade", "Superintendencia", "N° do Processo", "N° do Instrumento", "Tipo de Instrumento", "Inicio Realizado", "Término Realizado"));
+
+                    $this->barchart->set_include_charts(false);
+
+                    $this->write_xls($xls, 'CURSO_CADASTRADOS.xls');
+                } else if ($tipo == 2) {
+                    $this->write_pdf('Lista de Cursos cadastrados', $result, $title_status, 'relatorio/2pnera/lista_cursos_cadastrados');
+                } else if ($tipo == 3) {
+                    $this->write_html('Lista de Cursos cadastrados', $result, $title_status, 'relatorio/2pnera/lista_cursos_cadastrados');
+                }
+            } else {
+                $this->handle_empty();
+            }
+        } else {
+            $this->handle_error();
+        }
+    }
+
+    public function lista_cursos_modalidade($tipo)
+    { //nominal
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -688,7 +749,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function lista_cursos_modalidade_sr($tipo) {
+    public function lista_cursos_modalidade_sr($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -715,7 +777,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function alunos_curso($tipo, $idsr) {
+    public function alunos_curso($tipo, $idsr)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -744,7 +807,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function titulacao_educadores($tipo) {
+    public function titulacao_educadores($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -777,7 +841,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function titulacao_educadores_superintendencia($tipo) {
+    public function titulacao_educadores_superintendencia($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -787,8 +852,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if (count($result) != 0) {
                 if ($tipo == 1) {
                     $xls = $this->create_header("Total de educadores por Escolaridade/titulação e superintendência", $title_status);
-                    $xls = $this->append_xls_data($xls, $result, array("CÓDIGO", "SUPERINTENDÊNCIA", "% ENSINO FUNDAMENTAL COMPLETO", "% ENSINO FUNDAMENTAL INCOMPLETO",
-                        "% ENSINO MÉDIO COMPLETO", "% ENSINO MÉDIO INCOMPLETO", "% GRADUADO(A)", "% ESPECIALISTA", "% MESTRE(A)", "% DOUTOR(A)", "% N/A"));
+                    $xls = $this->append_xls_data($xls, $result, array(
+                        "CÓDIGO", "SUPERINTENDÊNCIA", "% ENSINO FUNDAMENTAL COMPLETO", "% ENSINO FUNDAMENTAL INCOMPLETO",
+                        "% ENSINO MÉDIO COMPLETO", "% ENSINO MÉDIO INCOMPLETO", "% GRADUADO(A)", "% ESPECIALISTA", "% MESTRE(A)", "% DOUTOR(A)", "% N/A"
+                    ));
 
                     $this->barchart->set_include_charts(false); // hide charts
 
@@ -808,7 +875,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function educadores_nivel($tipo) {
+    public function educadores_nivel($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -841,7 +909,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function educadores_curso($tipo) {
+    public function educadores_curso($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -869,7 +938,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function educadores_superintendencia($tipo) {
+    public function educadores_superintendencia($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -906,7 +976,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function genero_educadores_modalidade($tipo) {
+    public function genero_educadores_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -940,7 +1011,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function educandos_superintendencia($tipo) {
+    public function educandos_superintendencia($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -976,7 +1048,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function municipio_origem_educandos($tipo) {
+    public function municipio_origem_educandos($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1003,7 +1076,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function territorio_educandos_modalidade($tipo) {
+    public function territorio_educandos_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1012,8 +1086,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if (count($result) != 0) {
                 if ($tipo == 1) {
                     $xls = $this->create_header("Total de Educandos por Território de origem e modalidade do curso", $title_status);
-                    $xls = $this->append_xls_data($xls, $result, array("MODALIDADE", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
-                        "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO"));
+                    $xls = $this->append_xls_data($xls, $result, array(
+                        "MODALIDADE", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
+                        "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO"
+                    ));
 
                     $this->barchart->set_include_charts(false);
 
@@ -1031,7 +1107,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function territorio_educandos_superintendencia($tipo) {
+    public function territorio_educandos_superintendencia($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1040,8 +1117,10 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if (count($result) != 0) {
                 if ($tipo == 1) {
                     $xls = $this->create_header("Total de Educandos por Território de origem e superintendência do curso", $title_status);
-                    $xls = $this->append_xls_data($xls, $result, array("CÓDIGO", "SUPERINTENDÊNCIA", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
-                        "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO"));
+                    $xls = $this->append_xls_data($xls, $result, array(
+                        "CÓDIGO", "SUPERINTENDÊNCIA", "ACAMPAMENTO", "ASSENTAMENTO", "COMUNIDADE", "COMUNIDADE RIBEIRINHA",
+                        "FLONA", "FLORESTA NACIONAL", "QUILOMBOLA", "RDS", "RESEX", "OUTRO", "NÃO PREENCHIDO", "NÃO INFORMADO"
+                    ));
 
                     $this->barchart->set_include_charts(false); // hide charts
 
@@ -1059,7 +1138,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function idade_educandos_modalidade($tipo) {
+    public function idade_educandos_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1093,7 +1173,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function genero_educandos_modalidade($tipo) {
+    public function genero_educandos_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1127,7 +1208,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function educandos_assentamento_modalidade($tipo) {
+    public function educandos_assentamento_modalidade($tipo)
+    {
 
         // GAMBIARRRA para aumentar a área de memória 
         $status = $this->get_status();
@@ -1139,10 +1221,12 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             if (count($result) != 0) {
                 if ($tipo == 1) {
                     $xls = $this->create_header("Total de Educandos por assentamento e modalidade de curso", $title_status);
-                    $xls = $this->append_xls_data($xls, $result, array("NOME TERRITÓRIO / ASSENTAMENTO", "EJA ALFABETIZACAO", "EJA ANOS INICIAIS", "EJA ANOS FINAIS",
+                    $xls = $this->append_xls_data($xls, $result, array(
+                        "NOME TERRITÓRIO / ASSENTAMENTO", "EJA ALFABETIZACAO", "EJA ANOS INICIAIS", "EJA ANOS FINAIS",
                         "EJA NIVEL MEDIO (MAGISTERIO/FORMAL)", "EJA NIVEL MEDIO (NORMAL)", "NIVEL MEDIO/TECNICO (CONCOMITANTE)",
                         "NIVEL MEDIO/TECNICO (INTEGRADO)", "NIVEL MEDIO PROFISSIONAL (POS-MEDIO)", "GRADUACAO", "ESPECIALIZACAO",
-                        "RESIDENCIA AGRARIA", "MESTRADO", "DOUTORADO"));
+                        "RESIDENCIA AGRARIA", "MESTRADO", "DOUTORADO"
+                    ));
 
                     $this->barchart->set_include_charts(false); // hide charts
 
@@ -1160,7 +1244,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function educandos_assentamento_nivel($tipo) {
+    public function educandos_assentamento_nivel($tipo)
+    {
 
         // GAMBIARRRA para aumentar a área de memória 
         ini_set('memory_limit', '2048M');
@@ -1191,7 +1276,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function lista_educandos_cursos_sr($tipo, $sr) {
+    public function lista_educandos_cursos_sr($tipo, $sr)
+    {
 
         ini_set('memory_limit', '1024M');
         $status = $this->get_status();
@@ -1221,7 +1307,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function localizacao_instituicoes_ensino($tipo) {
+    public function localizacao_instituicoes_ensino($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1249,7 +1336,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function instituicoes_ensino_modalidade($tipo) {
+    public function instituicoes_ensino_modalidade($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1282,7 +1370,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function instituicoes_ensino_nivel($tipo) {
+    public function instituicoes_ensino_nivel($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1315,7 +1404,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function instituicoes_ensino_superintendencia($tipo) {
+    public function instituicoes_ensino_superintendencia($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1348,7 +1438,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function instituicoes_ensino_municipio($tipo) {
+    public function instituicoes_ensino_municipio($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1377,7 +1468,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function instituicoes_ensino_estado($tipo) {
+    public function instituicoes_ensino_estado($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1409,7 +1501,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function cursos_natureza_inst_ensino($tipo) {
+    public function cursos_natureza_inst_ensino($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1442,7 +1535,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function instituicao_ensino_cursos($tipo) {
+    public function instituicao_ensino_cursos($tipo)
+    {
 
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
@@ -1470,7 +1564,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function organizacoes_demandantes_modalidade($tipo) {
+    public function organizacoes_demandantes_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1501,7 +1596,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function membros_org_demandantes_modalidade($tipo) {
+    public function membros_org_demandantes_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1519,7 +1615,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
                     $this->barchart->set_number_format('0.0');                           // decimal format
 
                     $this->barchart->set_chart_colors(array('87CEEB', 'EE5C42'));         // array - colors
-                    $this->barchart->set_title("
+                    $this->barchart->set_title(
+                        "
                     MEMBROS DAS ORGANIZAÇÕES DEMANDANTES (%)\n
                     PARTICIPANTES DOS CURSOS DO PRONERA\n
                     POR MODALIDADE"
@@ -1539,7 +1636,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function organizacao_demandante_cursos($tipo) {
+    public function organizacao_demandante_cursos($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1566,7 +1664,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function localizacao_parceiros($tipo) {
+    public function localizacao_parceiros($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1594,7 +1693,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function parceiros_modalidade($tipo) {
+    public function parceiros_modalidade($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1625,7 +1725,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function parceiros_superintendencia($tipo) {
+    public function parceiros_superintendencia($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1656,7 +1757,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function parceiros_natureza($tipo) {
+    public function parceiros_natureza($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1683,7 +1785,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function lista_parceiros($tipo) {
+    public function lista_parceiros($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1715,7 +1818,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function producoes_estado($tipo) {
+    public function producoes_estado($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1743,7 +1847,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function producoes_superintendencia($tipo) {
+    public function producoes_superintendencia($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1770,7 +1875,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function producoes_tipo($tipo) {
+    public function producoes_tipo($tipo)
+    {
         $status = $this->get_status();
         $vigencia = $this->get_vigencia();
         $title_status = $this->title_status($status);
@@ -1802,7 +1908,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function pesquisa_estado($tipo) {
+    public function pesquisa_estado($tipo)
+    {
         $result = $this->relatorio_geral_m_pnera2->pesquisa_estado();
 
         if (is_array($result)) {
@@ -1827,7 +1934,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function pesquisa_superintendencia($tipo) {
+    public function pesquisa_superintendencia($tipo)
+    {
 
         $result = $this->relatorio_geral_m_pnera2->pesquisa_superintendencia();
         if (is_array($result)) {
@@ -1852,7 +1960,8 @@ class Relatorio_geral_pnera2 extends CI_Controller {
         }
     }
 
-    public function pesquisa_tipo($tipo) {
+    public function pesquisa_tipo($tipo)
+    {
 
         $result = $this->relatorio_geral_m_pnera2->pesquisa_tipo($this->session->userdata('access_level'));
         if (is_array($result)) {
@@ -1880,5 +1989,4 @@ class Relatorio_geral_pnera2 extends CI_Controller {
             $this->handle_error();
         }
     }
-
 }

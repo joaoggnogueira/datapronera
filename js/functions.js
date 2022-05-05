@@ -43,20 +43,20 @@ function loadMenuFeatures(_option) {
         switch (_option) {
 
             // Menus dropdown
-            case 'dropdown' :
+            case 'dropdown':
                 $('.dropdown-toggle').dropdown();
                 break;
 
-                // Itens do menu selecionáveis
-            case 'selectable' :
+            // Itens do menu selecionáveis
+            case 'selectable':
                 $('.overflow-menu').selectable();
                 break;
 
-                // Menu deslizante
-                //case 'scrollable' : $('.overflow-menu').scrollable(); break;
+            // Menu deslizante
+            //case 'scrollable' : $('.overflow-menu').scrollable(); break;
 
-                // Todas as opções
-            default :
+            // Todas as opções
+            default:
                 $('.dropdown-toggle').dropdown();
                 $('.overflow-menu').selectable();
                 //$('.overflow-menu').scrollable();
@@ -190,9 +190,9 @@ function request(_url, _data, _fn, _callback) {
                 // Carrega conteúdo da nova view
                 $('#content').fadeOut().queue(function (next) {
                     $(this)
-                            .html(data.html.content)
-                            .delay(500)
-                            .fadeIn("slow");
+                        .html(data.html.content)
+                        .delay(500)
+                        .fadeIn("slow");
                     next();
                 });
 
@@ -201,9 +201,9 @@ function request(_url, _data, _fn, _callback) {
                     // Carrega conteúdo do menu
                     $('#top_menu').fadeOut().queue(function (next) {
                         $(this)
-                                .html(data.html.top_menu)
-                                .delay(500)
-                                .fadeIn("slow");
+                            .html(data.html.top_menu)
+                            .delay(500)
+                            .fadeIn("slow");
                         next();
                     });
                 }
@@ -213,9 +213,9 @@ function request(_url, _data, _fn, _callback) {
                     // Carrega informção sobre o curso seleconado
                     $('#course_info').fadeOut().queue(function (next) {
                         $(this)
-                                .html(data.html.course_info)
-                                .delay(500)
-                                .fadeIn("slow");
+                            .html(data.html.course_info)
+                            .delay(500)
+                            .fadeIn("slow");
                         next();
                     });
                 }
@@ -282,9 +282,9 @@ function requestMultipart(_url, _idform, _fn, _append) {
                 // Carrega conteúdo da nova view
                 $('#content').fadeOut().queue(function (next) {
                     $(this)
-                            .html(data.html.content)
-                            .delay(500)
-                            .fadeIn("slow");
+                        .html(data.html.content)
+                        .delay(500)
+                        .fadeIn("slow");
                     next();
                 });
 
@@ -293,9 +293,9 @@ function requestMultipart(_url, _idform, _fn, _append) {
                     // Carrega conteúdo do menu
                     $('#top_menu').fadeOut().queue(function (next) {
                         $(this)
-                                .html(data.html.top_menu)
-                                .delay(500)
-                                .fadeIn("slow");
+                            .html(data.html.top_menu)
+                            .delay(500)
+                            .fadeIn("slow");
                         next();
                     });
                 }
@@ -305,9 +305,9 @@ function requestMultipart(_url, _idform, _fn, _append) {
                     // Carrega informção sobre o curso seleconado
                     $('#course_info').fadeOut().queue(function (next) {
                         $(this)
-                                .html(data.html.course_info)
-                                .delay(500)
-                                .fadeIn("slow");
+                            .html(data.html.course_info)
+                            .delay(500)
+                            .fadeIn("slow");
                         next();
                     });
                 }
@@ -415,10 +415,10 @@ $.fn.showErrorMessage = function (_msg) {
 
     switch ($this.getInputType()) {
 
-        case 'text' :
-        case 'password' :
-        case 'email' :
-        case 'textarea' :
+        case 'text':
+        case 'password':
+        case 'email':
+        case 'textarea':
 
             var $label = $('label[for="' + $this.attr('id') + '"]');
             var $parent = $this.parent().parent();
@@ -432,7 +432,7 @@ $.fn.showErrorMessage = function (_msg) {
 
             break;
 
-        case 'select' :
+        case 'select':
 
             var $label = $('label[for="' + $this.attr('id') + '"]');
             var $parent = $this.parent().parent();
@@ -446,7 +446,7 @@ $.fn.showErrorMessage = function (_msg) {
 
             break;
 
-        default :
+        default:
 
             var $label = $('label[for="' + $this.attr('name') + '"]');
             var $parent = $this.parent().parent().parent().parent();
@@ -470,10 +470,10 @@ $.fn.hideErrorMessage = function () {
 
     switch ($this.getInputType()) {
 
-        case 'text' :
-        case 'password' :
-        case 'email' :
-        case 'textarea' :
+        case 'text':
+        case 'password':
+        case 'email':
+        case 'textarea':
 
             var $label = $('label[for="' + $this.attr('id') + '"]');
             var $parent = $this.parent().parent();
@@ -487,7 +487,7 @@ $.fn.hideErrorMessage = function () {
 
             break;
 
-        case 'select' :
+        case 'select':
 
             var $label = $('label[for="' + $this.attr('id') + '"]');
             var $parent = $this.parent().parent();
@@ -501,7 +501,7 @@ $.fn.hideErrorMessage = function () {
 
             break;
 
-        default :
+        default:
 
             var $label = $('label[for="' + $this.attr('name') + '"]');
             var $parent = $this.parent().parent().parent().parent();
@@ -527,22 +527,22 @@ $.fn.isEmpty = function () {
 
     switch ($this.getInputType()) {
 
-        case 'text' :
-        case 'password' :
-        case 'email' :
-        case 'textarea' :
+        case 'text':
+        case 'password':
+        case 'email':
+        case 'textarea':
             return ($this.val().length == 0) ? true : false;
 
-        case 'radio' :
+        case 'radio':
             var $radio = $('input:radio[name=' + $this.attr('name') + ']:checked');
             return ($radio.val() === undefined) ? true : false;
 
-        case 'checkbox' :
+        case 'checkbox':
             //return (! $this.prop('checked'));
             var $checkbox = $('input:checkbox[name=' + $this.attr('name') + ']:checked');
             return ($checkbox.val() === undefined) ? true : false;
 
-        case 'select' :
+        case 'select':
             return ($this.val() === null) ? true : false;
     }
 }
@@ -554,8 +554,8 @@ $.fn.isEmpty = function () {
  */
 $.fn.getInputType = function () {
     return this[0].tagName.toString().toLowerCase() === "input" ?
-            $(this[0]).prop("type").toLowerCase() :
-            this[0].tagName.toLowerCase();
+        $(this[0]).prop("type").toLowerCase() :
+        this[0].tagName.toLowerCase();
 }
 
 /**
@@ -572,7 +572,7 @@ function isFormComplete(_form) {
     for (var i = 0; i < _form.length; i++) {
 
         $elem = (_form[i].id !== undefined) ?
-                $('#' + _form[i].id) : $('[name=' + _form[i].name + ']');
+            $('#' + _form[i].id) : $('[name=' + _form[i].name + ']');
 
         var ni = (_form[i].ni !== undefined) ? !_form[i].ni : true;
 
@@ -590,7 +590,7 @@ function isFormComplete(_form) {
             // Ignora próxima verificação e esconde a mensagem de erro
             if (_form[i].next === false) {
                 $next = (_form[++i].id !== undefined) ?
-                        $('#' + _form[i].id) : $('[name=' + _form[i].name + ']');
+                    $('#' + _form[i].id) : $('[name=' + _form[i].name + ']');
 
                 $next.hideErrorMessage();
             }
@@ -599,7 +599,7 @@ function isFormComplete(_form) {
             if (_form[i].ignore !== undefined) {
                 for (var j = 0; j < _form[i].ignore; j++) {
                     $next = (_form[++i].id !== undefined) ?
-                            $('#' + _form[i].id) : $('[name=' + _form[i].name + ']');
+                        $('#' + _form[i].id) : $('[name=' + _form[i].name + ']');
 
                     $next.hideErrorMessage();
                 }
@@ -611,7 +611,7 @@ function isFormComplete(_form) {
             // Busca e realiza operação de validação
             switch (_form[i].extra.operation) {
                 // Valida CPF
-                case 'cpf' :
+                case 'cpf':
 
                     if (!cpfValidate($elem.val())) {
                         $elem.showErrorMessage(_form[i].extra.message);
@@ -629,8 +629,8 @@ function isFormComplete(_form) {
 
                     break;
 
-                    // Valida email
-                case 'email' :
+                // Valida email
+                case 'email':
 
                     if (!emailValidate($elem.val())) {
                         $elem.showErrorMessage(_form[i].extra.message);
@@ -648,8 +648,8 @@ function isFormComplete(_form) {
 
                     break;
 
-                    // Valida data
-                case 'date' :
+                // Valida data
+                case 'date':
 
                     if (!dateValidate($elem.val()) && ni) {
                         $elem.showErrorMessage(_form[i].extra.message);
@@ -667,8 +667,8 @@ function isFormComplete(_form) {
 
                     break;
 
-                    // Verifica se senhas são iguais
-                case 'match' :
+                // Verifica se senhas são iguais
+                case 'match':
 
                     if (!matchValues($elem.val(), _form[i].extra.value)) {
                         $elem.showErrorMessage(_form[i].extra.message);
@@ -730,7 +730,7 @@ function scrollPage(_elem, _offset) {
 
     _offset = _offset || -160;
 
-    $('html,body').animate({scrollTop: (_elem.offset().top + _offset)}, 500);
+    $('html,body').animate({ scrollTop: (_elem.offset().top + _offset) }, 500);
 }
 
 $.fn.niCheck = function (_obj) {
@@ -778,18 +778,18 @@ $.fn.niCheck = function (_obj) {
                                     }
                                     $(this).attr('disabled', true);
                                     break;
-                                case 'text' :
-                                case 'textarea' :
+                                case 'text':
+                                case 'textarea':
                                     $(this).val('');
                                     $(this).attr('disabled', true);
                                     break;
 
-                                case 'radio' :
+                                case 'radio':
                                     $(this).attr('checked', false);
                                     $(this).attr('disabled', true);
                                     break;
 
-                                case 'checkbox' :
+                                case 'checkbox':
                                     if ($(this).prop('checked')) {
                                         $(this).click();
                                     }
@@ -837,8 +837,8 @@ $.fn.optionCheck = function (_obj, _val) {
 
     $.fn.hideInput = function () {
         switch ($(this).getInputType()) {
-            case 'text' :
-            case 'textarea' :
+            case 'text':
+            case 'textarea':
                 $(this).val('');
                 $(this).hide();
                 break;
@@ -1018,7 +1018,7 @@ $.fn.dialogInit = function (_function, _size) {
 $.fn.listCities = function (_url, _elem_city_id) {
     var $this = $(this);
     var $elemCity = $('#' + _elem_city_id);
-    
+
     $this.change(function () {
         var state_id = $this.val();
         $elemCity.html("<option>Aguarde...</option>");
@@ -1109,9 +1109,9 @@ function showMessage(_elem, _resp) {
 
     // Botão para fechar a caixa de diálogo
     var btnClose =
-            '<span class="status glyphicon glyphicon-remove"' +
-            'onclick="$(this).parent().slideToggle(100);">' +
-            '</span>';
+        '<span class="status glyphicon glyphicon-remove"' +
+        'onclick="$(this).parent().slideToggle(100);">' +
+        '</span>';
 
     var style = _resp.success ? arrayStyle[1] : arrayStyle[0];
     var msg = _resp.message + btnClose;
@@ -1167,9 +1167,9 @@ function getCheckedRadio(radio_group) {
  */
 function preventChar(event) {
     if ((event.key >= "0" && event.key <= "9")
-            || event.key === "Backspace"
-            || (event.keyCode >= 37 && event.keyCode <= 40)
-            || event.ctrlKey) {
+        || event.key === "Backspace"
+        || (event.keyCode >= 37 && event.keyCode <= 40)
+        || event.ctrlKey) {
     } else {
         event.preventDefault();
     }
@@ -1190,36 +1190,7 @@ function cpfValidate(_cpf) {
         return false;
 
     } else {
-
-        // Valida 1º dígito
-        add = 0;
-        for (i = 0; i < 9; i++) {
-            add += parseInt(_cpf.charAt(i)) * (10 - i);
-        }
-
-        rev = 11 - (add % 11);
-        if (rev == 10 || rev == 11) {
-            rev = 0;
-        }
-
-        if (rev != parseInt(_cpf.charAt(9))) {
-            return false;
-        }
-
-        // Valida 2º dígito
-        add = 0;
-        for (i = 0; i < 10; i++) {
-            add += parseInt(_cpf.charAt(i)) * (11 - i);
-        }
-
-        rev = 11 - (add % 11);
-        if (rev == 10 || rev == 11) {
-            rev = 0;
-        }
-
-        if (rev != parseInt(_cpf.charAt(10))) {
-            return false;
-        }
+        return true;
     }
 
     return true;
